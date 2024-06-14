@@ -77,61 +77,6 @@ uint16_t* init_GPIO(const struct device *gpio_dev, int button_pin, int wrist_led
 	return pwm_logic_array; 
 }
 
-/** @brief initilizes the GPIO for the button input 
- * 
- * 	Initlizes the pin input for a button press and sets the approppriate button change call back for when the button state changes.
- *  @param gpio_dev device structure that contains the device tree information for the gpio peripheral 
- *  @param button_pin Pin value on the board for the button input
- *  @param button_change_cb callback to use on the button interupt for the state change
- * 
- *  @return status code. 0 if successfull <0 if failed 
- *
-*/
-
-int init_interface_button(const struct device* gpio_dev, int button_pin, gpio_callback_handler_t button_interrrupt_handler){
-	int err;
-	static struct gpio_callback button_interupt_cb;
-	gpio_flags_t flags = GPIO_INPUT | GPIO_ACTIVE_HIGH; // I think the configuration here was wrong before hand
-	gpio_flags_t interrupts = GPIO_INT_EDGE_BOTH;
-	gpio_flags_t output_pin_flags = GPIO_OUTPUT_INACTIVE;
-
-	LOG_INF("Init GPIO Button: gpio_pin_configure\n");
-
-	err = gpio_pin_configure(gpio_dev, button_pin, flags);
-	if (err < 0) {
-		LOG_ERR("Error %d: failed to configure button gpio pin %d\n", err, button_pin);
-		return err; 
-	} 
-
-	LOG_INF("Init GPIO Button: gpio_pin_interrupt_configure\n");
-
-	err = gpio_pin_interrupt_configure(gpio_dev, button_pin, interrupts);
-	if (err < 0){
-		LOG_ERR("Error %d: failed to configure button callback on pin %d\n", err, button_pin);
-		return err;
-	}
-
-	err = gpio_pin_configure(gpio_dev,PIN_TOGGLE_OUTPUT, output_pin_flags);
-	if (err < 0){
-		LOG_ERR("failed to init GPIO output pin: (err %d)\n", err);
-		return err; 
-	}
-
-	LOG_INF("Init GPIO Button: gpio_init_callback\n");
-
-	gpio_init_callback(&button_interupt_cb, button_interrrupt_handler ,BIT(button_pin));
-
-	LOG_INF("Init GPIO Button: gpio_add_callback\n");
-
-	err = gpio_add_callback(gpio_dev, &button_interupt_cb);
-	if (err < 0) {
-		LOG_ERR("Error adding callback for button change: (err %d)\n", err);
-		return err; 
-	}
-
-	return 0;
-}
-
 /** @brief Initlizes an output pin to control the LED on and off states using a PWM signal 
  * 
  *  Function is resposible for initilizing a dynamically allocated array that holds the pulse values for the LED wrist module
@@ -274,18 +219,7 @@ void update_wrist_led(struct k_work *item){
 
 }
 
-/** @brief function to execute on the timer expires
- * 
- *  increment the button hold intervals which will be looked at when the button is released
- *  a concurrency safe coding method will be used such that an external party doesn't read or modify 
- *  the variable before the timer has updated it. 
- *  
- *  @param button_hold_interval ptr to the number of button hold intervals that have occured
- *  
- *  implement concurrency control to ensure that the updates occur correctly
-*/
 
-void button_timer_expire_cb(struct k_timer *timer);
 
 /** @brief outlines how the leds should operate base on an operational mode that is passed
  * 

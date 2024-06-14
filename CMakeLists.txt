@@ -12,6 +12,8 @@ target_sources(app PRIVATE
   src/bluetooth_control.h
   src/adc_control.c
   src/adc_control.h
+  src/button_control.c
+  src/button_control.h
 )
 
 # NORDIC SDK APP END

@@ -3,6 +3,8 @@
         "log.h": "c",
         "types.h": "c",
         "stdlib.h": "c",
-        "stddef.h": "c"
+        "stddef.h": "c",
+        "bluetooth.h": "c",
+        "conn.h": "c"
     }
 }
