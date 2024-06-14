@@ -3,4 +3,16 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(Mark_1)
 
-target_sources(app PRIVATE src/main.c)
+# NORDIC SDK APP START
+target_sources(app PRIVATE
+  src/main.c
+  src/led_control.c
+  src/led_control.h
+  src/bluetooth_control.c
+  src/bluetooth_control.h
+  src/adc_control.c
+  src/adc_control.h
+)
+
+# NORDIC SDK APP END
+zephyr_library_include_directories(.)
