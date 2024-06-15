@@ -69,3 +69,4 @@ int init_interface_button(const struct device* gpio_dev, int button_pin, gpio_ca
 */
 
 void button_timer_expire_cb(struct k_timer *timer);
+
