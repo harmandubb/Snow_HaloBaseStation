@@ -1,17 +1,7 @@
 #include "bluetooth_control.h"
 
-LOG_MODULE_REGISTER(bluetooth_control, LOG_LEVEL_INF);
-
-static const struct bt_data 
-ad[] = {
-        BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL|BT_LE_AD_NO_BREDR)), //not the classif bluetooth operation
-        BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
-        BT_DATA(BT_DATA_MANUFACTURER_DATA,(unsigned char *)&adv_mfg_data, sizeof(adv_mfg_data)),
-};
-
-static const struct bt_data sd[] = {
-        BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_LBS_VAL),
-};                       
+LOG_MODULE_REGISTER(button_control, LOG_LEVEL_INF);
+              
 
 /** @brief for each bond present the device is added to an accept list
  * 
@@ -59,79 +49,6 @@ int setup_accept_list(uint8_t local_id)
 	return bond_cnt;
 }
 
-/** @brief set up an accept list for bluetooth advertising use or not using an accept list. 
- * 
- * 	The function is a work function that is launched to conduct the advertising based on the bonded connections present
- * 	If no bonded connection are before then advertising happens without a filter accept list.
- *  If one or more bonds are found then a accept list is used to only accept the previously paird devices. 
- * 
- *  @param work : defined using the k_work structure so the function can be submitted for multi threading work 
- *   
-*/
-
-void advertise_with_acceptlist(struct k_work *work)
-{
-	int err=0;
-	int allowed_cnt= setup_accept_list(BT_ID_DEFAULT);
-	LOG_INF("NUmber of Allowed Connections:%d\n", allowed_cnt);
-	if (allowed_cnt<0){
-		printk("Acceptlist setup failed (err:%d)\n", allowed_cnt);
-	} else {
-		if (allowed_cnt==0){
-			printk("Advertising with no Filter Accept list\n"); 
-			err = bt_le_adv_start(BT_LE_ADV_CONN_NO_ACCEPT_LIST, ad, ARRAY_SIZE(ad),
-					sd, ARRAY_SIZE(sd));
-		}
-		else {
-			printk("Acceptlist setup number  = %d \n",allowed_cnt);
-			err = bt_le_adv_start(BT_LE_ADV_CONN_ACCEPT_LIST, ad, ARRAY_SIZE(ad),
-				sd, ARRAY_SIZE(sd));	
-		}
-		if (err) {
-		 	printk("Advertising failed to start (err %d)\n", err);
-			return;
-		}
-		printk("Advertising successfully started\n");
-	}
-}
-
-K_WORK_DEFINE(advertise_acceptlist_work, advertise_with_acceptlist);
-
-/** @brief set up an accept list for bluetooth advertising wihtout an accept list. 
- * 
- * 	The function will stop the current advertising and advertise without an accept list to accept new devices. 
- * 	NOTE: The system needs to be not connected to any device for the new advertising to occur. 
- * 
- *  TODO: for the central I should make a function that can accept multiple connections. 
- *  TODO: for the central I need to be able to auto connect. Need to work with this code and the central code in conjunction.  
- * 
- *  @param work: defined using the k_work structure so the function can be submitted for multi threading work 
- *   
-*/
-
-void advertise_without_acceptlist(struct k_work *work)
-{
-	int err_code = bt_le_adv_stop();
-	if (err_code) {
-		LOG_ERR("Cannot stop advertising err= %d \n", err_code);
-		return;
-	}
-	// err_code = bt_le_filter_accept_list_clear();
-	// if (err_code) {
-	// 	LOG_ERR("Cannot clear accept list (err: %d)\n", err_code);
-	// } else	{
-	// 	LOG_INF("Filter Accept List cleared succesfully");
-	// }				
-	err_code = bt_le_adv_start(BT_LE_ADV_CONN_NO_ACCEPT_LIST, ad, ARRAY_SIZE(ad),	sd, ARRAY_SIZE(sd));
-	if (err_code) {
-		LOG_ERR("Cannot start open advertising (err: %d)\n", err_code);
-	} else	{
-		LOG_INF("Advertising in pairing mode started");
-	}
-}
-
-K_WORK_DEFINE(advertise_work, advertise_without_acceptlist);
-
 /** @brief unpairs all bonded device from the system 
  * 
  * 
@@ -150,3 +67,103 @@ void unpair(struct k_work *work){
 
 K_WORK_DEFINE(unpair_work, unpair);
 	
+
+/** @brief Transmit LED on or off information 
+ * 
+ * 	bluetooth should be set up prior to ensure that there is a perpheral that can complete the request
+ *  
+ *  @param led_status bool: if the led should be on 
+ * //TODO: figure out how to be able to send the led info to a peripheral. 
+ *  
+*/
+
+void transmit_led_info(bool led_status){};
+
+/** @brief Scan event handler function to handle with filter passed devices
+ * 
+ *	The following are the situations that can be set to check in the @ref bt_scan_filter match struct: 
+	1. name
+	2. short_name
+	3. addr 
+	4. uuid
+	5. appearance
+	6. manufacturer_data
+ *  
+ *  @param device_info ptr to structure that holds device data to make a connection
+ *  @param bt_scan_filter_match ptr to a struct that holds the information of filter matches for a device. Would change based on the filter opetions used
+ * 	@param connectable  inform the central that the device is connectable. 
+ *  
+*/
+void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_filter_match *filter_match, bool connectable)
+{
+    // Handle filter match event
+};
+
+/** @brief Scan event handler function to handle with non filter passed devices
+ * 		   The device information is simpley outputed for debugging purposes. 
+ *  
+ *  @param device_info ptr to structure that holds device data to make a connection
+ * 	@param connectable  inform the central that the device is connectable. 
+ *  
+*/
+
+void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable)
+{
+    // Handle filter no match event
+};
+
+/** @brief Event handler runnign when a connection is made. Output the status of the connection. 
+ * 			- what device is connected to
+ * 			- status of the connection 
+ * 		    
+ *  
+ *  @param device_info ptr to structure that holds device data to make a connection
+ * 	@param conn ptr to connection info
+ *  
+*/
+
+void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn)
+{
+    // Handle connecting event
+};
+
+/** @brief Event handler runnign when a connection has failed. 
+ * 			Output:
+ * 			- what device was attempted to connect to
+ * 			- Error/reason for the connection failing
+ * 		    
+ *  @param device_info ptr to structure that holds device data to make a connection
+ *  
+*/
+
+void scan_connecting_error(struct bt_scan_device_info *device_info)
+{
+    // Handle connecting error event
+};
+
+/** @brief Macro for establishing the scan callbacks for when scanning is started
+ * 		    
+ *  @param _name scan_cb name of the bt_can_cb structure that is made 
+ *  @param match_fun scan_filter_match function handler for when filters match 
+ *  @param no_match_fun function handler for when filters do not match a device
+ *  @param err_fun handler for handling error if connection failed (connect_if_match flag in the scan param must be set for connect to occur with this callback)
+ *  @param connecting_fun handler for when a connection occurs (connect_if_match flag must be present)
+
+*/
+
+BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
+
+/** @brief establish scan parameters, filters and start scanning for finding a snow halo wrist unit
+ *			- if no accept list is given then use a general snow halow discovery filter
+				- filter list: 
+					- UUID for nordic LBS service
+					- Name to include Snow_Halo_Wrist in some capacity
+			- if accept list is present then use a specific filter which includes addressing 
+ * 	@param accept_list: bool if an accept list is present for the devices that have already been connected to  		    
+ * 
+ *  @return 0 if success else error code less than 0   
+*/
+
+int init_scan(bool accept_list){
+	return 0; 
+};

@@ -21,11 +21,18 @@ extern "C" {
 #include <zephyr/kernel.h>
 #include <zephyr/device.h> //need to allow memory size in the heap to use malloc
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/logging/log.h>
 
 #include <nrfx.h>
 #include <stdlib.h>
 
+
+
+
+
 #define PIN_TOGGLE_OUTPUT (3)
+
+
 
 #ifdef __cplusplus
 }

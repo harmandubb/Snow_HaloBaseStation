@@ -46,36 +46,6 @@ struct Advertise_Bt_Conn_Data {
 
 //global variables end 
 
-/** @brief initlializes the GPIO. 
- * 
- * 	Initlaized the LED pin as a PWM output and initiliazed a pin for a button input. 
- *  Set the approporiate callbacks for the button press
- * 
- *  @param gpio_dev ptr to the device tree struct that defines the gpio peripheral: 
- * 					use Macro DEVICE_DT_GET(DT_NODELABEL(<device tree peripheral name>)) 
- *  @param button_pin Pin value on the board for the button input
- *  @param wrist_led_pin Pin value on the board for the LED PWm output
- *  @param button_change_cb callback to use on the button interupt/state change 
- * 
- *  @return ptr to the array holding the PWM pulse values 
- *  
-*/
-
-uint16_t* init_GPIO(const struct device *gpio_dev, int button_pin, int wrist_led_pin, gpio_callback_handler_t button_change_cb){
-	int err; 
-
-	
-	err = init_interface_button(gpio_dev, button_pin, button_change_cb);
-	if (err < 0) {
-		printk("Failed to establish interface button GPIO\n");
-		return NULL; 
-	}
-
-
-	uint16_t* pwm_logic_array = init_wrist_led(wrist_led_pin);
-
-	return pwm_logic_array; 
-}
 
 /** @brief Initlizes an output pin to control the LED on and off states using a PWM signal 
  * 
