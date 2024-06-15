@@ -2,7 +2,7 @@
 
 LOG_MODULE_REGISTER(Button_Control, LOG_LEVEL_INF);
 
-/** @brief initilizes the GPIO for the button input 
+/** @brief initilizes the GPIO for the button input responsible for the paring of the system
  * 
  * 	Initlizes the pin input for a button press and sets the approppriate button change call back for when the button state changes.
  *  @param gpio_dev device structure that contains the device tree information for the gpio peripheral 
@@ -13,12 +13,11 @@ LOG_MODULE_REGISTER(Button_Control, LOG_LEVEL_INF);
  *
 */
 
-int init_interface_button(const struct device* gpio_dev, int button_pin, gpio_callback_handler_t button_interrrupt_handler){
+int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_callback_handler_t button_interrrupt_handler){
 	int err;
 	static struct gpio_callback button_interupt_cb;
 	gpio_flags_t flags = GPIO_INPUT | GPIO_ACTIVE_HIGH; // I think the configuration here was wrong before hand
-	gpio_flags_t interrupts = GPIO_INT_EDGE_BOTH;
-	gpio_flags_t output_pin_flags = GPIO_OUTPUT_INACTIVE;
+	gpio_flags_t interrupts = GPIO_INT_EDGE_BOTH; //can change to interrupt on active low 
 
 	LOG_INF("Init GPIO Button: gpio_pin_configure\n");
 
@@ -34,12 +33,6 @@ int init_interface_button(const struct device* gpio_dev, int button_pin, gpio_ca
 	if (err < 0){
 		LOG_ERR("Error %d: failed to configure button callback on pin %d\n", err, button_pin);
 		return err;
-	}
-
-	err = gpio_pin_configure(gpio_dev,PIN_TOGGLE_OUTPUT, output_pin_flags);
-	if (err < 0){
-		LOG_ERR("failed to init GPIO output pin: (err %d)\n", err);
-		return err; 
 	}
 
 	LOG_INF("Init GPIO Button: gpio_init_callback\n");

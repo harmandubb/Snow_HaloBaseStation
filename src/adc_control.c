@@ -26,9 +26,9 @@ LOG_MODULE_REGISTER(ADC_Control, LOG_LEVEL_INF);
 //  *  
 // */
 
-// int* init_multiplexer_sel(int adc_pin){
-//     return NULL; 
-// };
+int* init_multiplexer_read(int adc_pin){
+    return NULL; 
+};
 
 // /** @brief init the multiplexer control pins. 
 //  * 
@@ -45,9 +45,9 @@ LOG_MODULE_REGISTER(ADC_Control, LOG_LEVEL_INF);
 //  *  
 // */
 
-// int init_multiplexer_sel(const struct device* gpio_dev, int sel_pins[], int num_pins){
-//     return 0; 
-// }
+int init_multiplexer_sel(const struct device* gpio_dev, int sel_pins[], int num_pins){
+    return 0; 
+}
 
 
 // /** @brief request data from sensor 
@@ -61,9 +61,9 @@ LOG_MODULE_REGISTER(ADC_Control, LOG_LEVEL_INF);
 //  *  
 // */
 
-// int request_sensor_data(const struct device* gpio_dev, int num_sensor){
-//     return 0; 
-// };
+int request_sensor_data(const struct device* gpio_dev, int num_sensor){
+    return 0; 
+};
 
 // /** @brief determine the pressure diffrential between the two sides of the board
 //  * 
@@ -75,11 +75,11 @@ LOG_MODULE_REGISTER(ADC_Control, LOG_LEVEL_INF);
 //  *          
 // */
 
-// int calculate_pressure_diffrential(int sensor_checked, int sensor_val){
-//     static pressure_diff = 0;
+int calculate_pressure_diffrential(int sensor_checked, int sensor_val){
+    static int pressure_diff = 0;
 
-//     return 0; 
-// }; 
+    return pressure_diff; 
+}; 
 
 
 
