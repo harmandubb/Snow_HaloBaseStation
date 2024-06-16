@@ -10,6 +10,7 @@
         "byteorder.h": "c",
         "pwm.h": "c",
         "nrfx_pwm.h": "c",
-        "scan.h": "c"
+        "scan.h": "c",
+        "nrfx.h": "c"
     }
 }

@@ -60,14 +60,14 @@ struct Advertise_Bt_Conn_Data {
  * 
 */
 
-uint16_t* init_wrist_led(int wrist_led_pin){
+uint16_t* init_board_led(int board_led_pin){
 	int err;
 	uint16_t* pwm_pulse_array = init_PWM_array();
 
 	nrfx_pwm_t pwm0 = NRFX_PWM_INSTANCE(0);
 	nrfx_pwm_config_t pwm0_config = {
         .output_pins = {
-            wrist_led_pin,
+            board_led_pin,
             NRF_PWM_PIN_NOT_CONNECTED,
             NRF_PWM_PIN_NOT_CONNECTED, 
             NRF_PWM_PIN_NOT_CONNECTED,

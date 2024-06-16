@@ -38,8 +38,9 @@ extern "C" {
 #define PWM_0 (PWM_TOP_VALUE - 5) //clock ticks at 16, MHz
 #define PWM_1 (PWM_TOP_VALUE - 10) //clock ticks at 16 MHz
 #define RESET_CODE_DURATION (10) //number of periods to hold low 
-#define PIN_TOGGLE_OUTPUT (28)
-#define PIN_BUTTON_INTERFACE (3)
+
+//Pin allocation
+#define PIN_BOARD_LED (2)
 
 typedef enum {
     BOARD_ALIVE,
@@ -60,7 +61,7 @@ typedef struct {
 // Function prototypes
 uint16_t* init_GPIO(const struct device *gpio_dev, int button_pin, int wrist_led_pin, gpio_callback_handler_t button_change_cb);
 int init_interface_button(const struct device* ble_device, int button_pin, gpio_callback_handler_t button_change_cb);
-uint16_t* init_wrist_led(int wrist_led_pin);
+uint16_t* init_board_led(int board_led_pin);
 uint16_t* init_PWM_array();
 void wrist_led_cb(bool led_state);
 void update_wrist_led(struct k_work *item);
