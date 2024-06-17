@@ -98,7 +98,7 @@ uint16_t* init_board_led(int board_led_pin){
     }
 
 	nrf_pwm_sequence_t pw0_seq_config = {
-        .values = pwm_pulse_array, //this is suppose to be a 16 bit value but lets see how a 8 bit value impacts
+        .values = {pwm_pulse_array}, //this is suppose to be a 16 bit value but lets see how a 8 bit value impacts
         .length = PWM_ARRAY_SIZE,
         .repeats = 0, //only play the duty cycle in each cell once. 
         .end_delay = RESET_CODE_DURATION,

@@ -28,6 +28,8 @@ extern "C" {
 #include <stdlib.h>
 #include <zephyr/drivers/adc.h>
 
+#define NUM_SENSORS (2)
+
 #ifdef __cplusplus
 }
 #endif

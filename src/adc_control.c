@@ -14,34 +14,34 @@
 
 LOG_MODULE_REGISTER(ADC_Control, LOG_LEVEL_INF);
 
-// /** @brief init adc read pin . 
-//  * 
-//  * 	Initlaized the adc pin to accept the volage from the multiplexer cycling through the sensors. 
-//  * 
-//  *  @param adc_pin Pin value on the board for the adc input
-//  *  
-//  *  //TODO: read through the adc documentation to determine if mroe parameters are needed  
-//  * 
-//  *  @return ptr to the array used to hold the adc values of the sensors 
-//  *  
-// */
+/** @brief init adc read pin . 
+ * 
+ * 	Initlaized the adc pin to accept the volage from the multiplexer cycling through the sensors. 
+ * 
+ *  @param adc_dt_spec *adc_channel ptr to an empty struct variabl
+ *  
+ *  //TODO: read through the adc documentation to determine if more parameters are needed  
+ * 
+ *  @return ptr to array for holding the adc sensor memory readings 
+ *  
+*/
 
-int* init_multiplexer_read(int adc_pin){
+int* init_multiplexer_reader(struct adc_dt_spec *adc_channel){
     int err;
 
-    static const struct adc_dt_spec adc_channel = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));
-    if (!adc_is_ready_dt(&adc_channel)) {
-        LOG_ERR("ADC controller devivce %s not ready", adc_channel.dev->name);
-        return NULL;
-    }
-
-    err = adc_channel_setup_dt(&adc_channel);
+    err = adc_channel_setup_dt(adc_channel);
     if (err < 0) {
         LOG_ERR("Could not setup channel #%d (%d)", 0, err);
         return NULL;
     }
-    
-    return NULL; 
+    //initialize the sensor memory array here: 
+    int* sensor_pressure_data = (int*)malloc(NUM_SENSORS * sizeof(int));
+    if (sensor_pressure_data == NULL){
+        LOG_ERR("Could not allocate memory for the sensor pressure data\n");
+        return NULL; 
+    }
+
+    return sensor_pressure_data;
 };
 
 // /** @brief init the multiplexer control pins. 
