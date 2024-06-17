@@ -26,6 +26,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <zephyr/drivers/adc.h>
 
 #ifdef __cplusplus
 }

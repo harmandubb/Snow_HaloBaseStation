@@ -27,6 +27,20 @@ LOG_MODULE_REGISTER(ADC_Control, LOG_LEVEL_INF);
 // */
 
 int* init_multiplexer_read(int adc_pin){
+    int err;
+
+    static const struct adc_dt_spec adc_channel = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));
+    if (!adc_is_ready_dt(&adc_channel)) {
+        LOG_ERR("ADC controller devivce %s not ready", adc_channel.dev->name);
+        return NULL;
+    }
+
+    err = adc_channel_setup_dt(&adc_channel);
+    if (err < 0) {
+        LOG_ERR("Could not setup channel #%d (%d)", 0, err);
+        return NULL;
+    }
+    
     return NULL; 
 };
 
