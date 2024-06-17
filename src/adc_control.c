@@ -12,15 +12,15 @@
 
 #include "adc_control.h"
 
+#define NUM_MULTIPLEXER_PINS_ALLOWED (4)
+
 LOG_MODULE_REGISTER(ADC_Control, LOG_LEVEL_INF);
 
 /** @brief init adc read pin . 
  * 
- * 	Initlaized the adc pin to accept the volage from the multiplexer cycling through the sensors. 
+ * 	Initlaized the adc accept the volage from the multiplexer cycling through the sensors. 
  * 
- *  @param adc_dt_spec *adc_channel ptr to an empty struct variabl
- *  
- *  //TODO: read through the adc documentation to determine if more parameters are needed  
+ *  @param adc_dt_spec *adc_channel ptr to the device node label dt spec   
  * 
  *  @return ptr to array for holding the adc sensor memory readings 
  *  
@@ -54,12 +54,31 @@ int* init_multiplexer_reader(struct adc_dt_spec *adc_channel){
 //  *  @return status code if the intialization worked or erro code based on the issue
 //  *          Status codes: 
 //  *                      0 --> Success
-//  *                      -1 --> not enough pins provided 
-//  *                      -2 --> more than expected pins are provided 
-//  *  
+//  *                      -100 --> not enough pins provided 
+//  *                      -200 --> more than expected pins are provided 
+//  *                       other error codes --> need to look at the error coedes for gpio_pinconfiguration 
 // */
 
 int init_multiplexer_sel(const struct device* gpio_dev, int sel_pins[], int num_pins){
+    if(num_pins <= 0){
+        LOG_ERR("Not enough pins privided to control the adc multiplexer\n");
+        return -100; 
+    } else if (num_pins > NUM_MULTIPLEXER_PINS_ALLOWED) {
+        LOG_ERR("More pins (%d) than multiplexer interface provided\n", num_pins);
+        return -200; 
+    }
+
+    gpio_flags_t flags = GPIO_OUTPUT_INACTIVE;
+    int err; 
+
+    for(int i = 0; i < num_pins; i++){
+        err = gpio_pin_configure(gpio_dev, sel_pins[i], flags);
+        if (err < 0) {
+            LOG_ERR("Error %d: failed to configure button gpio pin %d\n", err, sel_pins[i]);
+            return err; 
+        } 
+    }
+
     return 0; 
 }
 
