@@ -27,13 +27,6 @@ extern "C" {
 #include <stdlib.h>
 
 
-
-
-
-#define PIN_TOGGLE_OUTPUT (3)
-
-
-
 #ifdef __cplusplus
 }
 #endif

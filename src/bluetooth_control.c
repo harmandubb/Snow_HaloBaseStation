@@ -1,6 +1,8 @@
 #include "bluetooth_control.h"
 
 LOG_MODULE_REGISTER(button_control, LOG_LEVEL_INF);
+
+struct bt_conn *default_conn; //would need to make this into an array if more than one connection is needed to be made 
               
 
 /** @brief for each bond present the device is added to an accept list
@@ -82,12 +84,12 @@ void transmit_led_info(bool led_status){};
 /** @brief Scan event handler function to handle with filter passed devices
  * 
  *	The following are the situations that can be set to check in the @ref bt_scan_filter match struct: 
-	1. name
-	2. short_name
-	3. addr 
-	4. uuid
-	5. appearance
-	6. manufacturer_data
+	1. name //will the filter work like a contain function or a hard name? 
+	2. short_name x
+	3. addr x
+	4. uuid //using the lbs service uuid
+	5. appearance x
+	6. manufacturer_data x
  *  
  *  @param device_info ptr to structure that holds device data to make a connection
  *  @param bt_scan_filter_match ptr to a struct that holds the information of filter matches for a device. Would change based on the filter opetions used
@@ -97,6 +99,41 @@ void transmit_led_info(bool led_status){};
 void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_filter_match *filter_match, bool connectable)
 {
     // Handle filter match event
+	//assume anything with a uuid and a name that are filtered will work.
+	
+	LOG_DBG("NAME: ");
+	for (int i = 0; i < filter_match->name.len; i++){
+		LOG_DBG("%s",filter_match->name.name[i]);
+	}
+	LOG_DBG("/n");
+
+	LOG_DBG("UUID: ");
+	for(int i = 0; i<filter_match->uuid.count; i++){
+		LOG_DBG("%d", filter_match->uuid.uuid[i]);
+	}
+	LOG_DBG("/n");
+
+	int err; 
+
+	//two options: perform a manual connect operation or allow the auto connect to work? 
+	if (connectable) {
+		struct bt_conn *conn; 
+		err = bt_conn_le_create(device_info->recv_info->addr,
+								BT_CONN_LE_CREATE_CONN, 
+								device_info->conn_param, 
+								&conn);
+
+		if (!err){
+			if (!err) {
+				default_conn = bt_conn_ref(conn);
+				bt_conn_unref(conn);
+			}
+		}
+	}
+
+
+
+	
 };
 
 /** @brief Scan event handler function to handle with non filter passed devices
@@ -124,7 +161,7 @@ void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connecta
 
 void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn)
 {
-    // Handle connecting event
+    LOG_INF("Connected\n");
 };
 
 /** @brief Event handler runnign when a connection has failed. 
@@ -138,7 +175,7 @@ void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *co
 
 void scan_connecting_error(struct bt_scan_device_info *device_info)
 {
-    // Handle connecting error event
+    LOG_ERR("Failed to Connect\n");
 };
 
 /** @brief Macro for establishing the scan callbacks for when scanning is started

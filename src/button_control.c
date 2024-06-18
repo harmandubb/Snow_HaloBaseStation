@@ -17,7 +17,7 @@ int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_call
 	int err;
 	static struct gpio_callback button_interupt_cb;
 	gpio_flags_t flags = GPIO_INPUT | GPIO_ACTIVE_HIGH; // I think the configuration here was wrong before hand
-	gpio_flags_t interrupts = GPIO_INT_EDGE_BOTH; //can change to interrupt on active low 
+	gpio_flags_t interrupts = GPIO_INT_EDGE_RISING; //can change to interrupt on active low 
 
 	LOG_INF("Init GPIO Button: gpio_pin_configure\n");
 
@@ -62,4 +62,20 @@ int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_call
 */
 
 void button_timer_expire_cb(struct k_timer *timer);
+
+/** @brief  callback function for the pairing button
+ * 
+ *  Allow the bluetooth scanning to occur to accept a new wrist module
+ *  
+ *  @param port: device binding device structure 
+ *  @param gpio_callback: structure that is used to register callback function in the config stage
+ *  @param pins: bitwise repersentation of what pin callback has occured. 
+ *  
+ *  implement concurrency control to ensure that the updates occur correctly
+*/
+
+void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins){
+	// Call the bluetoth advertising function to occur here. 
+	// TODO: write this after the bluetooth library has been written.  
+};
 

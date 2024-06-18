@@ -40,7 +40,7 @@ static struct adc_sequence_options opts = {
 */
 
 int* init_multiplexer_reader(struct adc_dt_spec *adc_channel, int *adc_buffer, struct adc_sequence *sequence){
-    int err;
+    int err = 0;
 
     err = adc_channel_setup_dt(adc_channel);
     if (err < 0) {
