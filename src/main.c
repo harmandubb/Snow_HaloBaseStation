@@ -18,7 +18,7 @@ int main(void)
 
         //flags 
         bool sensorDataRequested = false;
-        bool adcReady = false;
+        adcReady = false; 
 
         //variables
         int checkSensorNum = 0; 
