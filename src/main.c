@@ -36,11 +36,11 @@ int main(void)
                 LOG_ERR("Initilization of board led failed\n");
         }
 
-        //initalize the adc device tree variable 
+        // //initalize the adc device tree variable 
         static const struct adc_dt_spec adc_channel = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));
         if (!adc_is_ready_dt(&adc_channel)) {
                 LOG_ERR("ADC controller devivce %s not ready", adc_channel.dev->name);
-                return NULL;
+                return 0;
         }
 
         for(;;){

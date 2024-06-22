@@ -103,13 +103,15 @@ void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_f
 	
 	LOG_DBG("NAME: ");
 	for (int i = 0; i < filter_match->name.len; i++){
-		LOG_DBG("%s",filter_match->name.name[i]);
+		// LOG_DBG("%d",filter_match->name.name[i]);
+		LOG_DBG("Name value needs to get fixed");
 	}
 	LOG_DBG("/n");
 
 	LOG_DBG("UUID: ");
 	for(int i = 0; i<filter_match->uuid.count; i++){
-		LOG_DBG("%d", filter_match->uuid.uuid[i]);
+		// LOG_DBG("%d", filter_match->uuid.uuid[i].);
+		LOG_DBG("UUID value needs to get fixed");
 	}
 	LOG_DBG("/n");
 

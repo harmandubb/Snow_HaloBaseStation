@@ -14,14 +14,14 @@
 &pinctrl {
     pwm0_board_led: pwm0_board_led {
         group1 {
-            psels = <NRF_PSEL(PWM_OUT0, 0, 3)>;
+            psels = <NRF_PSEL(PWM_OUT0, 0, 2)>;
             nordic,invert;
         };
     };
 
     pwm0_board_sleep: pwm0_board_sleep {
         group1 {
-            psels = <NRF_PSEL(PWM_OUT0, 0, 3)>;
+            psels = <NRF_PSEL(PWM_OUT0, 0, 2)>;
             low-power-enable; 
         };
     };
