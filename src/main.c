@@ -6,6 +6,8 @@
 #include "led_control.h"
 #include "adc_control.h"
 
+#include <math.h>
+
 #define NUM_SENSORS (2)
 
 #define NUM_ADC_SEL_PINS (1) //should be the bits needed to rep the num_sensors value
@@ -18,19 +20,20 @@
 #define ADC_BUFFER_SIZE (2) //based of resolution, samples taken, and number of channesl (12 bits = 2 bytes)
                                 // 2 bytes * 1 sample taken * 1 channel = 2 
 
+#define PRESSURE_THRESHOLD (10)
 
 LOG_MODULE_REGISTER(base_station, LOG_LEVEL_INF);
 
 int main(void)
 {
-        k_sleep(K_SECONDS(3));
-        LOG_INF("Most Updated Code: 1\n");
         //Setup
         int err = 0; 
 
         //flags 
         bool sensorDataRequested = false;
         adcReady = false; 
+        bool turnOnRightSide = false; 
+        bool turnOnLeftSide = false; 
 
         //variables
         int checkSensorNum = 0; 
@@ -80,26 +83,55 @@ int main(void)
                 LOG_ERR("Failed to intializlize the multiplexer init pins (err %d)\n", err);
         }
 
-        err = request_sensor_data(gpio0_dev, &adc_channel, adc_sel_pins, NUM_ADC_SEL_PINS, checkSensorNum, NUM_SENSORS, &opts);
-        if (err < 0){
-                LOG_ERR("Failed to request the sensor data (err %d)\n", err);
-        }
+        
 
         //determine what pin the adc channel is reading from 
 
 
         for(;;){
 
-                // Constantl read the ADC buffer for the output 
-                LOG_INF("The ADC Reading is: %d, %d \n", adcSensorReading[0], adcSensorReading[1]);
-                k_sleep(K_MSEC(100));
-                err = request_sensor_data(gpio0_dev, &adc_channel, adc_sel_pins, NUM_ADC_SEL_PINS, checkSensorNum, NUM_SENSORS, &opts);
-                if (err < 0){
-                        LOG_ERR("Failed to request the sensor data (err %d)\n", err);
-                }
-                //update the led of the baord 
+                if (sensorDataRequested == false) {
+                        //send the reques to the adc to read
+                        err = request_sensor_data(gpio0_dev, &adc_channel, adc_sel_pins, NUM_ADC_SEL_PINS, checkSensorNum, NUM_SENSORS, &opts);
+                        if (err < 0){
+                                LOG_ERR("Failed to request the sensor data (err %d)\n", err);
+                        }
 
-                //go through the board logic
+                        sensorDataRequested = true; 
+                }
+
+                if(adcReady){
+                        //update the array of the sensor value 
+                        sensorPressureMap[checkSensorNum] = adcSensorReading[0];
+                        //calculate the pressure difference 
+                        pressureDiff = calculate_pressure_diffrential(checkSensorNum, adcSensorReading[0], NUM_SENSORS);
+
+                        //based on the pressureDiff decide which side to turn on
+                        turnOnLeftSide = false; 
+                        turnOnRightSide = false; 
+                        if (abs(pressureDiff) > PRESSURE_THRESHOLD) {
+                                //yes something need to turn on
+                                if(pressureDiff > 0) {
+                                        turnOnRightSide = true;
+                                } else {
+                                        turnOnLeftSide = true; 
+                                        
+                                }
+                        }
+
+                        checkSensorNum = (checkSensorNum + 1) % NUM_SENSORS;
+                        adcReady = false; 
+                        sensorDataRequested = false; 
+                }
+
+                if(turnOnLeftSide) {
+                        //only have the board led on the left side turn on
+                } 
+
+                if(turnOnRightSide) {
+                        //have the board and the wrist led turn on
+                }
+
         }
         return 0;
 }

@@ -141,6 +141,7 @@ uint16_t* init_PWM_array(){
 }
 
 
+
 /** @brief produces the needed control signals to change the led lighting on the wrist 
  * 
  *  This will use the sypers library to create the needed pulses to update the led wrist band. \
