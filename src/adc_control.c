@@ -13,14 +13,14 @@
 #define NUM_MULTIPLEXER_PINS_ALLOWED (4)
 #define ADC_CHANNEL_ID  DT_PROP(DT_CHILD(ADC_NODE, channel_0), reg)
 #define ADC_RESOLUTION (12)
-#define ADC_BUFFER_SIZE (1)
+#define ADC_BUFFER_SIZE (2)
 
 LOG_MODULE_REGISTER(ADC_Control, LOG_LEVEL_INF);
 
 //flag definitions 
 bool adcReady = false; 
 
-static struct adc_sequence_options opts = {
+struct adc_sequence_options opts = {
     .interval_us = 0,
     .callback = my_adc_sequence_callback,
     .user_data = NULL, 
@@ -34,12 +34,13 @@ static struct adc_sequence_options opts = {
  *  @param adc_dt_spec *adc_channel ptr to the device node label dt spec   
  *  @param adc_buffer ptr to a buffer that is used to store the adc read outputs
  *  @param sequence ptr to s sequence structure to be used in the read function
+ *  @param num_sensors number of total sensors that are present in the system
  * 
  *  @return ptr to array for holding the adc sensor memory readings 
  *  
 */
 
-int* init_multiplexer_reader(struct adc_dt_spec *adc_channel, int *adc_buffer, struct adc_sequence *sequence){
+int* init_multiplexer_reader(struct adc_dt_spec *adc_channel, int *adc_buffer, struct adc_sequence *sequence, int num_sensors){
     int err = 0;
 
     err = adc_channel_setup_dt(adc_channel);
@@ -48,7 +49,7 @@ int* init_multiplexer_reader(struct adc_dt_spec *adc_channel, int *adc_buffer, s
         return NULL;
     }
     //initialize the sensor memory array here: 
-    int* sensor_pressure_data = (int*)malloc(NUM_SENSORS * sizeof(int));
+    int* sensor_pressure_data = (int*)malloc(num_sensors * sizeof(int));
     if (sensor_pressure_data == NULL){
         LOG_ERR("Could not allocate memory for the sensor pressure data\n");
         return NULL; 
@@ -118,16 +119,16 @@ int init_multiplexer_sel(const struct device* gpio_dev, int sel_pins[], int num_
 *  @param num_sesnor the number value designated to the sensor that is to be checked
 *  @param adc_buffer ptr to a buffer that is used to load the adc sampled values
 *  
-*  @return sensor value that is scanned by the adc 
+*  @return error or success code 
 *          error codes:   
 *                    -100 --> num_sensor to be checked is greater than the total number of sensors on the board.       
 *                      other errors --> based on the pin logic value setting  
 */
 
-int request_sensor_data(const struct device* gpio_dev, const struct adc_dt_spec *spec, int sel_pins[], int num_pins, int num_sensor, struct adc_sequence *sequence){
+int request_sensor_data(const struct device* gpio_dev, const struct adc_dt_spec *spec, int sel_pins[], int num_pins, int num_sensor, int num_total_sensors, struct adc_sequence *sequence){
     int err; 
-    if (!(num_sensor < NUM_SENSORS)) {
-        LOG_ERR("num_sensor val (%d) is greater than sensors present (%d)\n", num_sensor, NUM_SENSORS);
+    if (!(num_sensor < num_total_sensors)) {
+        LOG_ERR("num_sensor val (%d) is greater than sensors present (%d)\n", num_sensor, num_total_sensors);
         return -100; 
     }
 
@@ -169,12 +170,12 @@ int request_sensor_data(const struct device* gpio_dev, const struct adc_dt_spec 
  *          
 */
 
-int calculate_pressure_diffrential(int sensor_checked, int sensor_val){
+int calculate_pressure_diffrential(int sensor_checked, int sensor_val, int num_sensors){
     static int pressure_diff = 0;
     static int pressure_l = 0; 
     static int pressure_r = 0; 
 
-    if (sensor_checked < NUM_SENSORS/2){
+    if (sensor_checked < num_sensors/2){
         pressure_l = sensor_val; 
     } else {
         pressure_r = sensor_val; 
