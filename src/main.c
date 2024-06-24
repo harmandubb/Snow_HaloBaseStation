@@ -29,6 +29,8 @@ int main(void)
         //Setup
         int err = 0; 
 
+        LOG_INF("TESTING GIT AUTHENTICATION?");
+
         //flags 
         bool sensorDataRequested = false;
         adcReady = false; 
