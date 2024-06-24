@@ -12,6 +12,7 @@
         "nrfx_pwm.h": "c",
         "scan.h": "c",
         "nrfx.h": "c",
-        "gpio.h": "c"
+        "gpio.h": "c",
+        "dk_buttons_and_leds.h": "c"
     }
 }

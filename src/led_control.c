@@ -142,52 +142,24 @@ uint16_t* init_PWM_array(){
 
 
 
-/** @brief produces the needed control signals to change the led lighting on the wrist 
+/** @brief updates the pwm pulse array appropriately to get the desired light output on the board based on the sensor pressures. 
  * 
- *  This will use the sypers library to create the needed pulses to update the led wrist band. \
- *  This functin will be running on a seperate thread in the back ground to execute
  * 
- *  @param work struct of k_work: this will be apart of a struct with the following parameters
- *
- *  		@param PWM_pulse_array ptr to the dynamically allocated array that holds the led control pulses 
- * 			@param PWM_pulse_array_size size of the pulse array in the dynamic memory
- *  		@param pwm_spec zephyr struct pwm_dt_spec which holds the device binding, pwm pin, the period of the pwm wave. 
+ *  @param pressure_left flag indicating if the left pressure led is to be on
+ *  @param pressure_right flag indicating if the right pressure led is to be on 
+ 
 */
 
-void update_wrist_led(struct k_work *item){
-	// values that are in the struct --> int* PWM_pulse_array, int PWM_pulse_array_size, int PWM_pin
-	Update_Wrist_Led_Data *data = CONTAINER_OF(item, Update_Wrist_Led_Data, work); 
-	int err; 
-
-	if(data->spec == NULL) {
-		printk("The spec designation is NULL\n");
-		return; 
-	}
-
-	err = pwm_set_dt(data->spec, PWM_PERIOD, data->PWM_pulse_array[0]);
-	if (err < 0){
-		printk("Unable to send initial PWM pulse");
-		return; 
-	}
-
-	for(int i = 1; i < data->PWM_pulse_array_size; i++){
-		//update the pwm signal for the next signal to be on deck and then wait for the period amount. 
-		err = pwm_set_dt(data->spec, PWM_PERIOD, data->PWM_pulse_array[i]);
-		if (err < 0) {
-			printk("Setting PWM Error: %d on pin %d\n",err, data->spec->channel);
-			return; 
+void update_board_led_pressure(uint16_t* led_board_map, bool pressure_left, bool pressure_right){
+	for(int i = 0; i < PWM_PULSE_ARRAY_SIZE; i++) {
+		if(pressure_right && i < PWM_PULSE_ARRAY_SIZE/2){
+			led_board_map[i] = PWM_1; 
+		} else if(pressure_left && i > PWM_PULSE_ARRAY_SIZE/2) {
+			led_board_map[i] = PWM_1;
+		} else {
+			led_board_map[i] = PWM_0;
 		}
-
-		k_sleep(K_NSEC(1250));
 	}
-	err = pwm_set_dt(data->spec, PWM_PERIOD, 0);
-		if (err < 0) {
-			printk("Unable to turn of the PWM signal\n");
-			return; 
-		}
-
-	return; 
-
 }
 
 
@@ -207,7 +179,7 @@ void update_wrist_led(struct k_work *item){
  * 
 */
 
-void board_led_operation(LED_Operation led_operation) {
+void status_led_operation(LED_Operation led_operation) {
     static int blink_status = 0; 
 
 	blink_status = (blink_status + 1) % 2;

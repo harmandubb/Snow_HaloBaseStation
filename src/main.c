@@ -16,6 +16,9 @@
 #define PIN_ADC_SEL_1 (29) 
 #define PIN_ADC_SEL_2 (4) 
 #define PIN_ADC_SEL_3 (5)
+// adc read pin is set to be pin 3 in the overlay file 
+#define PIN_BOARD_LED (2)
+
 
 #define ADC_BUFFER_SIZE (2) //based of resolution, samples taken, and number of channesl (12 bits = 2 bytes)
                                 // 2 bytes * 1 sample taken * 1 channel = 2 
@@ -40,6 +43,8 @@ int main(void)
         //variables
         int checkSensorNum = 0; 
         int pressureDiff = 0; 
+        LED_Operation led_operation = BLANK; 
+        LED_Operation* led_operation_ptr = &led_operation;   
 
         //get the gpio binding
         const struct device *gpio0_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
@@ -56,6 +61,8 @@ int main(void)
 
         //define the array to hold the selec pins 
         int adc_sel_pins[] = {PIN_ADC_SEL_0, PIN_ADC_SEL_1, PIN_ADC_SEL_2, PIN_ADC_SEL_3};
+
+        // ---------------------------ADC INIT---------------------------//
 
         // //initalize the adc device tree variable 
         static const struct adc_dt_spec adc_channel = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));
@@ -85,9 +92,14 @@ int main(void)
                 LOG_ERR("Failed to intializlize the multiplexer init pins (err %d)\n", err);
         }
 
+        //----------------------------PWM INIT--------------------------------//
+        //initalize the pwm pin and the array for the board led 
+        uint16_t* led_board_map = init_board_led(PIN_BOARD_LED);
+
         
 
-        //determine what pin the adc channel is reading from 
+
+        
 
 
         for(;;){
@@ -133,6 +145,9 @@ int main(void)
                 if(turnOnRightSide) {
                         //have the board and the wrist led turn on
                 }
+
+                //electronics status indicator
+                status_led_operation(*led_operation_ptr);
 
         }
         return 0;

@@ -29,9 +29,10 @@ extern "C" {
 #include <nrfx.h>
 #include <stdlib.h>
 
+//led parameters to be provided for the pwm output to control led
 #define PWM_PERIOD PWM_NSEC(1250) //ns
 #define PWM_TOP_VALUE (20)
-#define PWM_NUM_LED (10)
+#define PWM_NUM_LED (13)
 #define PWM_RESET_PERIODS (70)
 #define PWM_PULSE_ARRAY_SIZE (PWM_NUM_LED*4*8)
 #define PWM_ARRAY_SIZE PWM_PULSE_ARRAY_SIZE+PWM_RESET_PERIODS //need the last value for the reset
@@ -56,7 +57,7 @@ typedef struct {
 	int *PWM_pulse_array;
 	int PWM_pulse_array_size; 
 	const struct pwm_dt_spec *spec;
-}Update_Wrist_Led_Data;
+}Update_Board_Led_Data;
 
 // Function prototypes
 uint16_t* init_GPIO(const struct device *gpio_dev, int button_pin, int wrist_led_pin, gpio_callback_handler_t button_change_cb);
@@ -64,7 +65,7 @@ int init_interface_button(const struct device* ble_device, int button_pin, gpio_
 uint16_t* init_board_led(int board_led_pin);
 uint16_t* init_PWM_array();
 void wrist_led_cb(bool led_state);
-void update_wrist_led(struct k_work *item);
+void update_board_led(struct k_work *item);
 void button_timer_expire_cb(struct k_timer *timer);
 void board_led_operation(LED_Operation led_operation);
 void button_input_interrrupt_handler(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);
