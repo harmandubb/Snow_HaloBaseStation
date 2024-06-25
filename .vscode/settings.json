@@ -13,6 +13,13 @@
         "scan.h": "c",
         "nrfx.h": "c",
         "gpio.h": "c",
-        "dk_buttons_and_leds.h": "c"
+        "dk_buttons_and_leds.h": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "lbs.h": "c",
+        "bluetooth_control.h": "c",
+        "led_control.h": "c",
+        "settings.h": "c"
     }
 }
