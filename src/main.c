@@ -96,7 +96,7 @@ int main(void)
         //initalize the pwm pin and the array for the board led 
         uint16_t* led_board_map = init_board_led(PIN_BOARD_LED);
 
-        
+
 
 
         
@@ -133,17 +133,12 @@ int main(void)
                                 }
                         }
 
+                        //update the led as needed 
+                        update_board_led_pressure(led_board_map, turnOnLeftSide, turnOnRightSide);
+
                         checkSensorNum = (checkSensorNum + 1) % NUM_SENSORS;
                         adcReady = false; 
                         sensorDataRequested = false; 
-                }
-
-                if(turnOnLeftSide) {
-                        //only have the board led on the left side turn on
-                } 
-
-                if(turnOnRightSide) {
-                        //have the board and the wrist led turn on
                 }
 
                 //electronics status indicator

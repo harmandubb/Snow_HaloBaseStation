@@ -69,6 +69,7 @@ void update_board_led(struct k_work *item);
 void button_timer_expire_cb(struct k_timer *timer);
 void board_led_operation(LED_Operation led_operation);
 void button_input_interrrupt_handler(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);
+void update_board_led_pressure(uint16_t* led_board_map, bool pressure_left, bool pressure_right);
 
 
 #ifdef __cplusplus
