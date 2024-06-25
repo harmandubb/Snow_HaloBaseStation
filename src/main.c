@@ -198,6 +198,13 @@ void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio
                 LOG_ERR("Error setting the uuid filter (err: %d)\n", err);
         }
 
+        //start the scan function 
+        err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+        if (err < 0) {
+                LOG_ERR("Error starting the bt scan (err: %d)\n", err);
+        }
+
+
 
 
 
