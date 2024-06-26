@@ -198,7 +198,7 @@ int calculate_pressure_diffrential(int sensor_checked, int sensor_val, int num_s
 
 enum adc_action my_adc_sequence_callback(const struct device *dev, const struct adc_sequence *sequence, uint16_t sampling_index){
     //since only one sample is done there is no need to check the sampling index to see where we are
-    LOG_INF("The ADC Sample Index is: %d", sampling_index);
+    // LOG_INF("The ADC Sample Index is: %d", sampling_index);
     //set the adc done flag 
     adcReady = true; 
 

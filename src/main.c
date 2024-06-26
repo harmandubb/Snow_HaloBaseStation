@@ -36,10 +36,9 @@ LOG_MODULE_REGISTER(base_station, LOG_LEVEL_INF);
 
 int main(void)
 {
+        k_sleep(K_SECONDS(2));
         //Setup
         int err = 0; 
-
-        LOG_INF("TESTING GIT AUTHENTICATION?");
 
         //flags 
         bool sensorDataRequested = false;
