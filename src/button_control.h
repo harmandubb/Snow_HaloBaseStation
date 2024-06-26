@@ -17,6 +17,7 @@
 extern "C" {
 #endif
 
+
 #include <zephyr/types.h>
 #include <zephyr/kernel.h>
 #include <zephyr/device.h> //need to allow memory size in the heap to use malloc
@@ -26,18 +27,12 @@ extern "C" {
 #include <nrfx.h>
 #include <stdlib.h>
 
+int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_callback_handler_t button_interrrupt_handler);
+
 
 #ifdef __cplusplus
 }
 #endif
-
-int init_bt_scan();
-void scan_connecting_error(struct bt_scan_device_info *device_info);
-void transmit_led_info(bool led_status);
-void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_filter_match *filter_match, bool connectable);
-void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable);
-void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn);
-void scan_connecting_error(struct bt_scan_device_info *device_info);
 
 
 /**
