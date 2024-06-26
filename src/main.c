@@ -172,8 +172,18 @@ int main(void)
 
 void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins){
 	// Call the bluetoth advertising function to occur here. 
-	// TODO: write this after the bluetooth library has been written. 
+	uint32_t pin_vals = 0; 
         int err = 0; 
+
+        err = gpio_port_get(port,&pin_vals);
+        if (err < 0){
+                LOG_ERR("Error: Unable to get gpio port levels (err: %d)", err);
+        }
+         //if the button is not pressed down then just return right away 
+        if (!(pin_vals & (1 << PIN_PAIRING_BUTTON))) {
+                return;
+        }
+        
         const struct bt_scan_init_param bt_scan_init_opts = {
                 .scan_param = NULL, //default config 
                 .connect_if_match = true,
