@@ -74,8 +74,8 @@ void button_timer_expire_cb(struct k_timer *timer);
  *  implement concurrency control to ensure that the updates occur correctly
 */
 
-void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins){
-	// Call the bluetoth advertising function to occur here. 
-	// TODO: write this after the bluetooth library has been written.  
-};
+// void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins){
+// 	// Call the bluetoth advertising function to occur here. 
+// 	// TODO: write this after the bluetooth library has been written.  
+// };
 

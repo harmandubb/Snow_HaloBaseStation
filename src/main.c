@@ -27,6 +27,11 @@
 
 #define PRESSURE_THRESHOLD (10)
 
+
+// FUNCTION DEFINITIONS
+
+void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);
+
 LOG_MODULE_REGISTER(base_station, LOG_LEVEL_INF);
 
 int main(void)
@@ -203,11 +208,5 @@ void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio
         if (err < 0) {
                 LOG_ERR("Error starting the bt scan (err: %d)\n", err);
         }
-
-
-
-
-
-        
 
 };
