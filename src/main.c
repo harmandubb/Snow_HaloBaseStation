@@ -106,9 +106,21 @@ int main(void)
         //remeber to change to gpio1_dev for the buttons
         err = init_pairing_button(gpio0_dev,PIN_PAIRING_BUTTON,pairing_button_cb);
 
+        //-----------------------BLUETOOTH SCAN TESTING----------------------//
+        err = bt_enable(NULL);
+        if (err < 0){
+                LOG_ERR("Error in enabling the bluetooh (err: %d)\n", err);
+        }
 
+        err = init_bt_scan(); 
+        if (err < 0){
+                LOG_ERR("Error in setting up the bluetooth scanning (err: %d)\n", err);
+        }
 
-        
+        err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+        if (err < 0) {
+                LOG_ERR("Error starting the bt scan (err: %d)\n", err);
+        }
 
 
         for(;;){
@@ -183,41 +195,12 @@ void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio
         if (!(pin_vals & (1 << PIN_PAIRING_BUTTON))) {
                 return;
         }
+
+        err = init_bt_scan();
+        if (err < 0){
+                LOG_ERR("Unable to initalize the bluetooth scan parameters (err: %d)\n", err);
+        }
         
-        const struct bt_scan_init_param bt_scan_init_opts = {
-                .scan_param = NULL, //default config 
-                .connect_if_match = true,
-                .conn_param = NULL, //default config
-        };
-        
-        bt_scan_init(&bt_scan_init_opts);  
-
-        uint8_t filter_modes = BT_SCAN_SHORT_NAME_FILTER | BT_SCAN_UUID_FILTER;
-        err = bt_scan_filter_enable(filter_modes, true); //Want all filters to be matched when looking for a new device
-        if (err < 0) {
-                LOG_ERR("Error establishing scan filters (err: %d)\n", err);
-        }
-        //double check if the definitin of the short name filter is correct
-        struct bt_scan_short_name short_name_filter = {
-                .name = "SNOW_HALO",
-                .min_len = 9,
-        };
-
-        err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME, &short_name_filter); 
-        if (err < 0) {
-                LOG_ERR("Error setting the short name filter (err: %d)\n", err);
-        }
-
-        err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LBS);
-        if (err < 0) {
-                LOG_ERR("Error setting the uuid filter (err: %d)\n", err);
-        }
-
-        bt_scan_cb_register(scan_filter_match); 
-        bt_scan_cb_register(scan_filter_no_match); 
-        bt_scan_cb_register(scan_connecting); 
-        bt_scan_cb_register(scan_connecting_error); 
-
         //start the scan function 
         err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
         if (err < 0) {

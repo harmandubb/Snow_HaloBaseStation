@@ -192,17 +192,54 @@ void scan_connecting_error(struct bt_scan_device_info *device_info)
 
 BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
 
-/** @brief establish scan parameters, filters and start scanning for finding a snow halo wrist unit
+/** @brief establish scan parameters, filters, callback functions for the scan module
  *			- if no accept list is given then use a general snow halow discovery filter
 				- filter list: 
 					- UUID for nordic LBS service
 					- Name to include Snow_Halo_Wrist in some capacity
-			- if accept list is present then use a specific filter which includes addressing 
- * 	@param accept_list: bool if an accept list is present for the devices that have already been connected to  		    
+			- if accept list is present then use a specific filter which includes addressing 	    
  * 
  *  @return 0 if success else error code less than 0   
 */
 
-int init_scan(bool accept_list){
-	return 0; 
+int init_bt_scan(){
+	int err = 0; 
+	const struct bt_scan_init_param bt_scan_init_opts = {
+			.scan_param = NULL, //default config 
+			.connect_if_match = true,
+			.conn_param = NULL, //default config
+	};
+	
+	bt_scan_init(&bt_scan_init_opts);  
+
+	uint8_t filter_modes = BT_SCAN_SHORT_NAME_FILTER | BT_SCAN_UUID_FILTER;
+	err = bt_scan_filter_enable(filter_modes, true); //Want all filters to be matched when looking for a new device
+	if (err < 0) {
+			LOG_ERR("Error establishing scan filters (err: %d)\n", err);
+			return err; 
+	}
+	//double check if the definitin of the short name filter is correct
+	struct bt_scan_short_name short_name_filter = {
+			.name = "SNOW_HALO",
+			.min_len = 9,
+	};
+
+	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME, &short_name_filter); 
+	if (err < 0) {
+			LOG_ERR("Error setting the short name filter (err: %d)\n", err);
+			return err; 
+	}
+
+	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LBS);
+	if (err < 0) {
+			LOG_ERR("Error setting the uuid filter (err: %d)\n", err);
+			return err; 
+	}
+
+	bt_scan_cb_register(scan_filter_match); 
+	bt_scan_cb_register(scan_filter_no_match); 
+	bt_scan_cb_register(scan_connecting); 
+	bt_scan_cb_register(scan_connecting_error); 
+
+	return 0;
 };

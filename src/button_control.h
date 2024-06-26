@@ -31,6 +31,15 @@ extern "C" {
 }
 #endif
 
+int init_bt_scan();
+void scan_connecting_error(struct bt_scan_device_info *device_info);
+void transmit_led_info(bool led_status);
+void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_filter_match *filter_match, bool connectable);
+void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable);
+void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn);
+void scan_connecting_error(struct bt_scan_device_info *device_info);
+
+
 /**
  * @}
  */
