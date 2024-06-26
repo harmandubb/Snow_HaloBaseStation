@@ -101,19 +101,19 @@ void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_f
     // Handle filter match event
 	//assume anything with a uuid and a name that are filtered will work.
 	
-	LOG_DBG("NAME: ");
+	LOG_INF("NAME: ");
 	for (int i = 0; i < filter_match->name.len; i++){
 		// LOG_DBG("%d",filter_match->name.name[i]);
-		LOG_DBG("Name value needs to get fixed");
+		LOG_INF("Name value needs to get fixed");
 	}
-	LOG_DBG("/n");
+	LOG_INF("/n");
 
-	LOG_DBG("UUID: ");
+	LOG_INF("UUID: ");
 	for(int i = 0; i<filter_match->uuid.count; i++){
-		// LOG_DBG("%d", filter_match->uuid.uuid[i].);
-		LOG_DBG("UUID value needs to get fixed");
+		// LOG_INF("%d", filter_match->uuid.uuid[i].);
+		LOG_INF("UUID value needs to get fixed");
 	}
-	LOG_DBG("/n");
+	LOG_INF("/n");
 
 	int err; 
 

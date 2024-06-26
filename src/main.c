@@ -213,6 +213,11 @@ void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio
                 LOG_ERR("Error setting the uuid filter (err: %d)\n", err);
         }
 
+        bt_scan_cb_register(scan_filter_match); 
+        bt_scan_cb_register(scan_filter_no_match); 
+        bt_scan_cb_register(scan_connecting); 
+        bt_scan_cb_register(scan_connecting_error); 
+
         //start the scan function 
         err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
         if (err < 0) {
