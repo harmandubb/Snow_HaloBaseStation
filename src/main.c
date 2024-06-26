@@ -111,15 +111,50 @@ int main(void)
                 LOG_ERR("Error in enabling the bluetooh (err: %d)\n", err);
         }
 
-        err = init_bt_scan(); 
-        if (err < 0){
-                LOG_ERR("Error in setting up the bluetooth scanning (err: %d)\n", err);
-        }
+        //--------------SCAN TESTING START---------------------//
+
+        // int err = 0; 
+	const struct bt_scan_init_param bt_scan_init_opts = {
+			.scan_param = NULL, //default config 
+			.connect_if_match = true,
+			.conn_param = NULL, //default config
+	};
+	
+	bt_scan_init(&bt_scan_init_opts); 
+
+        bt_scan_filter_remove_all();
+	bt_scan_filter_disable(); 
+
+        //double check if the definitin of the short name filter is correct
+	struct bt_scan_short_name ble_shrt_name;
+	ble_shrt_name.name = "shrtname";
+	ble_shrt_name.min_len = 8;
+
+	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME, &ble_shrt_name);
+	if (err < 0) {
+                LOG_ERR("Error setting the short name filter (err: %d)\n", err);
+                // return err; 
+	}
+
+	uint8_t filter_modes = BT_SCAN_SHORT_NAME_FILTER | BT_SCAN_UUID_FILTER;
+	err = bt_scan_filter_enable(filter_modes, true); //Want all filters to be matched when looking for a new device
+	if (err < 0) {
+                LOG_ERR("Error establishing scan filters (err: %d)\n", err);
+                // return err; 
+	}
+
+
+	bt_scan_cb_register(scan_filter_match); 
+	bt_scan_cb_register(scan_filter_no_match); 
+	bt_scan_cb_register(scan_connecting); 
+	bt_scan_cb_register(scan_connecting_error); 
 
         err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
         if (err < 0) {
                 LOG_ERR("Error starting the bt scan (err: %d)\n", err);
         }
+
+        //--------------SCAN TESTING END---------------------//
 
 
         for(;;){
