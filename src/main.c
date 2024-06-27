@@ -6,6 +6,7 @@
 #include "led_control.h"
 #include "adc_control.h"
 #include "bluetooth_control.h"
+#include "button_control.h"
 
 #include <math.h>
 
@@ -40,7 +41,7 @@ bool btReady = false;
 
 int main(void)
 {
-        k_sleep(K_SECONDS(2));
+        k_sleep(K_SECONDS(3));
         //Setup
         int err = 0; 
 
@@ -75,29 +76,33 @@ int main(void)
         // ---------------------------ADC INIT---------------------------//
 
         // //initalize the adc device tree variable 
-        static struct adc_dt_spec adc_channel = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));
-        if (!adc_is_ready_dt(&adc_channel)) {
-                LOG_ERR("ADC controller devivce %s not ready", adc_channel.dev->name);
-                return 0;
-        }
+        static const struct adc_dt_spec adc_channel = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));
 
-        int adcSensorReading[ADC_BUFFER_SIZE] = {0};
-
-        struct adc_sequence adc_sequence; 
-
-        //default sequence options struct to be used. 
         struct adc_sequence_options opts = {
                 .interval_us = 0,
                 .callback = my_adc_sequence_callback,
                 .user_data = NULL, 
                 .extra_samplings = 0,
         };
+        uint16_t adc_buf[ADC_BUFFER_SIZE] = {0};
+        
+	struct adc_sequence sequence = {
+		.buffer = &adc_buf,
+		/* buffer size in bytes, not number of samples */
+		.buffer_size = sizeof(adc_buf),
+		//Optional
+		//.calibrate = true,
+                .options = &opts,
+	};
 
-        //returns a dynamically allocated sensor pressure map
-        int* sensorPressureMap = init_multiplexer_reader(&adc_channel, adcSensorReading, &adc_sequence, &opts, NUM_SENSORS);
+        int* sensorPressureMap = init_multiplexer_reader(&adc_channel, &sequence, NUM_SENSORS);
         if (sensorPressureMap == NULL) {
                 LOG_ERR("Initalization of sensorPressureMap failed\n");
         }
+
+        while(!adcReady);
+        LOG_INF("ADC INITALIZATION DONE\n");
+        adcReady = false; 
 
         err = init_multiplexer_sel(gpio0_dev, adc_sel_pins, NUM_ADC_SEL_PINS);
         if (err < 0){
@@ -107,6 +112,8 @@ int main(void)
         //----------------------------PWM INIT--------------------------------//
         //initalize the pwm pin and the array for the board led 
         uint16_t* led_board_map = init_board_led(PIN_BOARD_LED);
+
+        //----------------------PAIRING BUTTON INIT--------------------------//
 
         //remeber to change to gpio1_dev for the buttons
         err = init_pairing_button(gpio0_dev,PIN_PAIRING_BUTTON,pairing_button_cb);
@@ -179,7 +186,7 @@ int main(void)
 
                 if (sensorDataRequested == false) {
                         //send the reques to the adc to read
-                        err = request_sensor_data(gpio0_dev, &adc_channel, adc_sel_pins, NUM_ADC_SEL_PINS, checkSensorNum, NUM_SENSORS, &opts);
+                        err = request_sensor_data(gpio0_dev, &adc_channel, adc_sel_pins, NUM_ADC_SEL_PINS, checkSensorNum, NUM_SENSORS, &sequence);
                         if (err < 0){
                                 LOG_ERR("Failed to request the sensor data (err %d)\n", err);
                         }
@@ -187,32 +194,32 @@ int main(void)
                         sensorDataRequested = true; 
                 }
 
-                // if(adcReady){
-                //         //update the array of the sensor value 
-                //         sensorPressureMap[checkSensorNum] = adcSensorReading[0];
-                //         //calculate the pressure difference 
-                //         pressureDiff = calculate_pressure_diffrential(checkSensorNum, adcSensorReading[0], NUM_SENSORS);
+                if(adcReady){
+                        //update the array of the sensor value 
+                        sensorPressureMap[checkSensorNum] = adc_buf[0];
+                        //calculate the pressure difference 
+                        pressureDiff = calculate_pressure_diffrential(checkSensorNum, adc_buf[0], NUM_SENSORS);
 
-                //         //based on the pressureDiff decide which side to turn on
-                //         turnOnLeftSide = false; 
-                //         turnOnRightSide = false; 
-                //         if (abs(pressureDiff) > PRESSURE_THRESHOLD) {
-                //                 //yes something need to turn on
-                //                 if(pressureDiff > 0) {
-                //                         turnOnRightSide = true;
-                //                 } else {
-                //                         turnOnLeftSide = true; 
+                        //based on the pressureDiff decide which side to turn on
+                        turnOnLeftSide = false; 
+                        turnOnRightSide = false; 
+                        if (abs(pressureDiff) > PRESSURE_THRESHOLD) {
+                                //yes something need to turn on
+                                if(pressureDiff > 0) {
+                                        turnOnRightSide = true;
+                                } else {
+                                        turnOnLeftSide = true; 
                                         
-                //                 }
-                //         }
+                                }
+                        }
 
-                //         //update the led as needed 
-                //         update_board_led_pressure(led_board_map, turnOnLeftSide, turnOnRightSide);
+                        //update the led as needed 
+                        update_board_led_pressure(led_board_map, turnOnLeftSide, turnOnRightSide);
 
-                //         checkSensorNum = (checkSensorNum + 1) % NUM_SENSORS;
-                //         adcReady = false; 
-                //         sensorDataRequested = false; 
-                // }
+                        checkSensorNum = (checkSensorNum + 1) % NUM_SENSORS;
+                        adcReady = false; 
+                        sensorDataRequested = false; 
+                }
 
                 //electronics status indicator
                 status_led_operation(*led_operation_ptr);

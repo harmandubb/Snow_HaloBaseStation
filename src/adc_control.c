@@ -40,13 +40,24 @@ struct adc_sequence_options opts = {
  *  
 */
 
-int* init_multiplexer_reader(struct adc_dt_spec *adc_channel, int *adc_buffer, struct adc_sequence *sequence, struct adc_sequence_options *opts, int num_sensors){
+int* init_multiplexer_reader(const struct adc_dt_spec *adc_channel, struct adc_sequence *sequence, int num_sensors){
     int err = 0;
 
     err = adc_channel_setup_dt(adc_channel);
     if (err < 0) {
         LOG_ERR("Could not setup channel #%d (%d)", 0, err);
         return NULL;
+    }
+
+    err = adc_sequence_init_dt(adc_channel, sequence);
+	if (err < 0) {
+		LOG_ERR("Could not initalize sequnce");
+		return NULL;
+	}
+    err = adc_read(adc_channel->dev, sequence);
+    if (err < 0) {
+        LOG_ERR("Could not read (%d)", err);
+        return NULL; 
     }
     //initialize the sensor memory array here: 
     int* sensor_pressure_data = (int*)malloc(num_sensors * sizeof(int));
@@ -58,18 +69,8 @@ int* init_multiplexer_reader(struct adc_dt_spec *adc_channel, int *adc_buffer, s
     err = adc_sequence_init_dt(adc_channel, sequence); 
     if (err < 0) {
         LOG_ERR("Error (%d) occured when initalizing adc sequence \n", err);
+        return NULL;
     }
-
-    
-    //set the values in the sequence that are not: channels, resolution, oversampling 
-    sequence->options = opts; 
-    sequence->buffer = adc_buffer;
-    sequence->buffer_size = ADC_BUFFER_SIZE;
-    sequence->calibrate = false;  
-
-    LOG_INF("ADC Channel ID set to %d", adc_channel->channel_id);
-    LOG_INF("ADC Resolution set to %d", sequence->resolution);
-
 
     return sensor_pressure_data;
 };
@@ -202,11 +203,65 @@ int calculate_pressure_diffrential(int sensor_checked, int sensor_val, int num_s
 
 enum adc_action my_adc_sequence_callback(const struct device *dev, const struct adc_sequence *sequence, uint16_t sampling_index){
     //since only one sample is done there is no need to check the sampling index to see where we are
-    LOG_INF("The ADC Sample Index is: %d", sampling_index);
+    // LOG_INF("The ADC Sample Index is: %d", sampling_index);
     //set the adc done flag 
     adcReady = true; 
 
     return ADC_ACTION_FINISH;
 };
 
+/**
+ * @brief create a simple funciton that intialized the ADC and requests one read
+ * 
+ * @param adc_channel: the adc spec in the device tree describing the adc channel in use
+ * 
+ * @return error code if present otherwise 0
+ */
+
+int simple_adc_init_and_call(const struct adc_dt_spec adc_channel){
+    int err = 0; 
+
+    if (!adc_is_ready_dt(&adc_channel)) {
+        LOG_ERR("ADC controller devivce %s not ready", adc_channel.dev->name);
+        return -100;
+    }
+
+    err = adc_channel_setup_dt(&adc_channel);
+    if (err < 0) {
+        LOG_ERR("Could not setup channel #%d (%d)", 0, err);
+        return err;
+    }
+
+    struct adc_sequence_options opts = {
+                .interval_us = 0,
+                .callback = my_adc_sequence_callback,
+                .user_data = NULL, 
+                .extra_samplings = 0,
+        };
+
+    int16_t buf;
+	struct adc_sequence sequence = {
+		.buffer = &buf,
+		/* buffer size in bytes, not number of samples */
+		.buffer_size = sizeof(buf),
+		//Optional
+		//.calibrate = true,
+        .options = &opts,
+	};
+
+    err = adc_sequence_init_dt(&adc_channel, &sequence);
+	if (err < 0) {
+		LOG_ERR("Could not initalize sequnce");
+		return err;
+	}
+    
+    err = adc_read(adc_channel.dev, &sequence);
+    if (err < 0) {
+        LOG_ERR("Could not read (%d)", err);
+        return err; 
+    }
+
+    return 0;
+  
+};
 
