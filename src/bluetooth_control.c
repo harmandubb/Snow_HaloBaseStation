@@ -203,16 +203,16 @@ BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connectin
 */
 
 int init_bt_scan(){
-	int err = 0; 
-	const struct bt_scan_init_param bt_scan_init_opts = {
-			.scan_param = NULL, //default config 
-			.connect_if_match = true,
-			.conn_param = NULL, //default config
-	};
+	// int err = 0; 
+	// const struct bt_scan_init_param bt_scan_init_opts = {
+	// 		.scan_param = NULL, //default config 
+	// 		.connect_if_match = true,
+	// 		.conn_param = NULL, //default config
+	// };
 	
-	bt_scan_init(&bt_scan_init_opts);  
+	// bt_scan_init(&bt_scan_init_opts);  
 
-	uint8_t filter_modes = BT_SCAN_SHORT_NAME_FILTER | BT_SCAN_UUID_FILTER;
+	// uint8_t filter_modes = BT_SCAN_SHORT_NAME_FILTER | BT_SCAN_UUID_FILTER;
 	// err = bt_scan_filter_enable(filter_modes, true); //Want all filters to be matched when looking for a new device
 	// if (err < 0) {
 	// 		LOG_ERR("Error establishing scan filters (err: %d)\n", err);
@@ -241,5 +241,5 @@ int init_bt_scan(){
 	// bt_scan_cb_register(scan_connecting); 
 	// bt_scan_cb_register(scan_connecting_error); 
 
-	return 0;
+	// return 0;
 };

@@ -21,6 +21,7 @@
         "bluetooth_control.h": "c",
         "led_control.h": "c",
         "settings.h": "c",
-        "adc_control.h": "c"
+        "adc_control.h": "c",
+        "uart.h": "c"
     }
 }
