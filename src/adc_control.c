@@ -40,7 +40,7 @@ struct adc_sequence_options opts = {
  *  
 */
 
-int* init_multiplexer_reader(struct adc_dt_spec *adc_channel, int *adc_buffer, struct adc_sequence *sequence, int num_sensors){
+int* init_multiplexer_reader(struct adc_dt_spec *adc_channel, int *adc_buffer, struct adc_sequence *sequence, struct adc_sequence_options *opts, int num_sensors){
     int err = 0;
 
     err = adc_channel_setup_dt(adc_channel);
@@ -62,10 +62,14 @@ int* init_multiplexer_reader(struct adc_dt_spec *adc_channel, int *adc_buffer, s
 
     
     //set the values in the sequence that are not: channels, resolution, oversampling 
-    sequence->options = &opts; 
+    sequence->options = opts; 
     sequence->buffer = adc_buffer;
     sequence->buffer_size = ADC_BUFFER_SIZE;
     sequence->calibrate = false;  
+
+    LOG_INF("ADC Channel ID set to %d", adc_channel->channel_id);
+    LOG_INF("ADC Resolution set to %d", sequence->resolution);
+
 
     return sensor_pressure_data;
 };
@@ -198,7 +202,7 @@ int calculate_pressure_diffrential(int sensor_checked, int sensor_val, int num_s
 
 enum adc_action my_adc_sequence_callback(const struct device *dev, const struct adc_sequence *sequence, uint16_t sampling_index){
     //since only one sample is done there is no need to check the sampling index to see where we are
-    // LOG_INF("The ADC Sample Index is: %d", sampling_index);
+    LOG_INF("The ADC Sample Index is: %d", sampling_index);
     //set the adc done flag 
     adcReady = true; 
 

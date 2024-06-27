@@ -34,7 +34,7 @@ enum adc_action my_adc_sequence_callback(const struct device *dev, const struct 
 int request_sensor_data(const struct device* gpio_dev, const struct adc_dt_spec *spec, int sel_pins[], int num_pins, int num_sensor, int num_total_sensors, struct adc_sequence *sequence);
 int calculate_pressure_diffrential(int sensor_checked, int sensor_val, int num_sensors);
 int init_multiplexer_sel(const struct device* gpio_dev, int sel_pins[], int num_pins);
-int* init_multiplexer_reader(struct adc_dt_spec *adc_channel, int *adc_buffer, struct adc_sequence *sequence, int num_sensors);
+int* init_multiplexer_reader(struct adc_dt_spec *adc_channel, int *adc_buffer, struct adc_sequence *sequence, struct adc_sequence_options *opts, int num_sensors);
 
 
 

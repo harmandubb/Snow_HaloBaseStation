@@ -16,7 +16,7 @@
 #define PIN_ADC_SEL_0 (28) //to be coordinated with the rest of the sytem
 #define PIN_ADC_SEL_1 (29) 
 #define PIN_ADC_SEL_2 (4) 
-#define PIN_ADC_SEL_3 (5)
+#define PIN_ADC_SEL_3 (5+1)
 // adc read pin is set to be pin 3 in the overlay file 
 #define PIN_BOARD_LED (2)
 #define PIN_PAIRING_BUTTON (5)
@@ -75,13 +75,15 @@ int main(void)
         // ---------------------------ADC INIT---------------------------//
 
         // //initalize the adc device tree variable 
-        static const struct adc_dt_spec adc_channel = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));
+        static struct adc_dt_spec adc_channel = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));
         if (!adc_is_ready_dt(&adc_channel)) {
                 LOG_ERR("ADC controller devivce %s not ready", adc_channel.dev->name);
                 return 0;
         }
 
         int adcSensorReading[ADC_BUFFER_SIZE] = {0};
+
+        struct adc_sequence adc_sequence; 
 
         //default sequence options struct to be used. 
         struct adc_sequence_options opts = {
@@ -92,7 +94,7 @@ int main(void)
         };
 
         //returns a dynamically allocated sensor pressure map
-        int* sensorPressureMap = init_multiplexer_reader(&adc_channel, adcSensorReading, &opts,NUM_SENSORS);
+        int* sensorPressureMap = init_multiplexer_reader(&adc_channel, adcSensorReading, &adc_sequence, &opts, NUM_SENSORS);
         if (sensorPressureMap == NULL) {
                 LOG_ERR("Initalization of sensorPressureMap failed\n");
         }
@@ -185,32 +187,32 @@ int main(void)
                         sensorDataRequested = true; 
                 }
 
-                if(adcReady){
-                        //update the array of the sensor value 
-                        sensorPressureMap[checkSensorNum] = adcSensorReading[0];
-                        //calculate the pressure difference 
-                        pressureDiff = calculate_pressure_diffrential(checkSensorNum, adcSensorReading[0], NUM_SENSORS);
+                // if(adcReady){
+                //         //update the array of the sensor value 
+                //         sensorPressureMap[checkSensorNum] = adcSensorReading[0];
+                //         //calculate the pressure difference 
+                //         pressureDiff = calculate_pressure_diffrential(checkSensorNum, adcSensorReading[0], NUM_SENSORS);
 
-                        //based on the pressureDiff decide which side to turn on
-                        turnOnLeftSide = false; 
-                        turnOnRightSide = false; 
-                        if (abs(pressureDiff) > PRESSURE_THRESHOLD) {
-                                //yes something need to turn on
-                                if(pressureDiff > 0) {
-                                        turnOnRightSide = true;
-                                } else {
-                                        turnOnLeftSide = true; 
+                //         //based on the pressureDiff decide which side to turn on
+                //         turnOnLeftSide = false; 
+                //         turnOnRightSide = false; 
+                //         if (abs(pressureDiff) > PRESSURE_THRESHOLD) {
+                //                 //yes something need to turn on
+                //                 if(pressureDiff > 0) {
+                //                         turnOnRightSide = true;
+                //                 } else {
+                //                         turnOnLeftSide = true; 
                                         
-                                }
-                        }
+                //                 }
+                //         }
 
-                        //update the led as needed 
-                        update_board_led_pressure(led_board_map, turnOnLeftSide, turnOnRightSide);
+                //         //update the led as needed 
+                //         update_board_led_pressure(led_board_map, turnOnLeftSide, turnOnRightSide);
 
-                        checkSensorNum = (checkSensorNum + 1) % NUM_SENSORS;
-                        adcReady = false; 
-                        sensorDataRequested = false; 
-                }
+                //         checkSensorNum = (checkSensorNum + 1) % NUM_SENSORS;
+                //         adcReady = false; 
+                //         sensorDataRequested = false; 
+                // }
 
                 //electronics status indicator
                 status_led_operation(*led_operation_ptr);
