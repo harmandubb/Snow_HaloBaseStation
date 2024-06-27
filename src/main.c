@@ -135,11 +135,24 @@ int main(void)
 
         err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LBS);
 	if (err) {
-		LOG_ERR("Scanning filters cannot be set (err %d)", err);
+		LOG_ERR("UUID scanning filters cannot be set (err %d)", err);
 		return err;
 	}
 
-        err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
+        struct bt_scan_short_name short_name_filter_data = {
+                .name = "SNOW_HALO",
+                .min_len = 9,
+        };
+
+
+
+        err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME,&short_name_filter_data);
+        if (err) {
+		LOG_ERR("Short Name scanning filters cannot be set (err %d)", err);
+		return err;
+	}
+
+        err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_SHORT_NAME_FILTER, false);
 	if (err) {
 		LOG_ERR("Filters cannot be turned on (err %d)", err);
 		return err;
