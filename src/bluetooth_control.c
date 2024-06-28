@@ -117,7 +117,7 @@ void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_f
 			if (filter_match->uuid.uuid[i]->type == BT_UUID_TYPE_128) {
 				LOG_INF("128 bit uuid found");
 				struct bt_uuid_128 *u128 = (struct bt_uuid_128 *)filter_match->uuid.uuid;
-				printf("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x\n",
+				LOG_INF("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
 						// u128->val[0], u128->val[1], u128->val[2], u128->val[3], 
 						// u128->val[4], u128->val[5], 
 						// u128->val[6], u128->val[7], 
@@ -130,6 +130,7 @@ void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_f
 						u128->val[7], u128->val[6], 
 						u128->val[5], u128->val[4], u128->val[3], u128->val[2], u128->val[1], u128->val[0]
 						);
+				LOG_INF("END OF UUID 128 bit");
 			}
 		}
 	}
