@@ -273,3 +273,24 @@ int init_bt_scan(){
 
 	// return 0;
 };
+
+/** @brief starting the discovery of the services after a central connection is made 
+ * 
+ *  @param 	bt_conn * conn: struct holding the connectin parameters
+ *  @param  err if error in connection has occured
+ *			   
+*/
+
+void connected(struct bt_conn *conn, uint8_t err){
+	
+};
+
+/** @brief starting the discovery of the services after a central connection is made 
+ * 
+ *  @param 	bt_conn * conn: struct holding the connectin parameters
+ *  @param  reason error code for why disconnected occured   
+*/
+
+void disconnected(struct bt_conn *conn, uint8_t reason){
+	LOG_ERR("Disconnection occured. (err: %d)", reason);
+};
