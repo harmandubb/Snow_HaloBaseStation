@@ -101,19 +101,39 @@ void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_f
     // Handle filter match event
 	//assume anything with a uuid and a name that are filtered will work.
 	
-	LOG_INF("NAME: ");
-	for (int i = 0; i < filter_match->name.len; i++){
-		// LOG_DBG("%d",filter_match->name.name[i]);
-		LOG_INF("Name value needs to get fixed");
+	if (filter_match->short_name.match){
+		LOG_INF("NAME: ");
+		for (int i = 0; i < filter_match->short_name.len; i++){
+			LOG_INF("%c", filter_match->short_name.name[i]);
+		}
+		LOG_INF("\n");
 	}
-	LOG_INF("/n");
 
-	LOG_INF("UUID: ");
-	for(int i = 0; i<filter_match->uuid.count; i++){
-		// LOG_INF("%d", filter_match->uuid.uuid[i].);
-		LOG_INF("UUID value needs to get fixed");
+	if(filter_match->uuid.match){
+		LOG_INF("UUID: ");
+		for (int i = 0; i < filter_match->uuid.count; i++){
+			LOG_INF("%d", filter_match->uuid.uuid[i]->type); // Logging as hexadecimal
+			if (filter_match->uuid.uuid[i]->type == BT_UUID_TYPE_128) {
+				LOG_INF("128 bit uuid found");
+				struct bt_uuid_128 *u128 = (struct bt_uuid_128 *)filter_match->uuid.uuid;
+				printf("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x\n",
+						// u128->val[0], u128->val[1], u128->val[2], u128->val[3], 
+						// u128->val[4], u128->val[5], 
+						// u128->val[6], u128->val[7], 
+						// u128->val[8], u128->val[9], 
+						// u128->val[10], u128->val[11], u128->val[12], u128->val[13], u128->val[14], u128->val[15]
+						
+						u128->val[15], u128->val[14], u128->val[13], u128->val[12], 
+						u128->val[11], u128->val[10], 
+						u128->val[9], u128->val[8], 
+						u128->val[7], u128->val[6], 
+						u128->val[5], u128->val[4], u128->val[3], u128->val[2], u128->val[1], u128->val[0]
+						);
+			}
+		}
 	}
-	LOG_INF("/n");
+
+	
 
 	int err; 
 
