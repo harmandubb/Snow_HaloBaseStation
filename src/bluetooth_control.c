@@ -100,6 +100,7 @@ void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_f
 {
     // Handle filter match event
 	//assume anything with a uuid and a name that are filtered will work.
+	int err; 
 	
 	if (filter_match->short_name.match){
 		LOG_INF("NAME: ");
@@ -133,9 +134,16 @@ void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_f
 		}
 	}
 
-	
+	if(filter_match->name.match){
+		LOG_INF("NAME: ");
+		for (int i = 0; i < filter_match->name.len; i++){
+			LOG_INF("%c", filter_match->name.name[i]);
+		}
 
-	int err; 
+		LOG_INF("\n");
+	}
+
+	
 
 	//two options: perform a manual connect operation or allow the auto connect to work? 
 	if (connectable) {
@@ -169,6 +177,7 @@ void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_f
 void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable)
 {
     // Handle filter no match event
+	// LOG_ERR("DEVICE WITH ALL FILTERS NOT FOUND\n");
 };
 
 /** @brief Event handler runnign when a connection is made. Output the status of the connection. 

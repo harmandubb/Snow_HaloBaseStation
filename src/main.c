@@ -28,6 +28,8 @@
 
 #define PRESSURE_THRESHOLD (10)
 
+#define TARGET_DEVICE_NAME "SNOW"
+
 
 // FUNCTION DEFINITIONS
 
@@ -142,25 +144,37 @@ int main(void)
         BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
         bt_scan_cb_register(&scan_cb);
 
-        // err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LBS);
-	// if (err) {
-	// 	LOG_ERR("UUID scanning filters cannot be set (err %d)", err);
-	// 	return err;
-	// }
+        //--------------------UUID FILTER
 
-        struct bt_scan_short_name short_name_filter_data = {
-                .name = "SNOW_HALO",
-                .min_len = 9,
-        };
-
-        err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME,&short_name_filter_data);
-        if (err) {
-		LOG_ERR("Short Name scanning filters cannot be set (err %d)", err);
+        err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LBS);
+	if (err) {
+		LOG_ERR("UUID scanning filters cannot be set (err %d)", err);
 		return err;
 	}
 
-        // err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_SHORT_NAME_FILTER, false);
-        err = bt_scan_filter_enable(BT_SCAN_SHORT_NAME_FILTER, false);
+        //------------------SHORT NAME FILTER
+
+        // struct bt_scan_short_name short_name_filter_data = {
+        //         .name = TARGET_DEVICE_NAME,
+        //         .min_len = sizeof(TARGET_DEVICE_NAME),
+        // };
+
+        // err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME,&short_name_filter_data);
+        // if (err) {
+	// 	LOG_ERR("Short Name scanning filters cannot be set (err %d)", err);
+	// 	return err;
+        // }
+
+        //------------------NAME FILTER
+        err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, TARGET_DEVICE_NAME);
+        if (err) {
+		LOG_ERR("Name scanning filters cannot be set (err %d)", err);
+		return err;
+        }
+
+
+        err = bt_scan_filter_enable((BT_SCAN_UUID_FILTER | BT_SCAN_NAME_FILTER), true);
+        // err = bt_scan_filter_enable(BT_SCAN_NAME_FILTER, false);
 
         if (err) {
 		LOG_ERR("Filters cannot be turned on (err %d)", err);
