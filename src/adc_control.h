@@ -29,6 +29,8 @@ extern "C" {
 #include <zephyr/drivers/adc.h>
 
 extern bool adcReady;
+extern uint16_t led_handle;
+extern struct bt_conn *conn; //TODO: make this an array of connections based on the connections that are allowed to allow for multiple gatt operations to take place. For now just allow one wrist device to take place. 
 
 enum adc_action my_adc_sequence_callback(const struct device *dev, const struct adc_sequence *sequence, uint16_t sampling_index);
 int request_sensor_data(const struct device* gpio_dev, const struct adc_dt_spec *spec, int sel_pins[], int num_pins, int num_sensor, int num_total_sensors, struct adc_sequence *sequence);

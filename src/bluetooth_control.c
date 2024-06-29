@@ -3,6 +3,11 @@
 LOG_MODULE_REGISTER(button_control, LOG_LEVEL_INF);
 
 struct bt_conn *default_conn; //would need to make this into an array if more than one connection is needed to be made 
+
+//flags 
+bool ledHandleReady = false;
+uint16_t led_handle = 0; 
+struct bt_conn *wrist_conn = NULL; 
               
 
 /** @brief for each bond present the device is added to an accept list
@@ -282,7 +287,23 @@ int init_bt_scan(){
 */
 
 void connected(struct bt_conn *conn, uint8_t err){
-	
+	if (err < 0){
+		LOG_ERR("Conection erro has occured (err %d)", err);
+	}
+
+	LOG_INF("Bluetooth Connection Sucessfull");
+
+	struct bt_gatt_discover_params discover_params = {
+		.uuid = BT_UUID_LBS,
+		.func = discover_cb, //discover attribute callback 
+		.start_handle = 1, 
+		.end_handle = 0xffff,
+		.type = BT_GATT_DISCOVER_CHARACTERISTIC,
+	};
+
+	wrist_conn = conn; 
+
+	bt_gatt_discover(conn, &discover_params);
 };
 
 /** @brief starting the discovery of the services after a central connection is made 
@@ -293,4 +314,46 @@ void connected(struct bt_conn *conn, uint8_t err){
 
 void disconnected(struct bt_conn *conn, uint8_t reason){
 	LOG_ERR("Disconnection occured. (err: %d)", reason);
+	wrist_conn = NULL;
+	ledHandleReady = false; 
+};
+
+/** @brief callback funciton to address cycling through characteristics of the incoming connection
+ * 
+ * 	Want to find the led characteristic of the led service then get the required information 
+ * 
+ *  @param bt_conn *conn: ptr to the connection parameters needed for a bluetooth conneciton 
+ *  @param bt_gatt_attr *attr: the gatt attribute that is found currently 
+ *  @param bt_gatt_discover_params *params: Discovery parameters that are given
+ *  
+ */
+
+int discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt_gatt_discover_params *params){
+	if(attr == NULL){
+		LOG_INF("Discovery complete");
+		return BT_GATT_ITER_STOP;
+	}
+
+	//set the struct for a characteristic 
+	struct bt_gatt_chrc *chrc = (struct bt_gatt_charc *)attr->user_data;
+
+	if(bt_uuid_cmp(chrc->uuid,BT_UUID_LBS_LED) == 0) {
+		led_handle = chrc->value_handle;
+		LOG_INF("LED characteristic handle: %u", led_handle); 
+		ledHandleReady = true; 
+		return BT_GATT_ITER_STOP;  
+	} 
+
+	return BT_GATT_ITER_CONTINUE; 
+};
+
+/** @brief send the updated led signal to the wrist module attached 
+ * 	
+ * 	Will need to write to teh led characteristic to update the led wrist module thorugh bluetooth control
+ * 	
+ *  @param led_on: bool to tell if the led wrist strap is to be on or not 
+ */
+
+void updateWristLED(bool led_on){
+	// bt_gatt_write_without_response(); 
 };

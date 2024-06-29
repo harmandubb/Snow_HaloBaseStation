@@ -27,6 +27,8 @@
         "numeric": "c",
         "ostream": "c",
         "system_error": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "adc.h": "c",
+        "gap.h": "c"
     }
 }
