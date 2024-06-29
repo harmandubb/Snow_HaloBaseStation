@@ -350,10 +350,20 @@ int discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt
 /** @brief send the updated led signal to the wrist module attached 
  * 	
  * 	Will need to write to teh led characteristic to update the led wrist module thorugh bluetooth control
+ *  User must check if the led_handle and the bluetooth connection parameters are present. 
  * 	
  *  @param led_on: bool to tell if the led wrist strap is to be on or not 
+ * 
+ *  @return erro if present else 0. 
  */
 
-void updateWristLED(bool led_on){
-	// bt_gatt_write_without_response(); 
+int updateWristLED(bool led_on){
+	uint8_t transmit_val[1] = {led_on};
+	
+	int err = bt_gatt_write_without_response(wrist_conn, led_handle,transmit_val,sizeof(transmit_val),false);
+	if (err < 0){
+		LOG_ERR("Error updating wrist LED (err: %d)", err);
+		return err; 
+	} 
+	return 0; 
 };
