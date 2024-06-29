@@ -2,7 +2,7 @@
 #define BLUETOOTH_CONTROL_H
 
 #include <zephyr/kernel.h>
-#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>it
 #include <zephyr/bluetooth/gap.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/uuid.h>
