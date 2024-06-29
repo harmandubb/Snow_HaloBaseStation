@@ -28,8 +28,6 @@ void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_f
 void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable);
 void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn);
 void scan_connecting_error(struct bt_scan_device_info *device_info);
-int init_bt_scan();
-
 
 void connected(struct bt_conn *conn, uint8_t err);
 void disconnected(struct bt_conn *conn, uint8_t reason);

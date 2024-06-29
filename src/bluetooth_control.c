@@ -227,58 +227,6 @@ void scan_connecting_error(struct bt_scan_device_info *device_info)
 
 BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
 
-/** @brief establish scan parameters, filters, callback functions for the scan module
- *			- if no accept list is given then use a general snow halow discovery filter
-				- filter list: 
-					- UUID for nordic LBS service
-					- Name to include Snow_Halo_Wrist in some capacity
-			- if accept list is present then use a specific filter which includes addressing 	    
- * 
- *  @return 0 if success else error code less than 0   
-*/
-
-int init_bt_scan(){
-	// int err = 0; 
-	// const struct bt_scan_init_param bt_scan_init_opts = {
-	// 		.scan_param = NULL, //default config 
-	// 		.connect_if_match = true,
-	// 		.conn_param = NULL, //default config
-	// };
-	
-	// bt_scan_init(&bt_scan_init_opts);  
-
-	// uint8_t filter_modes = BT_SCAN_SHORT_NAME_FILTER | BT_SCAN_UUID_FILTER;
-	// err = bt_scan_filter_enable(filter_modes, true); //Want all filters to be matched when looking for a new device
-	// if (err < 0) {
-	// 		LOG_ERR("Error establishing scan filters (err: %d)\n", err);
-	// 		return err; 
-	// }
-	// //double check if the definitin of the short name filter is correct
-	// static struct bt_scan_short_name short_name_filter = {
-	// 		.name = "SNOW_HALO",
-	// 		.min_len = 9,
-	// };
-
-	// err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME, &short_name_filter); 
-	// if (err < 0) {
-	// 		LOG_ERR("Error setting the short name filter (err: %d)\n", err);
-	// 		// return err; 
-	// }
-
-	// err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LBS);
-	// if (err < 0) {
-	// 		LOG_ERR("Error setting the uuid filter (err: %d)\n", err);
-	// 		// return err; 
-	// }
-
-	// bt_scan_cb_register(scan_filter_match); 
-	// bt_scan_cb_register(scan_filter_no_match); 
-	// bt_scan_cb_register(scan_connecting); 
-	// bt_scan_cb_register(scan_connecting_error); 
-
-	// return 0;
-};
-
 /** @brief starting the discovery of the services after a central connection is made 
  * 
  *  @param 	bt_conn * conn: struct holding the connectin parameters
@@ -293,10 +241,17 @@ void connected(struct bt_conn *conn, uint8_t err){
 
 	LOG_INF("Bluetooth Connection Sucessfull");
 
+	if(conn == NULL){
+		LOG_ERR("The Conneciton ptr is not set properly");
+	}
+
+	static struct bt_uuid_128 uuid = BT_UUID_INIT_128(0);
+	memcpy(&uuid, BT_UUID_LBS, sizeof(uuid));
+
 	struct bt_gatt_discover_params discover_params = {
-		.uuid = BT_UUID_LBS,
+		.uuid = &uuid.uuid,
 		.func = discover_cb, //discover attribute callback 
-		.start_handle = 1, 
+		.start_handle = 0x0001, 
 		.end_handle = 0xffff,
 		.type = BT_GATT_DISCOVER_CHARACTERISTIC,
 	};
@@ -332,22 +287,24 @@ void disconnected(struct bt_conn *conn, uint8_t reason){
  */
 
 uint8_t discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt_gatt_discover_params *params){
-	if(attr == NULL){
-		LOG_INF("Discovery complete");
-		return BT_GATT_ITER_STOP;
-	}
+	LOG_INF("IN THE DISCOVERY CALLBACK");
+	// if(attr == NULL){
+	// 	LOG_INF("Discovery complete");
+	// 	return BT_GATT_ITER_STOP;
+	// }
 
-	//set the struct for a characteristic 
-	struct bt_gatt_chrc *chrc = (struct bt_gatt_chrc *)attr->user_data;
+	// //set the struct for a characteristic 
+	// struct bt_gatt_chrc *chrc = (struct bt_gatt_chrc *)attr->user_data;
 
-	if(bt_uuid_cmp(chrc->uuid,BT_UUID_LBS_LED) == 0) {
-		led_handle = chrc->value_handle;
-		LOG_INF("LED characteristic handle: %u", led_handle); 
-		ledHandleReady = true; 
-		return BT_GATT_ITER_STOP;  
-	} 
+	// if(bt_uuid_cmp(chrc->uuid,BT_UUID_LBS_LED) == 0) {
+	// 	led_handle = chrc->value_handle;
+	// 	LOG_INF("LED characteristic handle: %u", led_handle); 
+	// 	ledHandleReady = true; 
+	// 	return BT_GATT_ITER_STOP;  
+	// } 
 
-	return BT_GATT_ITER_CONTINUE; 
+	// return BT_GATT_ITER_CONTINUE; 
+	return BT_GATT_ITER_STOP; 
 };
 
 /** @brief send the updated led signal to the wrist module attached 

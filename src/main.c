@@ -301,10 +301,10 @@ void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio
                 return;
         }
 
-        err = init_bt_scan();
-        if (err < 0){
-                LOG_ERR("Unable to initalize the bluetooth scan parameters (err: %d)\n", err);
-        }
+        // err = init_bt_scan();
+        // if (err < 0){
+        //         LOG_ERR("Unable to initalize the bluetooth scan parameters (err: %d)\n", err);
+        // }
         
         //start the scan function 
         err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
