@@ -29,6 +29,7 @@
         "system_error": "c",
         "typeinfo": "c",
         "adc.h": "c",
-        "gap.h": "c"
+        "gap.h": "c",
+        "uuid.h": "c"
     }
 }

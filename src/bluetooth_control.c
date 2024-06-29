@@ -7,7 +7,7 @@ struct bt_conn *default_conn; //would need to make this into an array if more th
 //flags 
 bool ledHandleReady = false;
 uint16_t led_handle = 0; 
-struct bt_conn *wrist_conn = NULL; 
+struct bt_conn *wrist_conn = NULL;
               
 
 /** @brief for each bond present the device is added to an accept list
@@ -303,7 +303,10 @@ void connected(struct bt_conn *conn, uint8_t err){
 
 	wrist_conn = conn; 
 
-	bt_gatt_discover(conn, &discover_params);
+	int result = bt_gatt_discover(conn, &discover_params);
+	if (result < 0) {
+		LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
+	}
 };
 
 /** @brief starting the discovery of the services after a central connection is made 
@@ -328,14 +331,14 @@ void disconnected(struct bt_conn *conn, uint8_t reason){
  *  
  */
 
-int discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt_gatt_discover_params *params){
+uint8_t discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt_gatt_discover_params *params){
 	if(attr == NULL){
 		LOG_INF("Discovery complete");
 		return BT_GATT_ITER_STOP;
 	}
 
 	//set the struct for a characteristic 
-	struct bt_gatt_chrc *chrc = (struct bt_gatt_charc *)attr->user_data;
+	struct bt_gatt_chrc *chrc = (struct bt_gatt_chrc *)attr->user_data;
 
 	if(bt_uuid_cmp(chrc->uuid,BT_UUID_LBS_LED) == 0) {
 		led_handle = chrc->value_handle;

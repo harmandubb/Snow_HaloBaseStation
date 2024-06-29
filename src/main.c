@@ -52,6 +52,9 @@ int main(void)
         adcReady = false; 
         bool turnOnRightSide = false; 
         bool turnOnLeftSide = false; 
+        ledHandleReady = false; 
+        led_handle = 0; 
+        wrist_conn = NULL;
 
         //variables
         int checkSensorNum = 0; 
@@ -131,6 +134,13 @@ int main(void)
 		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return 0;
 	}
+
+        struct bt_conn_cb cb = {
+                .connected = connected,
+                .disconnected = disconnected,
+        };
+
+        bt_conn_cb_register(&cb);
 
         while(!btReady);
 
@@ -229,6 +239,10 @@ int main(void)
 
                         //update the led as needed 
                         update_board_led_pressure(led_board_map, turnOnLeftSide, turnOnRightSide);
+                        if(ledHandleReady){
+                                LOG_INF("Able to turn on wrist led");
+                                updateWristLED(turnOnRightSide);
+                        }
 
                         checkSensorNum = (checkSensorNum + 1) % NUM_SENSORS;
                         adcReady = false; 
