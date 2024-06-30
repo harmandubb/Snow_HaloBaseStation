@@ -198,7 +198,29 @@ void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connecta
 
 void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn)
 {
-    LOG_INF("Connected\n");
+    LOG_INF("Connected in the Scan Connecting callback\n");
+
+	if(conn == NULL){
+		LOG_ERR("The Conneciton ptr is not set properly");
+	}
+
+	static struct bt_uuid_128 uuid = BT_UUID_INIT_128(0);
+	memcpy(&uuid, BT_UUID_LBS, sizeof(uuid));
+
+	struct bt_gatt_discover_params discover_params = {
+		.uuid = &uuid.uuid,
+		.func = discover_cb, //discover attribute callback 
+		.start_handle = 0x0001, 
+		.end_handle = 0xffff,
+		.type = BT_GATT_DISCOVER_CHARACTERISTIC,
+	};
+
+	wrist_conn = conn; 
+
+	int result = bt_gatt_discover(conn, &discover_params);
+	if (result < 0) {
+		LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
+	}
 };
 
 /** @brief Event handler runnign when a connection has failed. 
@@ -235,33 +257,34 @@ BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connectin
 */
 
 void connected(struct bt_conn *conn, uint8_t err){
-	if (err < 0){
-		LOG_ERR("Conection erro has occured (err %d)", err);
-	}
+	// LOG_INF("IN the connected callback");
+	// if (err < 0){
+	// 	LOG_ERR("Conection erro has occured (err %d)", err);
+	// }
 
-	LOG_INF("Bluetooth Connection Sucessfull");
+	// LOG_INF("Bluetooth Connection Sucessfull");
 
-	if(conn == NULL){
-		LOG_ERR("The Conneciton ptr is not set properly");
-	}
+	// if(conn == NULL){
+	// 	LOG_ERR("The Conneciton ptr is not set properly");
+	// }
 
-	static struct bt_uuid_128 uuid = BT_UUID_INIT_128(0);
-	memcpy(&uuid, BT_UUID_LBS, sizeof(uuid));
+	// static struct bt_uuid_128 uuid = BT_UUID_INIT_128(0);
+	// memcpy(&uuid, BT_UUID_LBS, sizeof(uuid));
 
-	struct bt_gatt_discover_params discover_params = {
-		.uuid = &uuid.uuid,
-		.func = discover_cb, //discover attribute callback 
-		.start_handle = 0x0001, 
-		.end_handle = 0xffff,
-		.type = BT_GATT_DISCOVER_CHARACTERISTIC,
-	};
+	// struct bt_gatt_discover_params discover_params = {
+	// 	.uuid = NULL,
+	// 	.func = discover_cb, //discover attribute callback 
+	// 	.start_handle = 0x0001, 
+	// 	.end_handle = 0xffff,
+	// 	.type = BT_GATT_DISCOVER_CHARACTERISTIC,
+	// };
 
-	wrist_conn = conn; 
+	// wrist_conn = conn; 
 
-	int result = bt_gatt_discover(conn, &discover_params);
-	if (result < 0) {
-		LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
-	}
+	// int result = bt_gatt_discover(conn, &discover_params);
+	// if (result < 0) {
+	// 	LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
+	// }
 };
 
 /** @brief starting the discovery of the services after a central connection is made 
