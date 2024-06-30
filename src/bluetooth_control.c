@@ -204,23 +204,23 @@ void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *co
 		LOG_ERR("The Conneciton ptr is not set properly");
 	}
 
-	static struct bt_uuid_128 uuid = BT_UUID_INIT_128(0);
-	memcpy(&uuid, BT_UUID_LBS, sizeof(uuid));
+	// static struct bt_uuid_128 uuid = BT_UUID_INIT_128(0);
+	// memcpy(&uuid, BT_UUID_LBS, sizeof(uuid));
 
-	struct bt_gatt_discover_params discover_params = {
-		.uuid = &uuid.uuid,
-		.func = discover_cb, //discover attribute callback 
-		.start_handle = 0x0001, 
-		.end_handle = 0xffff,
-		.type = BT_GATT_DISCOVER_CHARACTERISTIC,
-	};
+	// struct bt_gatt_discover_params discover_params = {
+	// 	.uuid = &uuid.uuid,
+	// 	.func = discover_cb, //discover attribute callback 
+	// 	.start_handle = 0x0001, 
+	// 	.end_handle = 0xffff,
+	// 	.type = BT_GATT_DISCOVER_CHARACTERISTIC,
+	// };
 
-	wrist_conn = conn; 
+	// wrist_conn = conn; 
 
-	int result = bt_gatt_discover(conn, &discover_params);
-	if (result < 0) {
-		LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
-	}
+	// int result = bt_gatt_discover(conn, &discover_params);
+	// if (result < 0) {
+	// 	LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
+	// }
 };
 
 /** @brief Event handler runnign when a connection has failed. 
@@ -257,34 +257,40 @@ BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connectin
 */
 
 void connected(struct bt_conn *conn, uint8_t err){
-	// LOG_INF("IN the connected callback");
-	// if (err < 0){
-	// 	LOG_ERR("Conection erro has occured (err %d)", err);
-	// }
+	LOG_INF("IN the connected callback");
+	if (err < 0){
+		LOG_ERR("Conection error has occured (err %d)", err);
+	}
 
-	// LOG_INF("Bluetooth Connection Sucessfull");
+	LOG_INF("Bluetooth Connection Sucessfull");
 
-	// if(conn == NULL){
-	// 	LOG_ERR("The Conneciton ptr is not set properly");
-	// }
+	if(conn == NULL){
+		LOG_ERR("The Conneciton ptr is not set properly");
+	}
 
-	// static struct bt_uuid_128 uuid = BT_UUID_INIT_128(0);
-	// memcpy(&uuid, BT_UUID_LBS, sizeof(uuid));
+	static struct bt_uuid_128 uuid = BT_UUID_INIT_128(0);
+	memcpy(&uuid, BT_UUID_LBS, sizeof(uuid));
 
-	// struct bt_gatt_discover_params discover_params = {
-	// 	.uuid = NULL,
-	// 	.func = discover_cb, //discover attribute callback 
-	// 	.start_handle = 0x0001, 
-	// 	.end_handle = 0xffff,
-	// 	.type = BT_GATT_DISCOVER_CHARACTERISTIC,
-	// };
+	struct bt_gatt_discover_params discover_params = {
+		.uuid = &uuid.uuid,
+		.func = discover_cb, //discover attribute callback  //shuldn't beed the issue, but not being called at all? 
+		.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE, 
+		.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE,
+		.type = BT_GATT_DISCOVER_PRIMARY,
+		// BT_GATT_DISCOVER_PRIMARY
+		// BT_GATT_DISCOVER_CHARACTERISTIC
+	};
 
-	// wrist_conn = conn; 
+	wrist_conn = conn; 
 
-	// int result = bt_gatt_discover(conn, &discover_params);
-	// if (result < 0) {
-	// 	LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
-	// }
+	LOG_INF("RIGHT BEFORE THE DISCOVER FUNCTION");
+	k_sleep(K_SECONDS(1));
+	int result = bt_gatt_discover(conn, &discover_params);
+	LOG_INF("After the bt_gatt_discover call");
+	k_sleep(K_SECONDS(1));
+	if (result < 0) {
+		LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
+	}
 };
 
 /** @brief starting the discovery of the services after a central connection is made 
@@ -310,23 +316,58 @@ void disconnected(struct bt_conn *conn, uint8_t reason){
  */
 
 uint8_t discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt_gatt_discover_params *params){
+	int err; 
 	LOG_INF("IN THE DISCOVERY CALLBACK");
-	// if(attr == NULL){
-	// 	LOG_INF("Discovery complete");
-	// 	return BT_GATT_ITER_STOP;
-	// }
+	k_sleep(K_SECONDS(1));
+	if(attr == NULL){
+		LOG_INF("Discovery complete");
+		return BT_GATT_ITER_STOP;
+	}
 
-	// //set the struct for a characteristic 
+	static struct bt_uuid_128 uuid = BT_UUID_INIT_128(0);
+
+	if(!bt_uuid_cmp(params->uuid, BT_UUID_LBS)) {
+		memcpy(&uuid, BT_UUID_LBS_LED, sizeof(uuid));
+		params->uuid = &uuid.uuid,
+		params->start_handle = attr->handle +1; 
+		params->type = BT_GATT_DISCOVER_CHARACTERISTIC;
+
+		err = bt_gatt_discover(conn, &params);
+		if(err < 0){
+			LOG_ERR("DIscover Failed (err: %d)", err);
+		}
+	} else if (!bt_uuid_cmp(params->uuid, BT_UUID_LBS_LED)) {
+		struct bt_gatt_chrc *chrc = (struct bt_gatt_chrc *)attr->user_data;
+		led_handle = 
+	}
+
+
+	// //set the struct for a characteristic need to change this for other funcitons. That is why it is failing other places
 	// struct bt_gatt_chrc *chrc = (struct bt_gatt_chrc *)attr->user_data;
+	// // struct bt_gatt_service_val *chrc = (struct bt_gatt_service *)attr->user_data; 
 
+	
+	// LOG_INF("Just about to complete the UUID");
+	// k_sleep(K_SECONDS(1));
 	// if(bt_uuid_cmp(chrc->uuid,BT_UUID_LBS_LED) == 0) {
+		
+	// 	LOG_INF("Just about to set the led_handle");
+	// 	k_sleep(K_SECONDS(1));
 	// 	led_handle = chrc->value_handle;
+	// 	// led_handle = chrc->end_handle;
 	// 	LOG_INF("LED characteristic handle: %u", led_handle); 
+	// 	k_sleep(K_SECONDS(1));
+	// 	LOG_INF("Just about to set the handle ready flag");
 	// 	ledHandleReady = true; 
 	// 	return BT_GATT_ITER_STOP;  
 	// } 
+	
+	// LOG_INF("Just about to continue to the next gatt");
+	// k_sleep(K_SECONDS(1));
 
 	// return BT_GATT_ITER_CONTINUE; 
+	LOG_INF("END OF DISCOVERY CALLBACK");
+	k_sleep(K_SECONDS(1));
 	return BT_GATT_ITER_STOP; 
 };
 
