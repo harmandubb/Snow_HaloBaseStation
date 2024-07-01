@@ -33,5 +33,6 @@ void connected(struct bt_conn *conn, uint8_t err);
 void disconnected(struct bt_conn *conn, uint8_t reason);
 uint8_t discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt_gatt_discover_params *params);
 int updateWristLED(bool led_on);
+void print_uuid(const struct bt_uuid *uuid);
 
 #endif /* BLUETOOTH_CONTROL_H */

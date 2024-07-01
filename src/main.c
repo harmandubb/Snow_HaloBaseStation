@@ -183,8 +183,9 @@ int main(void)
         }
 
 
-        err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_NAME_FILTER, true);
-        // err = bt_scan_filter_enable(BT_SCAN_NAME_FILTER, true);
+        // err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_NAME_FILTER, true);
+        // err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, true);
+        err = bt_scan_filter_enable(BT_SCAN_NAME_FILTER, true);
 
         if (err) {
 		LOG_ERR("Filters cannot be turned on (err %d)", err);

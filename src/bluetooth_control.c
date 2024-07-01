@@ -119,24 +119,8 @@ void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_f
 		LOG_INF("UUID: ");
 		for (int i = 0; i < filter_match->uuid.count; i++){
 			LOG_INF("%d", filter_match->uuid.uuid[i]->type); // Logging as hexadecimal
-			if (filter_match->uuid.uuid[i]->type == BT_UUID_TYPE_128) {
-				LOG_INF("128 bit uuid found");
-				struct bt_uuid_128 *u128 = (struct bt_uuid_128 *)filter_match->uuid.uuid;
-				LOG_INF("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-						// u128->val[0], u128->val[1], u128->val[2], u128->val[3], 
-						// u128->val[4], u128->val[5], 
-						// u128->val[6], u128->val[7], 
-						// u128->val[8], u128->val[9], 
-						// u128->val[10], u128->val[11], u128->val[12], u128->val[13], u128->val[14], u128->val[15]
-						
-						u128->val[15], u128->val[14], u128->val[13], u128->val[12], 
-						u128->val[11], u128->val[10], 
-						u128->val[9], u128->val[8], 
-						u128->val[7], u128->val[6], 
-						u128->val[5], u128->val[4], u128->val[3], u128->val[2], u128->val[1], u128->val[0]
-						);
-				LOG_INF("END OF UUID 128 bit");
-			}
+
+			print_uuid(filter_match->uuid.uuid[i]);
 		}
 	}
 
@@ -183,7 +167,7 @@ void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_f
 void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable)
 {
     // Handle filter no match event
-	// LOG_ERR("DEVICE WITH ALL FILTERS NOT FOUND\n");
+	LOG_ERR("DEVICE WITH ALL FILTERS NOT FOUND\n");
 };
 
 /** @brief Event handler runnign when a connection is made. Output the status of the connection. 
@@ -203,24 +187,6 @@ void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *co
 	if(conn == NULL){
 		LOG_ERR("The Conneciton ptr is not set properly");
 	}
-
-	// static struct bt_uuid_128 uuid = BT_UUID_INIT_128(0);
-	// memcpy(&uuid, BT_UUID_LBS, sizeof(uuid));
-
-	// struct bt_gatt_discover_params discover_params = {
-	// 	.uuid = &uuid.uuid,
-	// 	.func = discover_cb, //discover attribute callback 
-	// 	.start_handle = 0x0001, 
-	// 	.end_handle = 0xffff,
-	// 	.type = BT_GATT_DISCOVER_CHARACTERISTIC,
-	// };
-
-	// wrist_conn = conn; 
-
-	// int result = bt_gatt_discover(conn, &discover_params);
-	// if (result < 0) {
-	// 	LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
-	// }
 };
 
 /** @brief Event handler runnign when a connection has failed. 
@@ -268,26 +234,21 @@ void connected(struct bt_conn *conn, uint8_t err){
 		LOG_ERR("The Conneciton ptr is not set properly");
 	}
 
-	static struct bt_uuid_128 uuid = BT_UUID_INIT_128(0);
-	memcpy(&uuid, BT_UUID_LBS, sizeof(uuid));
+	static struct bt_uuid_128 uuid = BT_UUID_INIT_128(
+		BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
+	);
 
-	struct bt_gatt_discover_params discover_params = {
-		.uuid = &uuid.uuid,
+	static struct bt_gatt_discover_params discover_params = {
+		.uuid = NULL,
 		.func = discover_cb, //discover attribute callback  //shuldn't beed the issue, but not being called at all? 
 		.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE, 
 		.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE,
 		.type = BT_GATT_DISCOVER_PRIMARY,
-		// BT_GATT_DISCOVER_PRIMARY
-		// BT_GATT_DISCOVER_CHARACTERISTIC
 	};
 
 	wrist_conn = conn; 
 
-	LOG_INF("RIGHT BEFORE THE DISCOVER FUNCTION");
-	k_sleep(K_SECONDS(1));
 	int result = bt_gatt_discover(conn, &discover_params);
-	LOG_INF("After the bt_gatt_discover call");
-	k_sleep(K_SECONDS(1));
 	if (result < 0) {
 		LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
 	}
@@ -315,61 +276,58 @@ void disconnected(struct bt_conn *conn, uint8_t reason){
  *  
  */
 
-uint8_t discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt_gatt_discover_params *params){
-	int err; 
-	LOG_INF("IN THE DISCOVERY CALLBACK");
+uint8_t discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt_gatt_discover_params *params) {	
+	static struct bt_gatt_discover_params discover_params;
 	k_sleep(K_SECONDS(1));
-	if(attr == NULL){
-		LOG_INF("Discovery complete");
-		return BT_GATT_ITER_STOP;
-	}
+	if (attr == NULL) {
+        LOG_INF("Discovery complete");
+        return BT_GATT_ITER_STOP;
+    }
 
-	static struct bt_uuid_128 uuid = BT_UUID_INIT_128(0);
+	
 
-	if(!bt_uuid_cmp(params->uuid, BT_UUID_LBS)) {
-		memcpy(&uuid, BT_UUID_LBS_LED, sizeof(uuid));
-		params->uuid = &uuid.uuid,
-		params->start_handle = attr->handle +1; 
-		params->type = BT_GATT_DISCOVER_CHARACTERISTIC;
+    if (params->type == BT_GATT_DISCOVER_PRIMARY) {
+        struct bt_gatt_service_val *service_val = (struct bt_gatt_service_val *)attr->user_data;
+        print_uuid(service_val->uuid);
 
-		err = bt_gatt_discover(conn, &params);
-		if(err < 0){
-			LOG_ERR("DIscover Failed (err: %d)", err);
-		}
-	} else if (!bt_uuid_cmp(params->uuid, BT_UUID_LBS_LED)) {
+        if (bt_uuid_cmp(service_val->uuid, BT_UUID_LBS) == 0) {
+			
+            LOG_INF("Found LBS service");
+            // Here you can start discovering characteristics of the LBS service
+			discover_params.uuid = NULL;
+			discover_params.start_handle = attr->handle + 1; 
+			discover_params.end_handle = service_val->end_handle;
+			discover_params.type = BT_GATT_DISCOVER_CHARACTERISTIC;
+			discover_params.func = discover_cb;
+
+			LOG_INF("BEFORE the LBS discover function");
+			k_sleep(K_SECONDS(1));
+			int err = bt_gatt_discover(conn, &discover_params);
+			LOG_INF("After the LBS discover function");
+			k_sleep(K_SECONDS(1));
+
+			if (err < 0){
+				LOG_ERR("Characteristic discovery failed (err: %d)", err);
+				return BT_GATT_ITER_STOP;
+			}
+            return BT_GATT_ITER_STOP;
+        }
+    } else if (params->type == BT_GATT_DISCOVER_CHARACTERISTIC){
 		struct bt_gatt_chrc *chrc = (struct bt_gatt_chrc *)attr->user_data;
-		led_handle = 
+		LOG_INF("Found characteristic with UUID: ");
+        print_uuid(chrc->uuid);
+
+		if (bt_uuid_cmp(chrc->uuid, BT_UUID_LBS_LED) == 0) {
+            LOG_INF("Found LED characteristic");
+            led_handle = chrc->value_handle;
+            LOG_INF("LED characteristic handle: %u", led_handle);
+            ledHandleReady = true;
+            return BT_GATT_ITER_STOP;
+        }
 	}
 
-
-	// //set the struct for a characteristic need to change this for other funcitons. That is why it is failing other places
-	// struct bt_gatt_chrc *chrc = (struct bt_gatt_chrc *)attr->user_data;
-	// // struct bt_gatt_service_val *chrc = (struct bt_gatt_service *)attr->user_data; 
-
-	
-	// LOG_INF("Just about to complete the UUID");
-	// k_sleep(K_SECONDS(1));
-	// if(bt_uuid_cmp(chrc->uuid,BT_UUID_LBS_LED) == 0) {
-		
-	// 	LOG_INF("Just about to set the led_handle");
-	// 	k_sleep(K_SECONDS(1));
-	// 	led_handle = chrc->value_handle;
-	// 	// led_handle = chrc->end_handle;
-	// 	LOG_INF("LED characteristic handle: %u", led_handle); 
-	// 	k_sleep(K_SECONDS(1));
-	// 	LOG_INF("Just about to set the handle ready flag");
-	// 	ledHandleReady = true; 
-	// 	return BT_GATT_ITER_STOP;  
-	// } 
-	
-	// LOG_INF("Just about to continue to the next gatt");
-	// k_sleep(K_SECONDS(1));
-
-	// return BT_GATT_ITER_CONTINUE; 
-	LOG_INF("END OF DISCOVERY CALLBACK");
-	k_sleep(K_SECONDS(1));
-	return BT_GATT_ITER_STOP; 
-};
+    return BT_GATT_ITER_CONTINUE;
+}
 
 /** @brief send the updated led signal to the wrist module attached 
  * 	
@@ -391,3 +349,38 @@ int updateWristLED(bool led_on){
 	} 
 	return 0; 
 };
+
+void print_uuid(const struct bt_uuid *uuid) {
+    char uuid_str[37]; // 36 characters for UUID + null terminator
+    
+    switch (uuid->type) {
+        case BT_UUID_TYPE_16:
+        {
+            struct bt_uuid_16 *u16 = (struct bt_uuid_16 *)uuid;
+            LOG_INF("16-bit UUID: 0x%04x", u16->val);
+            break;
+        }
+        case BT_UUID_TYPE_32:
+        {
+            struct bt_uuid_32 *u32 = (struct bt_uuid_32 *)uuid;
+            LOG_INF("32-bit UUID: 0x%08x", u32->val);
+            break;
+        }
+        case BT_UUID_TYPE_128:
+        {
+            struct bt_uuid_128 *u128 = (struct bt_uuid_128 *)uuid;
+            bt_uuid_to_str(uuid, uuid_str, sizeof(uuid_str));
+            LOG_INF("128-bit UUID: %s", uuid_str);
+            LOG_INF("Raw 128-bit UUID: %02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+                    u128->val[15], u128->val[14], u128->val[13], u128->val[12],
+                    u128->val[11], u128->val[10],
+                    u128->val[9], u128->val[8],
+                    u128->val[7], u128->val[6],
+                    u128->val[5], u128->val[4], u128->val[3], u128->val[2], u128->val[1], u128->val[0]);
+            break;
+        }
+        default:
+            LOG_INF("Unsupported UUID type");
+            break;
+    }
+}
