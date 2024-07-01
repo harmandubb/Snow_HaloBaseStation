@@ -351,6 +351,14 @@ int updateWristLED(bool led_on){
 	return 0; 
 };
 
+/** @brief prints uuid in a clean form as shown in nrf connect app
+ * 		
+ * 	The funciton will determine what size the uuid is and print it as needed
+ * 	
+ *  @param uuid: ptr to a bt_uuid structure
+ * 
+ */
+
 void print_uuid(const struct bt_uuid *uuid) {
     char uuid_str[37]; // 36 characters for UUID + null terminator
     
