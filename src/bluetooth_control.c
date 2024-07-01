@@ -343,6 +343,7 @@ int updateWristLED(bool led_on){
 	uint8_t transmit_val[1] = {led_on};
 	
 	int err = bt_gatt_write_without_response(wrist_conn, led_handle,transmit_val,sizeof(transmit_val),false);
+	LOG_INF("Transmitted led bit to the wrist module");
 	if (err < 0){
 		LOG_ERR("Error updating wrist LED (err: %d)", err);
 		return err; 
