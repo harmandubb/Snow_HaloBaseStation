@@ -8,6 +8,7 @@ struct bt_conn *default_conn; //would need to make this into an array if more th
 bool ledHandleReady = false;
 uint16_t led_handle = 0; 
 struct bt_conn *wrist_conn = NULL;
+uint8_t read_data[100]; 
               
 
 /** @brief for each bond present the device is added to an accept list
@@ -223,7 +224,6 @@ BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connectin
 */
 
 void connected(struct bt_conn *conn, uint8_t err){
-	LOG_INF("IN the connected callback");
 	if (err < 0){
 		LOG_ERR("Conection error has occured (err %d)", err);
 	}
@@ -233,10 +233,6 @@ void connected(struct bt_conn *conn, uint8_t err){
 	if(conn == NULL){
 		LOG_ERR("The Conneciton ptr is not set properly");
 	}
-
-	static struct bt_uuid_128 uuid = BT_UUID_INIT_128(
-		BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
-	);
 
 	static struct bt_gatt_discover_params discover_params = {
 		.uuid = NULL,
@@ -284,7 +280,6 @@ uint8_t discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struc
         return BT_GATT_ITER_STOP;
     }
 
-	
 
     if (params->type == BT_GATT_DISCOVER_PRIMARY) {
         struct bt_gatt_service_val *service_val = (struct bt_gatt_service_val *)attr->user_data;
@@ -343,12 +338,52 @@ int updateWristLED(bool led_on){
 	uint8_t transmit_val[1] = {led_on};
 	
 	int err = bt_gatt_write_without_response(wrist_conn, led_handle,transmit_val,sizeof(transmit_val),false);
-	LOG_INF("Transmitted led bit to the wrist module");
+	LOG_INF("Transmitted led bit to the wrist moduleL %d", led_on);
 	if (err < 0){
 		LOG_ERR("Error updating wrist LED (err: %d)", err);
 		return err; 
 	} 
 	return 0; 
+};
+
+int readWristLED(){
+	static struct bt_gatt_read_params read_params; 
+	
+	read_params.func = gatt_read_func;
+	read_params.handle_count = 1;
+	read_params.single.handle = led_handle;
+	read_params.single.offset = 0;
+
+	LOG_INF("About to read the LED attribute");
+	int err = bt_gatt_read(wrist_conn, &read_params);
+	LOG_INF("AFTER to read the LED attribute");
+	if (err < 0){
+		LOG_ERR("Error reading the attribute (err: %d)",err);
+		return err; 
+	}
+
+	return 0;
+};
+
+uint8_t gatt_read_func(struct bt_conn *conn, uint8_t err, struct bt_gatt_read_params *params, const void *data, uint16_t length)
+{
+    if (err< 0) {
+        LOG_ERR("Read failed (err %d)\n", err);
+        return BT_GATT_ITER_STOP ;
+    }
+
+	if(data == NULL){
+		LOG_INF("Read is complete");
+
+		return BT_GATT_ITER_STOP;
+	} else {
+		LOG_INF("Size of data: %d", length);
+        memcpy(read_data, data, length);
+        LOG_INF("Read data: %s\n", read_data);
+        return BT_GATT_ITER_STOP;
+    }
+
+	return BT_GATT_ITER_CONTINUE;
 };
 
 /** @brief prints uuid in a clean form as shown in nrf connect app
@@ -393,3 +428,5 @@ void print_uuid(const struct bt_uuid *uuid) {
             break;
     }
 }
+
+

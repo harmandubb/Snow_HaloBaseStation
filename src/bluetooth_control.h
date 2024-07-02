@@ -23,6 +23,7 @@ void unpair(struct k_work *work);
 extern struct k_work unpair_work; 
 extern bool ledHandleReady;
 extern struct bt_conn *wrist_conn;
+extern uint8_t read_data[100];
 
 void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_filter_match *filter_match, bool connectable);
 void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable);
@@ -33,6 +34,8 @@ void connected(struct bt_conn *conn, uint8_t err);
 void disconnected(struct bt_conn *conn, uint8_t reason);
 uint8_t discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt_gatt_discover_params *params);
 int updateWristLED(bool led_on);
+int readWristLED();
 void print_uuid(const struct bt_uuid *uuid);
+uint8_t gatt_read_func(struct bt_conn *conn, uint8_t err, struct bt_gatt_read_params *params, const void *data, uint16_t length);
 
 #endif /* BLUETOOTH_CONTROL_H */

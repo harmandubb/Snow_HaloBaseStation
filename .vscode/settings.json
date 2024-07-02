@@ -30,6 +30,7 @@
         "typeinfo": "c",
         "adc.h": "c",
         "gap.h": "c",
-        "uuid.h": "c"
+        "uuid.h": "c",
+        "functional": "c"
     }
 }

@@ -183,9 +183,9 @@ int main(void)
         }
 
 
-        // err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_NAME_FILTER, true);
+        err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_NAME_FILTER, true);
         // err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, true);
-        err = bt_scan_filter_enable(BT_SCAN_NAME_FILTER, true);
+        // err = bt_scan_filter_enable(BT_SCAN_NAME_FILTER, true);
 
         if (err) {
 		LOG_ERR("Filters cannot be turned on (err %d)", err);
@@ -242,7 +242,21 @@ int main(void)
                         update_board_led_pressure(led_board_map, turnOnLeftSide, turnOnRightSide);
                         if(ledHandleReady){
                                 LOG_INF("Able to turn on wrist led");
-                                updateWristLED(turnOnRightSide);
+                                for(int i = 0; i < 10; i++){
+                                        updateWristLED(i%2);
+                                        k_sleep(K_SECONDS(1));
+                                        err = readWristLED();
+                                        k_sleep(K_SECONDS(2));
+                                        if (err <0){
+                                                LOG_ERR("Error reading the wrist attribute (err: %d)",err);
+                                        }
+                                        if(read_data[0] == i%2){
+                                                LOG_INF("LED set correctly: %d, %d", i%2, read_data[0]);
+                                        } else {
+                                                LOG_ERR("LED not set: %d, %d", i%2, read_data[0]);
+                                        }
+                                }
+                                
                         }
 
                         checkSensorNum = (checkSensorNum + 1) % NUM_SENSORS;
