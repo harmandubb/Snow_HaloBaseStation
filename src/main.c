@@ -256,8 +256,8 @@ int main(void)
                                 for(int i = 0; i < 10; i++){
                                         updateWristLED(i%2);
                                         k_sleep(K_SECONDS(1));
-                                        err = readWristLED();
-                                        k_sleep(K_SECONDS(2));
+                                        // err = readWristLED();
+                                        // k_sleep(K_SECONDS(2)); 
                                         if (err <0){
                                                 LOG_ERR("Error reading the wrist attribute (err: %d)",err);
                                         }
