@@ -1,4 +1,5 @@
 #include "bluetooth_control.h"
+#include "led_control.h"
 
 LOG_MODULE_REGISTER(button_control, LOG_LEVEL_INF);
 
@@ -230,6 +231,8 @@ void connected(struct bt_conn *conn, uint8_t err){
 
 	LOG_INF("Bluetooth Connection Sucessfull");
 
+	*led_operation_ptr = CONNECTED;
+
 	if(conn == NULL){
 		LOG_ERR("The Conneciton ptr is not set properly");
 	}
@@ -260,6 +263,8 @@ void disconnected(struct bt_conn *conn, uint8_t reason){
 	LOG_ERR("Disconnection occured. (err: %d)", reason);
 	wrist_conn = NULL;
 	ledHandleReady = false; 
+	
+	*led_operation_ptr = DISCONNECTED;
 };
 
 /** @brief callback funciton to address cycling through characteristics of the incoming connection

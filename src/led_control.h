@@ -22,6 +22,7 @@ extern "C" {
 #include <zephyr/device.h> //need to allow memory size in the heap to use malloc
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/pwm.h>
+#include <dk_buttons_and_leds.h>
 
 #include <dk_buttons_and_leds.h>
 
@@ -58,6 +59,8 @@ typedef struct {
 	int PWM_pulse_array_size; 
 	const struct pwm_dt_spec *spec;
 }Update_Board_Led_Data;
+
+extern LED_Operation* led_operation_ptr;
 
 // Function prototypes
 uint16_t* init_GPIO(const struct device *gpio_dev, int button_pin, int wrist_led_pin, gpio_callback_handler_t button_change_cb);

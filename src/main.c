@@ -55,12 +55,12 @@ int main(void)
         ledHandleReady = false; 
         led_handle = 0; 
         wrist_conn = NULL;
+        *led_operation_ptr = BLANK;
 
         //variables
         int checkSensorNum = 0; 
         int pressureDiff = 0; 
-        LED_Operation led_operation = BLANK; 
-        LED_Operation* led_operation_ptr = &led_operation;   
+        
 
         //get the gpio binding
         const struct device *gpio0_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
@@ -69,16 +69,27 @@ int main(void)
 		return -1; 
 	}
 
+        //------------------------LED INIT------------------------//
+        err = dk_leds_init();
+	if (err) {
+		printk("LEDs init failed (err %d)\n", err);
+		return 0;
+	}
+
         // dynamically allocated memory        
         uint16_t* boardLedMap = init_board_led(PIN_BOARD_LED);
         if (boardLedMap == NULL){
                 LOG_ERR("Initilization of board led failed\n");
         }
 
+
+
+        // ---------------------------ADC INIT---------------------------//
+
         //define the array to hold the selec pins 
         int adc_sel_pins[] = {PIN_ADC_SEL_0, PIN_ADC_SEL_1, PIN_ADC_SEL_2, PIN_ADC_SEL_3};
 
-        // ---------------------------ADC INIT---------------------------//
+        
 
         // //initalize the adc device tree variable 
         static const struct adc_dt_spec adc_channel = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));

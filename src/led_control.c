@@ -44,7 +44,10 @@ struct Advertise_Bt_Conn_Data {
 	bool new_connection; 
 };
 
-//global variables end 
+//global variables
+LED_Operation led_operation = BLANK; 
+LED_Operation* led_operation_ptr = &led_operation;    
+
 
 
 /** @brief Initlizes an output pin to control the LED on and off states using a PWM signal 
