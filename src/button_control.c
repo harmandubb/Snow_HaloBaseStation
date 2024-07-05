@@ -66,7 +66,7 @@ int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_call
  *  implement concurrency control to ensure that the updates occur correctly
 */
 
-void button_timer_expire_cb(struct k_timer *timer);
+void button_timer_expire_cb(struct k_timer *timer){};
 
 /** @brief  callback function for the pairing button
  * 

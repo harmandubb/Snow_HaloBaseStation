@@ -31,10 +31,11 @@ extern "C" {
 #define PIN_PAIRING_BUTTON (5) 
 
 //variables
-extern k_mutex button_hold_mutex;
+extern struct k_mutex button_hold_mutex;
 
 //functions
 int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_callback_handler_t button_interrrupt_handler);
+void button_timer_expire_cb(struct k_timer *timer);
 
 
 #ifdef __cplusplus
