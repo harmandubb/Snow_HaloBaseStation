@@ -20,7 +20,7 @@
 #define PIN_ADC_SEL_3 (5+1)
 // adc read pin is set to be pin 3 in the overlay file 
 #define PIN_BOARD_LED (2)
-#define PIN_PAIRING_BUTTON (5)
+// #define PIN_PAIRING_BUTTON (5)
 
 
 #define ADC_BUFFER_SIZE (2) //based of resolution, samples taken, and number of channesl (12 bits = 2 bytes)
@@ -301,41 +301,3 @@ void bt_ready_cb(int err){
 }
 
 
-/** @brief  callback function for the pairing button
- * 
- *  Allow the bluetooth scanning to occur to accept a new wrist module
- *  TODO: Make the button keep a time state for deliteing all of the connections 
- *  
- *  @param port: device binding device structure 
- *  @param gpio_callback: structure that is used to register callback function in the config stage
- *  @param pins: bitwise repersentation of what pin callback has occured. 
- *  
- *  implement concurrency control to ensure that the updates occur correctly
-*/
-
-void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins){
-	// Call the bluetoth advertising function to occur here. 
-	uint32_t pin_vals = 0; 
-        int err = 0; 
-
-        err = gpio_port_get(port,&pin_vals);
-        if (err < 0){
-                LOG_ERR("Error: Unable to get gpio port levels (err: %d)", err);
-        }
-         //if the button is not pressed down then just return right away 
-        if (!(pin_vals & (1 << PIN_PAIRING_BUTTON))) {
-                return;
-        }
-
-        // err = init_bt_scan();
-        // if (err < 0){
-        //         LOG_ERR("Unable to initalize the bluetooth scan parameters (err: %d)\n", err);
-        // }
-        
-        //start the scan function 
-        err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-        if (err < 0) {
-                LOG_ERR("Error starting the bt scan (err: %d)\n", err);
-        }
-
-};

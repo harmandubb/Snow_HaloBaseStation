@@ -2,6 +2,11 @@
 
 LOG_MODULE_REGISTER(Button_Control, LOG_LEVEL_INF);
 
+//Global variables 
+int timer_hold_intervals = 0; 
+K_MUTEX_DEFINE(button_hold_mutex);
+K_TIMER_DEFINE(button_hold_timer,button_timer_expire_cb,NULL);
+
 /** @brief initilizes the GPIO for the button input responsible for the paring of the system
  * 
  * 	Initlizes the pin input for a button press and sets the approppriate button change call back for when the button state changes.
@@ -74,8 +79,45 @@ void button_timer_expire_cb(struct k_timer *timer);
  *  implement concurrency control to ensure that the updates occur correctly
 */
 
-// void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins){
-// 	// Call the bluetoth advertising function to occur here. 
-// 	// TODO: write this after the bluetooth library has been written.  
-// };
+/** @brief  callback function for the pairing button
+ * 
+ *  Allow the bluetooth scanning to occur to accept a new wrist module
+ *  TODO: Make the button keep a time state for deleting all of the connections 
+ *  
+ *  @param port: device binding device structure 
+ *  @param gpio_callback: structure that is used to register callback function in the config stage
+ *  @param pins: bitwise repersentation of what pin callback has occured. 
+ *  
+ *  implement concurrency control to ensure that the updates occur correctly
+*/
+
+void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins){
+	// Call the bluetoth advertising function to occur here. 
+	uint32_t pin_vals = 0; 
+        int err = 0; 
+
+        err = gpio_port_get(port,&pin_vals);
+        if (err < 0){
+                LOG_ERR("Error: Unable to get gpio port levels (err: %d)", err);
+        }
+         //Check if the paring button has been pressed down. 
+        if ((pin_vals & (1 << PIN_PAIRING_BUTTON))) {
+					// check if the button is infact being held down
+ 	               //start the timer for counting the hold is needed 
+				   
+
+                //check if the hold is released.
+                        // if the hold is less than 3 secounds just allow for a new pair 
+
+                        //if hold is more than 3 secounds delete previous pairs and starting new paring process
+        }
+
+        
+        //start the scan function 
+        err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+        if (err < 0) {
+                LOG_ERR("Error starting the bt scan (err: %d)\n", err);
+        }
+
+};
 
