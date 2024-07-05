@@ -455,4 +455,23 @@ void print_uuid(const struct bt_uuid *uuid) {
     }
 }
 
+/** @brief create the appropriate scan filter based on the bonded devices. 
+ * 
+ * 	
+ */
 
+static void bond_filter_set(){
+	
+};
+
+
+/** @brief determine if bonded device is present and handle the connection as needed 
+ *  If present then set the appripirate filter to scan 
+ *  If not present then just start the scanning
+ * 
+ * 	
+ */
+
+void scan_bond_devices(){
+
+};

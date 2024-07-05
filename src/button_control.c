@@ -66,7 +66,11 @@ int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_call
  *  implement concurrency control to ensure that the updates occur correctly
 */
 
-void button_timer_expire_cb(struct k_timer *timer){};
+void button_timer_expire_cb(struct k_timer *timer){
+	k_mutex_lock(&button_hold_mutex,K_NO_WAIT);
+	timer_hold_intervals++;
+	k_mutex_unlock(&button_hold_mutex);
+};
 
 /** @brief  callback function for the pairing button
  * 
@@ -102,7 +106,6 @@ void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio
         }
          //Check if the paring button has been pressed down. 
         if ((pin_vals & (1 << PIN_PAIRING_BUTTON))) {
-			timer_hold_intervals = 0; 
 			k_timer_start(&button_hold_timer, K_MSEC(100), K_SECONDS(1));       
         } else if (!(pin_vals & (1 << PIN_PAIRING_BUTTON)) && timer_hold_intervals > 0){
 			k_timer_stop(&button_hold_timer);
@@ -115,8 +118,11 @@ void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio
 				default: 
 					//clear the pairng and start scanning 
 					break; 
-
 			}
+			
+			k_mutex_lock(&button_hold_mutex,K_NO_WAIT);
+			timer_hold_intervals = 0; 
+			k_mutex_unlock(&button_hold_mutex);
 		}
 
         
