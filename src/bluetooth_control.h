@@ -32,6 +32,8 @@ void scan_connecting_error(struct bt_scan_device_info *device_info);
 
 void connected(struct bt_conn *conn, uint8_t err);
 void disconnected(struct bt_conn *conn, uint8_t reason);
+void on_security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err);
+
 uint8_t discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt_gatt_discover_params *params);
 int updateWristLED(bool led_on);
 int readWristLED();

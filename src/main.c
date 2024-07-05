@@ -134,10 +134,7 @@ int main(void)
         //remeber to change to gpio1_dev for the buttons
         err = init_pairing_button(gpio0_dev,PIN_PAIRING_BUTTON,pairing_button_cb);
 
-        //-----------------------BLUETOOTH SCAN TESTING----------------------//
-        
-
-        //--------------SCAN TESTING START---------------------//
+        //-----------------------BLUETOOTH SCAN----------------------//
 
         // int err = 0; 
         err = bt_enable(bt_ready_cb);
@@ -149,6 +146,7 @@ int main(void)
         struct bt_conn_cb cb = {
                 .connected = connected,
                 .disconnected = disconnected,
+                .security_changed = on_security_changed,
         };
 
         bt_conn_cb_register(&cb);
@@ -205,7 +203,7 @@ int main(void)
 
         LOG_INF("Scan module initialized");
 
-
+        //check if bonding is present?
         err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 		LOG_ERR("Scanning failed to start (err %d)", err);

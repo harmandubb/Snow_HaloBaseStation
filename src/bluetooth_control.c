@@ -267,6 +267,27 @@ void disconnected(struct bt_conn *conn, uint8_t reason){
 	*led_operation_ptr = DISCONNECTED;
 };
 
+/** @brief annoyce how the bluetooth security has changed
+ * 
+ * 	@param bt_conn: conn is the connection parameters needed for the bluetooth connection
+ *  @param bt_security_t: level is the security level that is set
+ *  @param bt_security_err: err if present
+ */
+ 
+void on_security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	if (!err) {
+		LOG_INF("Security changed: %s level %u\n", addr, level);
+	} else {
+		LOG_INF("Security failed: %s level %u err %d\n", addr, level,
+			err);
+	}
+}
+
 /** @brief callback funciton to address cycling through characteristics of the incoming connection
  * 
  * 	Want to find the led characteristic of the led service then get the required information 

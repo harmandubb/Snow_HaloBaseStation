@@ -102,22 +102,29 @@ void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio
         }
          //Check if the paring button has been pressed down. 
         if ((pin_vals & (1 << PIN_PAIRING_BUTTON))) {
-					// check if the button is infact being held down
- 	               //start the timer for counting the hold is needed 
-				   
+			timer_hold_intervals = 0; 
+			k_timer_start(&button_hold_timer, K_MSEC(100), K_SECONDS(1));       
+        } else if (!(pin_vals & (1 << PIN_PAIRING_BUTTON)) && timer_hold_intervals > 0){
+			k_timer_stop(&button_hold_timer);
+			switch (timer_hold_intervals) {
+				case 1: 
+					//just start the scanning for an additional device
 
-                //check if the hold is released.
-                        // if the hold is less than 3 secounds just allow for a new pair 
+					break; 
+				
+				default: 
+					//clear the pairng and start scanning 
+					break; 
 
-                        //if hold is more than 3 secounds delete previous pairs and starting new paring process
-        }
+			}
+		}
 
         
         //start the scan function 
-        err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-        if (err < 0) {
-                LOG_ERR("Error starting the bt scan (err: %d)\n", err);
-        }
+        // err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+        // if (err < 0) {
+        //         LOG_ERR("Error starting the bt scan (err: %d)\n", err);
+        // }
 
 };
 
