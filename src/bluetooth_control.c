@@ -10,6 +10,7 @@ bool ledHandleReady = false;
 uint16_t led_handle = 0; 
 struct bt_conn *wrist_conn = NULL;
 uint8_t read_data[100]; 
+bool connectedFlag = false; 
               
 
 /** @brief for each bond present the device is added to an accept list
@@ -232,6 +233,8 @@ void connected(struct bt_conn *conn, uint8_t err){
 	LOG_INF("Bluetooth Connection Sucessfull");
 
 	*led_operation_ptr = CONNECTED;
+	connectedFlag = true; 
+
 
 	if(conn == NULL){
 		LOG_ERR("The Conneciton ptr is not set properly");
@@ -463,6 +466,8 @@ void print_uuid(const struct bt_uuid *uuid) {
 static int bond_filter_scan(bt_addr_le_t* bond_addr){
 	int err; 
 
+	LOG_INF("BOND FILTER SCAN STARTED");
+
 	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR,bond_addr);
 	if (err < 0){
 		LOG_ERR("Error adding the addr filter for bonded devices: (err %d)", err);
@@ -530,6 +535,8 @@ void bond_initial_cb(const struct bt_bond_info *info, void *user_data){
 int scan_standard(const char *target_device_name){
 //--------------------UUID FILTER
 	int err; 
+
+	LOG_INF("Standard Scan Started");
 
 	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LBS);
 	if (err) {

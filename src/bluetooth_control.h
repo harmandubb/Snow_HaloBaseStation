@@ -27,6 +27,7 @@ extern struct k_work unpair_work;
 extern bool ledHandleReady;
 extern struct bt_conn *wrist_conn;
 extern uint8_t read_data[100];
+extern bool connectedFlag; 
 
 void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_filter_match *filter_match, bool connectable);
 void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable);

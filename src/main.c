@@ -30,6 +30,8 @@
 
 #define TARGET_DEVICE_NAME "SNOW"
 
+#define BOND_CONNECT_COUNT_THRESHOLD (6)
+
 
 // FUNCTION DEFINITIONS
 
@@ -167,10 +169,16 @@ int main(void)
         bt_scan_cb_register(&scan_cb);
 
         //------------------------BOND Devices Scan Check------------//
+        int bond_connect_counter = 0 ; 
         int bond_count = scan_bond_devices();
         LOG_INF("bond count: %d", bond_count);
 
-        if (bond_count == 0) {
+        while((bond_count > 0) && (bond_connect_counter < BOND_CONNECT_COUNT_THRESHOLD) && (!connectedFlag)){
+                k_sleep(K_MSEC(500));
+                bond_connect_counter++;
+        }
+
+        if (!connectedFlag) {
                 err = scan_standard(TARGET_DEVICE_NAME);
                 if (err < 0){
                         LOG_ERR("Error when doing a standard Scan (err: %d)");
