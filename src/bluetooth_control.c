@@ -460,8 +460,27 @@ void print_uuid(const struct bt_uuid *uuid) {
  * 	
  */
 
-static void bond_filter_set(){
-	
+static int bond_filter_scan(bt_addr_le_t* bond_addr){
+	int err; 
+
+	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR,bond_addr);
+	if (err < 0){
+		LOG_ERR("Error adding the addr filter for bonded devices: (err %d)", err);
+		return err; 
+	}
+
+	err = bt_scan_filter_enable(BT_SCAN_ADDR_FILTER, false);
+	if (err < 0) {
+		LOG_ERR("Filters cannot be turned on (err %d)", err);
+		return err;
+	}
+
+	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+	if (err < 0){
+		LOG_ERR("Scanning failed to start (err %d)", err);
+		return 0;
+	}
+
 };
 
 
@@ -469,9 +488,91 @@ static void bond_filter_set(){
  *  If present then set the appripirate filter to scan 
  *  If not present then just start the scanning
  * 
+ * 	@return the total number of bonds found in the system
+ */
+
+int scan_bond_devices(){
+	static struct bond_count_data data = {
+		.count = 0,
+	};
+
+	bt_foreach_bond(BT_ID_DEFAULT,bond_initial_cb,&data);
+
+	// TODO: determine a mechanisms to allow two bonds to occur back to back 
+	return data.count; 
+};
+
+/** @brief bond call back for when scanning is done on start up 
+ * 	determine what identified for the bonded device that is stored and set a filter for a scan. 
+ * 
+ * 	@param bt_bond_info *info: pointer to the bond informaiton we get for each bonded device
+ *  @param *user_data a predecided data structure for beused in the callback and outside of the bt_foreach_bond call
  * 	
  */
 
-void scan_bond_devices(){
+void bond_initial_cb(const struct bt_bond_info *info, void *user_data){
+	struct bond_count_data *data = (struct bond_count_data *)user_data;
+
+	data->count++; 
+
+	char addr[BT_ADDR_LE_STR_LEN];
+
+    bt_addr_le_to_str(&info->addr.a, addr, sizeof(addr));
+	LOG_INF("Bonded Address found: %s", addr);
+
+	int err = bond_filter_scan(&(info->addr));
+	if (err < 0){
+		LOG_ERR("Error set up and starting bond scan (err: %d)", err);
+	}
 
 };
+
+int scan_standard(const char *target_device_name){
+//--------------------UUID FILTER
+	int err; 
+
+	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LBS);
+	if (err) {
+			LOG_ERR("UUID scanning filters cannot be set (err %d)", err);
+			return err;
+	}
+
+	//------------------SHORT NAME FILTER
+
+	// struct bt_scan_short_name short_name_filter_data = {
+	//         .name = TARGET_DEVICE_NAME,
+	//         .min_len = sizeof(TARGET_DEVICE_NAME),
+	// };
+
+	// err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME,&short_name_filter_data);
+	// if (err) {
+	// 	LOG_ERR("Short Name scanning filters cannot be set (err %d)", err);
+	// 	return err;
+	// }
+
+	//------------------NAME FILTER
+	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, target_device_name);
+	if (err) {
+			LOG_ERR("Name scanning filters cannot be set (err %d)", err);
+			return err;
+	}
+
+
+	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_NAME_FILTER, true);
+	// err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, true);
+	// err = bt_scan_filter_enable(BT_SCAN_NAME_FILTER, true);
+
+	if (err) {
+			LOG_ERR("Filters cannot be turned on (err %d)", err);
+			return err;
+	}
+
+	LOG_INF("Scan module initialized");
+
+	//check if bonding is present?
+	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+	if (err) {
+			LOG_ERR("Scanning failed to start (err %d)", err);
+			return 0;
+	}
+}

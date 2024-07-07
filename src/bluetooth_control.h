@@ -14,7 +14,10 @@
 
 #include <bluetooth/scan.h>
 
-
+//struct definitions
+struct bond_count_data {
+	int count;
+};
 
 //function defines: 
 void setup_accept_list_cb(const struct bt_bond_info *info, void *user_data);
@@ -39,5 +42,8 @@ int updateWristLED(bool led_on);
 int readWristLED();
 void print_uuid(const struct bt_uuid *uuid);
 uint8_t gatt_read_func(struct bt_conn *conn, uint8_t err, struct bt_gatt_read_params *params, const void *data, uint16_t length);
+
+void bond_initial_cb(const struct bt_bond_info *info, void *user_data);
+int scan_standard(const char *target_device_name);
 
 #endif /* BLUETOOTH_CONTROL_H */

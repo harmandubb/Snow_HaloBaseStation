@@ -135,8 +135,6 @@ int main(void)
         err = init_pairing_button(gpio0_dev,PIN_PAIRING_BUTTON,pairing_button_cb);
 
         //-----------------------BLUETOOTH SCAN----------------------//
-
-        // int err = 0; 
         err = bt_enable(bt_ready_cb);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)", err);
@@ -153,6 +151,11 @@ int main(void)
 
         while(!btReady);
 
+        err = settings_load();
+        if (err) {
+                LOG_ERR("Seetings load failed (err %d)", err);
+        }
+
 	const struct bt_scan_init_param bt_scan_init_opts = {
 			.scan_param = NULL, //default config 
 			.connect_if_match = true,
@@ -163,52 +166,17 @@ int main(void)
         BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
         bt_scan_cb_register(&scan_cb);
 
-        //--------------------UUID FILTER
+        //------------------------BOND Devices Scan Check------------//
+        int bond_count = scan_bond_devices();
+        LOG_INF("bond count: %d", bond_count);
 
-        err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LBS);
-	if (err) {
-		LOG_ERR("UUID scanning filters cannot be set (err %d)", err);
-		return err;
-	}
-
-        //------------------SHORT NAME FILTER
-
-        // struct bt_scan_short_name short_name_filter_data = {
-        //         .name = TARGET_DEVICE_NAME,
-        //         .min_len = sizeof(TARGET_DEVICE_NAME),
-        // };
-
-        // err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME,&short_name_filter_data);
-        // if (err) {
-	// 	LOG_ERR("Short Name scanning filters cannot be set (err %d)", err);
-	// 	return err;
-        // }
-
-        //------------------NAME FILTER
-        err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, TARGET_DEVICE_NAME);
-        if (err) {
-		LOG_ERR("Name scanning filters cannot be set (err %d)", err);
-		return err;
+        if (bond_count == 0) {
+                err = scan_standard(TARGET_DEVICE_NAME);
+                if (err < 0){
+                        LOG_ERR("Error when doing a standard Scan (err: %d)");
+                        return 0; 
+                }
         }
-
-
-        err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_NAME_FILTER, true);
-        // err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, true);
-        // err = bt_scan_filter_enable(BT_SCAN_NAME_FILTER, true);
-
-        if (err) {
-		LOG_ERR("Filters cannot be turned on (err %d)", err);
-		return err;
-	}
-
-        LOG_INF("Scan module initialized");
-
-        //check if bonding is present?
-        err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-	if (err) {
-		LOG_ERR("Scanning failed to start (err %d)", err);
-		return 0;
-	}
 
         LOG_INF("Scanning successfully started");
 
