@@ -28,6 +28,8 @@ extern "C" {
 #include <nrfx.h>
 #include <stdlib.h>
 
+#include "bluetooth_control.h"
+
 #define PIN_PAIRING_BUTTON (5) 
 
 //variables

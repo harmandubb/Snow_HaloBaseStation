@@ -1,5 +1,6 @@
 #include "button_control.h"
 
+
 LOG_MODULE_REGISTER(Button_Control, LOG_LEVEL_INF);
 
 //Global variables 
@@ -112,11 +113,13 @@ void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio
 			switch (timer_hold_intervals) {
 				case 1: 
 					//just start the scanning for an additional device
-
+					scan_standard(TARGET_DEVICE_NAME);
 					break; 
 				
 				default: 
 					//clear the pairng and start scanning 
+					unpair();
+					scan_standard(TARGET_DEVICE_NAME);
 					break; 
 			}
 			
@@ -124,13 +127,5 @@ void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio
 			timer_hold_intervals = 0; 
 			k_mutex_unlock(&button_hold_mutex);
 		}
-
-        
-        //start the scan function 
-        // err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-        // if (err < 0) {
-        //         LOG_ERR("Error starting the bt scan (err: %d)\n", err);
-        // }
-
 };
 

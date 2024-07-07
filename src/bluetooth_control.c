@@ -60,13 +60,10 @@ int setup_accept_list(uint8_t local_id)
 }
 
 /** @brief unpairs all bonded device from the system 
- * 
- * 
- *  @param work: defined using the k_work structure so the function can be submitted for multi threading work 
  *   
 */
 
-void unpair(struct k_work *work){
+void unpair(){
 	int err= bt_unpair(BT_ID_DEFAULT,BT_ADDR_LE_ANY);
 	if (err) {
 		LOG_INF("Cannot delete bond (err: %d)\n", err);
@@ -75,7 +72,6 @@ void unpair(struct k_work *work){
 	}
 }
 
-K_WORK_DEFINE(unpair_work, unpair);
 	
 
 /** @brief Transmit LED on or off information 

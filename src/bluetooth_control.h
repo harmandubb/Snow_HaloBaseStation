@@ -14,20 +14,23 @@
 
 #include <bluetooth/scan.h>
 
+#define TARGET_DEVICE_NAME "SNOW"
+
 //struct definitions
 struct bond_count_data {
 	int count;
 };
 
-//function defines: 
-void setup_accept_list_cb(const struct bt_bond_info *info, void *user_data);
-int setup_accept_list(uint8_t local_id);
-void unpair(struct k_work *work); 
-extern struct k_work unpair_work; 
+//external variables
 extern bool ledHandleReady;
 extern struct bt_conn *wrist_conn;
 extern uint8_t read_data[100];
 extern bool connectedFlag; 
+
+//function defines: 
+void setup_accept_list_cb(const struct bt_bond_info *info, void *user_data);
+int setup_accept_list(uint8_t local_id);
+void unpair(); 
 
 void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_filter_match *filter_match, bool connectable);
 void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable);
