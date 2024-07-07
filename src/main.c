@@ -153,7 +153,7 @@ int main(void)
 
         err = settings_load();
         if (err) {
-                LOG_ERR("Seetings load failed (err %d)", err);
+                LOG_ERR("Settings load failed (err %d)", err);
         }
 
 	const struct bt_scan_init_param bt_scan_init_opts = {
