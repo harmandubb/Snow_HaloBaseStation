@@ -7,6 +7,7 @@ LOG_MODULE_REGISTER(Button_Control, LOG_LEVEL_INF);
 int timer_hold_intervals = 0; 
 K_MUTEX_DEFINE(button_hold_mutex);
 K_TIMER_DEFINE(button_hold_timer,button_timer_expire_cb,NULL);
+int pin_pairing_button = 0; 
 
 /** @brief initilizes the GPIO for the button input responsible for the paring of the system
  * 
@@ -21,9 +22,10 @@ K_TIMER_DEFINE(button_hold_timer,button_timer_expire_cb,NULL);
 
 int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_callback_handler_t button_interrrupt_handler){
 	int err;
+	pin_pairing_button = button_pin; 
 	static struct gpio_callback button_interupt_cb;
 	gpio_flags_t flags = GPIO_INPUT | GPIO_ACTIVE_HIGH; // I think the configuration here was wrong before hand
-	gpio_flags_t interrupts = GPIO_INT_EDGE_RISING; //can change to interrupt on active low 
+	gpio_flags_t interrupts = GPIO_INT_EDGE_BOTH; //can change to interrupt on active low 
 
 	LOG_INF("Init GPIO Button: gpio_pin_configure\n");
 
@@ -68,8 +70,9 @@ int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_call
 */
 
 void button_timer_expire_cb(struct k_timer *timer){
-	k_mutex_lock(&button_hold_mutex,K_NO_WAIT);
+	k_mutex_lock(&button_hold_mutex,K_FOREVER);
 	timer_hold_intervals++;
+	LOG_INF("Timer_Hold_Intervals: %d", timer_hold_intervals);
 	k_mutex_unlock(&button_hold_mutex);
 };
 
@@ -96,36 +99,46 @@ void button_timer_expire_cb(struct k_timer *timer){
  *  implement concurrency control to ensure that the updates occur correctly
 */
 
-void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins){
-	// Call the bluetoth advertising function to occur here. 
-	uint32_t pin_vals = 0; 
-        int err = 0; 
+void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins)
+{
+    LOG_INF("In the pairing button callback");
+    
+    uint32_t pin_vals = 0;
+    int err = gpio_port_get(port, &pin_vals);
+    if (err != 0) {
+        LOG_ERR("Error: Unable to get GPIO port levels (err: %d)", err);
+        return;  // Consider returning early on error
+    }
 
-        err = gpio_port_get(port,&pin_vals);
-        if (err < 0){
-                LOG_ERR("Error: Unable to get gpio port levels (err: %d)", err);
+    k_mutex_lock(&button_hold_mutex, K_FOREVER);  // Use K_FOREVER instead of K_NO_WAIT
+
+    if (pin_vals & BIT(pin_pairing_button)) {
+        LOG_INF("Button Pressed: starting hold timer");
+        k_timer_start(&button_hold_timer, K_MSEC(100), K_SECONDS(1));      
+    } else if (!(pin_vals & BIT(pin_pairing_button)) && timer_hold_intervals > 0) {
+        LOG_INF("Button Release: stopping timer");
+        k_timer_stop(&button_hold_timer);
+        
+        switch (timer_hold_intervals) {
+            case 0:
+                // debounce
+                break;
+            case 1:
+                LOG_INF("Adding additional device");
+                k_work_submit(&scan_standard_work);
+                break;
+            default:
+                LOG_INF("Unpairing devices and then adding additional device");
+				k_work_submit(&bt_disconnect_all_work);
+				k_work_submit(&unpair_work);
+				k_work_submit(&scan_standard_work);
+                break;
         }
-         //Check if the paring button has been pressed down. 
-        if ((pin_vals & (1 << PIN_PAIRING_BUTTON))) {
-			k_timer_start(&button_hold_timer, K_MSEC(100), K_SECONDS(1));       
-        } else if (!(pin_vals & (1 << PIN_PAIRING_BUTTON)) && timer_hold_intervals > 0){
-			k_timer_stop(&button_hold_timer);
-			switch (timer_hold_intervals) {
-				case 1: 
-					//just start the scanning for an additional device
-					scan_standard(TARGET_DEVICE_NAME);
-					break; 
-				
-				default: 
-					//clear the pairng and start scanning 
-					unpair();
-					scan_standard(TARGET_DEVICE_NAME);
-					break; 
-			}
-			
-			k_mutex_lock(&button_hold_mutex,K_NO_WAIT);
-			timer_hold_intervals = 0; 
-			k_mutex_unlock(&button_hold_mutex);
-		}
-};
+        
+        timer_hold_intervals = 0;
+    }
+
+    k_mutex_unlock(&button_hold_mutex);
+}
+
 

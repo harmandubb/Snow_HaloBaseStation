@@ -30,7 +30,7 @@ extern "C" {
 
 #include "bluetooth_control.h"
 
-#define PIN_PAIRING_BUTTON (5) 
+#define PIN_PAIRING_BUTTON (15)
 
 //variables
 extern struct k_mutex button_hold_mutex;

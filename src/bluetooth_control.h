@@ -26,6 +26,9 @@ extern bool ledHandleReady;
 extern struct bt_conn *wrist_conn;
 extern uint8_t read_data[100];
 extern bool connectedFlag; 
+extern struct k_work unpair_work; 
+extern struct k_work scan_standard_work;
+extern struct k_work bt_disconnect_all_work; 
 
 //function defines: 
 void setup_accept_list_cb(const struct bt_bond_info *info, void *user_data);
@@ -48,6 +51,9 @@ void print_uuid(const struct bt_uuid *uuid);
 uint8_t gatt_read_func(struct bt_conn *conn, uint8_t err, struct bt_gatt_read_params *params, const void *data, uint16_t length);
 
 void bond_initial_cb(const struct bt_bond_info *info, void *user_data);
-int scan_standard(const char *target_device_name);
+void scan_standard(struct k_work *work);
+
+void force_disconnect_cb(struct bt_conn *conn, void *data);
+void bt_disconnect_all(struct k_work *work);
 
 #endif /* BLUETOOTH_CONTROL_H */

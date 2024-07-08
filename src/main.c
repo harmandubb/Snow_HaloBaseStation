@@ -14,13 +14,17 @@
 
 #define NUM_ADC_SEL_PINS (1) //should be the bits needed to rep the num_sensors value
 
-#define PIN_ADC_SEL_0 (28) //to be coordinated with the rest of the sytem
-#define PIN_ADC_SEL_1 (29) 
-#define PIN_ADC_SEL_2 (4) 
-#define PIN_ADC_SEL_3 (5+1)
-// adc read pin is set to be pin 3 in the overlay file 
+// GPIO0
 #define PIN_BOARD_LED (2)
-// #define PIN_PAIRING_BUTTON (5)
+// adc read pin is set to be pin 3 in the overlay file 
+#define PIN_ADC_SEL_3 (28)
+#define PIN_ADC_SEL_2 (29) 
+#define PIN_ADC_SEL_1 (4) 
+#define PIN_ADC_SEL_0 (5) 
+
+// GPIO1
+#define PIN_PAIRING_BUTTON (15)
+#define PIN_SPARE_BUTTON (14)
 
 
 #define ADC_BUFFER_SIZE (2) //based of resolution, samples taken, and number of channesl (12 bits = 2 bytes)
@@ -67,6 +71,12 @@ int main(void)
         //get the gpio binding
         const struct device *gpio0_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 	if (gpio0_dev == NULL) {
+		LOG_ERR("Device binding is not found\n");
+		return -1; 
+	}
+
+        const struct device *gpio1_dev = DEVICE_DT_GET(DT_NODELABEL(gpio1));
+	if (gpio1_dev == NULL) {
 		LOG_ERR("Device binding is not found\n");
 		return -1; 
 	}
@@ -134,7 +144,7 @@ int main(void)
         //----------------------PAIRING BUTTON INIT--------------------------//
 
         //remeber to change to gpio1_dev for the buttons
-        err = init_pairing_button(gpio0_dev,PIN_PAIRING_BUTTON,pairing_button_cb);
+        err = init_pairing_button(gpio1_dev,PIN_PAIRING_BUTTON,pairing_button_cb);
 
         //-----------------------BLUETOOTH SCAN----------------------//
         err = bt_enable(bt_ready_cb);
@@ -171,6 +181,7 @@ int main(void)
         //------------------------BOND Devices Scan Check------------//
         int bond_connect_counter = 0 ; 
         int bond_count = scan_bond_devices();
+        LOG_INF("Scanning successfully started");
         LOG_INF("bond count: %d", bond_count);
 
         while((bond_count > 0) && (bond_connect_counter < BOND_CONNECT_COUNT_THRESHOLD) && (!connectedFlag)){
@@ -179,14 +190,14 @@ int main(void)
         }
 
         if (!connectedFlag) {
-                err = scan_standard(TARGET_DEVICE_NAME);
-                if (err < 0){
-                        LOG_ERR("Error when doing a standard Scan (err: %d)");
-                        return 0; 
+                //stop the bond scanning 
+                err = bt_scan_stop();
+                if (err < 0) {
+                        LOG_ERR("Unable to stop bond scanning");
                 }
         }
 
-        LOG_INF("Scanning successfully started");
+        
 
         //--------------SCAN TESTING END---------------------//
 
@@ -226,21 +237,19 @@ int main(void)
                         //update the led as needed 
                         update_board_led_pressure(led_board_map, turnOnLeftSide, turnOnRightSide);
                         if(ledHandleReady){
-                                LOG_INF("Able to turn on wrist led");
-                                for(int i = 0; i < 10; i++){
-                                        updateWristLED(i%2);
-                                        k_sleep(K_SECONDS(1));
-                                        // err = readWristLED();
-                                        // k_sleep(K_SECONDS(2)); 
-                                        if (err <0){
-                                                LOG_ERR("Error reading the wrist attribute (err: %d)",err);
-                                        }
-                                        if(read_data[0] == i%2){
-                                                LOG_INF("LED set correctly: %d, %d", i%2, read_data[0]);
-                                        } else {
-                                                LOG_ERR("LED not set: %d, %d", i%2, read_data[0]);
-                                        }
-                                }
+                                // LOG_INF("Able to turn on wrist led");
+                                // for(int i = 0; i < 10; i++){
+                                //         updateWristLED(i%2);
+                                //         k_sleep(K_SECONDS(1));
+                                //         if (err <0){
+                                //                 LOG_ERR("Error reading the wrist attribute (err: %d)",err);
+                                //         }
+                                //         if(read_data[0] == i%2){
+                                //                 LOG_INF("LED set correctly: %d, %d", i%2, read_data[0]);
+                                //         } else {
+                                //                 LOG_ERR("LED not set: %d, %d", i%2, read_data[0]);
+                                //         }
+                                // }
                                 
                         }
 

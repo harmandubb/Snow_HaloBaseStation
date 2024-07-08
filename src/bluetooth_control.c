@@ -63,7 +63,7 @@ int setup_accept_list(uint8_t local_id)
  *   
 */
 
-void unpair(){
+void unpair(struct k_work *work){
 	int err= bt_unpair(BT_ID_DEFAULT,BT_ADDR_LE_ANY);
 	if (err) {
 		LOG_INF("Cannot delete bond (err: %d)\n", err);
@@ -72,6 +72,7 @@ void unpair(){
 	}
 }
 
+K_WORK_DEFINE(unpair_work, unpair);
 	
 
 /** @brief Transmit LED on or off information 
@@ -528,16 +529,26 @@ void bond_initial_cb(const struct bt_bond_info *info, void *user_data){
 
 };
 
-int scan_standard(const char *target_device_name){
+void scan_standard(struct k_work *work){
 //--------------------UUID FILTER
 	int err; 
 
 	LOG_INF("Standard Scan Started");
 
+	//ensure that the scanning is off and filters are reset:
+	err = bt_scan_stop();
+	if (err < 0){
+		LOG_INF("Unable to stop scanning (err: %d)", err);
+	}
+
+	bt_scan_filter_disable();
+	
+	bt_scan_filter_remove_all();
+
 	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LBS);
 	if (err) {
 			LOG_ERR("UUID scanning filters cannot be set (err %d)", err);
-			return err;
+			return;
 	}
 
 	//------------------SHORT NAME FILTER
@@ -554,10 +565,10 @@ int scan_standard(const char *target_device_name){
 	// }
 
 	//------------------NAME FILTER
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, target_device_name);
+	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, "SNOW");
 	if (err) {
 			LOG_ERR("Name scanning filters cannot be set (err %d)", err);
-			return err;
+			return;
 	}
 
 
@@ -567,7 +578,7 @@ int scan_standard(const char *target_device_name){
 
 	if (err) {
 			LOG_ERR("Filters cannot be turned on (err %d)", err);
-			return err;
+			return;
 	}
 
 	LOG_INF("Scan module initialized");
@@ -576,6 +587,31 @@ int scan_standard(const char *target_device_name){
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 			LOG_ERR("Scanning failed to start (err %d)", err);
-			return 0;
+			return;
 	}
 }
+
+K_WORK_DEFINE(scan_standard_work, scan_standard);
+
+/** @brief disconnect from all bluetooth devices
+ * 
+ * 	@param: work parameter for defining work
+ */
+void bt_disconnect_all(struct k_work *work){
+	bt_conn_foreach(BT_CONN_TYPE_LE,force_disconnect_cb, NULL);
+};
+
+K_WORK_DEFINE(bt_disconnect_all_work, bt_disconnect_all);
+
+/** @brief callback to disconnect from all bluetooth devices that are attached. 
+ *  
+ *  @param bt_conn conn: connection struct that shows the details that are needed to connect to a device. 
+ * 	@param data data ptr to type of data passed (nothing in this case)
+ */
+void force_disconnect_cb(struct bt_conn *conn, void *data){
+	LOG_INF("Disconnecting from bt device");
+	int err = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+	if (err < 0){
+		LOG_ERR("Unable to disconnect from the bluetooth device");
+	}
+};
