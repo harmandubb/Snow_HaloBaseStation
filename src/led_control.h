@@ -32,17 +32,23 @@ extern "C" {
 
 //led parameters to be provided for the pwm output to control led
 #define PWM_PERIOD PWM_NSEC(1250) //ns
-#define PWM_TOP_VALUE (20)
-#define PWM_NUM_LED (13)
+#define PWM_TOP_VALUE (20) 
+#define PWM_NUM_LED (10)
 #define PWM_RESET_PERIODS (70)
-#define PWM_PULSE_ARRAY_SIZE (PWM_NUM_LED*4*8)
-#define PWM_ARRAY_SIZE PWM_PULSE_ARRAY_SIZE+PWM_RESET_PERIODS //need the last value for the reset
-#define PWM_0 (PWM_TOP_VALUE - 5) //clock ticks at 16, MHz
-#define PWM_1 (PWM_TOP_VALUE - 10) //clock ticks at 16 MHz
-#define RESET_CODE_DURATION (10) //number of periods to hold low 
 
-//Pin allocation
-#define PIN_BOARD_LED (2)
+#define PWM_COLOR_LED (3) //if RGB only 
+// #define PWM_COLOR_LED (4) //if the white led is present
+
+
+#define PWM_PULSE_ARRAY_SIZE (PWM_NUM_LED*PWM_COLOR_LED*8)
+#define PWM_ARRAY_SIZE PWM_PULSE_ARRAY_SIZE+PWM_RESET_PERIODS //need the last value for the reset
+// #define PWM_0 (PWM_TOP_VALUE - 5) //clock ticks at 16, MHz 0.9 us L
+// #define PWM_1 (PWM_TOP_VALUE - 10) //clock ticks at 16 MHz 0.6 us L
+
+#define PWM_0 (PWM_TOP_VALUE - 7) //0.8 us L
+#define PWM_1 (PWM_TOP_VALUE - 13) //0.45 us L
+
+#define RESET_CODE_DURATION (10) //number of periods to hold low 
 
 typedef enum {
     BOARD_ALIVE,
