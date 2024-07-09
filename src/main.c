@@ -254,21 +254,9 @@ int main(void)
 
                         //update the led as needed 
                         update_board_led_pressure(led_board_map, turnOnLeftSide, turnOnRightSide);
+                        
                         if(ledHandleReady){
-                                // LOG_INF("Able to turn on wrist led");
-                                // for(int i = 0; i < 10; i++){
-                                //         updateWristLED(i%2);
-                                //         k_sleep(K_SECONDS(1));
-                                //         if (err <0){
-                                //                 LOG_ERR("Error reading the wrist attribute (err: %d)",err);
-                                //         }
-                                //         if(read_data[0] == i%2){
-                                //                 LOG_INF("LED set correctly: %d, %d", i%2, read_data[0]);
-                                //         } else {
-                                //                 LOG_ERR("LED not set: %d, %d", i%2, read_data[0]);
-                                //         }
-                                // }
-                                
+                                updateWristLED(turnOnRightSide);        
                         }
 
                         checkSensorNum = (checkSensorNum + 1) % NUM_SENSORS;
