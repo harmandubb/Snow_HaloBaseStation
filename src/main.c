@@ -30,7 +30,8 @@
 #define ADC_BUFFER_SIZE (2) //based of resolution, samples taken, and number of channesl (12 bits = 2 bytes)
                                 // 2 bytes * 1 sample taken * 1 channel = 2 
 
-#define PRESSURE_THRESHOLD (10)
+#define PRESSURE_THRESHOLD (50)
+#define PRESSURE_INTEGRATOR_CEILING (500)
 
 
 
@@ -66,7 +67,7 @@ int main(void)
         //variables
         int checkSensorNum = 0; 
         int pressureDiff = 0; //hold a cummuliate value of the pressures 
-        int miliVolt_adc_val = 0; //use for the value conversion
+        int adc_read_val = 0; //use for the value conversion
         
 
         //get the gpio binding
@@ -219,22 +220,24 @@ int main(void)
                 if(adcReady){
                         //update the array of the sensor value 
                         sensorPressureMap[checkSensorNum] = adc_buf[0];
-                        miliVolt_adc_val = adc_buf[0];
-
-                        err = adc_raw_to_millivolts_dt(&adc_channel, &miliVolt_adc_val);
-                        if (err < 0){
-                                LOG_ERR("Unable to convert adc value to milli volt");
-                                return err; 
-                        }
+                        adc_read_val = adc_buf[0];
 
                         LOG_INF("Sensor Checked: %d", checkSensorNum);
+                        LOG_INF("BUFF 0: %d", adc_buf[0]);
+                        LOG_INF("BUFF 1: %d", adc_buf[1]);
 
-                        LOG_INF("ADC MILIVOLT VAL: %d", miliVolt_adc_val);
+
+                        if (adc_read_val > 65000){
+                                adc_read_val = 0; 
+                        }
 
                         //calculate the pressure difference 
-                        pressureDiff = calculate_pressure_diffrential(checkSensorNum, miliVolt_adc_val, NUM_SENSORS);
+                        pressureDiff = calculate_pressure_diffrential(checkSensorNum, adc_read_val, NUM_SENSORS);
 
                         LOG_INF("Pressure Diff: %d", pressureDiff);
+                        if (abs(pressureDiff) > PRESSURE_INTEGRATOR_CEILING){
+                                pressureDiff/(abs(pressureDiff)) * PRESSURE_INTEGRATOR_CEILING;
+                        }
 
                         //based on the pressureDiff decide which side to turn on
                         turnOnLeftSide = false; 

@@ -167,7 +167,7 @@ void scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_f
 void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable)
 {
     // Handle filter no match event
-	LOG_ERR("DEVICE WITH ALL FILTERS NOT FOUND\n");
+	// LOG_ERR("DEVICE WITH ALL FILTERS NOT FOUND\n");
 };
 
 /** @brief Event handler runnign when a connection is made. Output the status of the connection. 
