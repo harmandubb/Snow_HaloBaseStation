@@ -12,7 +12,7 @@
 
 #define NUM_SENSORS (2)
 
-#define NUM_ADC_SEL_PINS (1) //should be the bits needed to rep the num_sensors value
+#define NUM_ADC_SEL_PINS (4) //should be the bits needed to rep the num_sensors value
 
 // GPIO0
 #define PIN_BOARD_LED (2)
@@ -65,7 +65,8 @@ int main(void)
 
         //variables
         int checkSensorNum = 0; 
-        int pressureDiff = 0; 
+        int pressureDiff = 0; //hold a cummuliate value of the pressures 
+        int miliVolt_adc_val = 0; //use for the value conversion
         
 
         //get the gpio binding
@@ -218,8 +219,22 @@ int main(void)
                 if(adcReady){
                         //update the array of the sensor value 
                         sensorPressureMap[checkSensorNum] = adc_buf[0];
+                        miliVolt_adc_val = adc_buf[0];
+
+                        err = adc_raw_to_millivolts_dt(&adc_channel, &miliVolt_adc_val);
+                        if (err < 0){
+                                LOG_ERR("Unable to convert adc value to milli volt");
+                                return err; 
+                        }
+
+                        LOG_INF("Sensor Checked: %d", checkSensorNum);
+
+                        LOG_INF("ADC MILIVOLT VAL: %d", miliVolt_adc_val);
+
                         //calculate the pressure difference 
-                        pressureDiff = calculate_pressure_diffrential(checkSensorNum, adc_buf[0], NUM_SENSORS);
+                        pressureDiff = calculate_pressure_diffrential(checkSensorNum, miliVolt_adc_val, NUM_SENSORS);
+
+                        LOG_INF("Pressure Diff: %d", pressureDiff);
 
                         //based on the pressureDiff decide which side to turn on
                         turnOnLeftSide = false; 

@@ -131,6 +131,7 @@ int init_multiplexer_sel(const struct device* gpio_dev, int sel_pins[], int num_
 */
 
 int request_sensor_data(const struct device* gpio_dev, const struct adc_dt_spec *spec, int sel_pins[], int num_pins, int num_sensor, int num_total_sensors, struct adc_sequence *sequence){
+    //did you change the adc num pins flag? 
     int err; 
     if (!(num_sensor < num_total_sensors)) {
         LOG_ERR("num_sensor val (%d) is greater than sensors present (%d)\n", num_sensor, num_total_sensors);
@@ -154,6 +155,13 @@ int request_sensor_data(const struct device* gpio_dev, const struct adc_dt_spec 
                 return err;
             }
         }
+    }
+
+    //offset the pin on 
+    int offset = 29; //corresponds to 4 on the bits  
+    err = gpio_pin_set(gpio_dev, offset, true);
+    if (err < 0){
+        LOG_ERR("Error (%d) occurred when setting the offset pin", err);
     }
 
     //request the adc to start recording the data     
@@ -187,6 +195,7 @@ int calculate_pressure_diffrential(int sensor_checked, int sensor_val, int num_s
     }
 
     pressure_diff = pressure_r - pressure_l;
+
 
     return pressure_diff; 
 }; 
