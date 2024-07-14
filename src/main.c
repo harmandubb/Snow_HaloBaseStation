@@ -10,7 +10,7 @@
 
 #include <math.h>
 
-#define NUM_SENSORS (2)
+#define NUM_SENSORS (4)
 
 #define NUM_ADC_SEL_PINS (4) //should be the bits needed to rep the num_sensors value
 
