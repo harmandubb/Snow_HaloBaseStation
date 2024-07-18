@@ -189,9 +189,9 @@ int calculate_pressure_diffrential(int sensor_checked, int sensor_val, int num_s
     static int pressure_r = 0; 
 
     if (sensor_checked < num_sensors/2){
-        pressure_l = sensor_val; 
+        pressure_l = (pressure_l + sensor_val)/2; 
     } else {
-        pressure_r = sensor_val; 
+        pressure_r = (pressure_r + sensor_val)/2; 
     }
 
     pressure_diff = pressure_r - pressure_l;
