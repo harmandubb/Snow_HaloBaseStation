@@ -10,7 +10,7 @@
 
 #include <math.h>
 
-#define NUM_SENSORS (4)
+#define NUM_SENSORS (2)
 
 #define NUM_ADC_SEL_PINS (4) //should be the bits needed to rep the num_sensors value
 
@@ -30,8 +30,8 @@
 #define ADC_BUFFER_SIZE (2) //based of resolution, samples taken, and number of channesl (12 bits = 2 bytes)
                                 // 2 bytes * 1 sample taken * 1 channel = 2 
 
-#define PRESSURE_THRESHOLD (50)
-#define PRESSURE_INTEGRATOR_CEILING (500)
+#define PRESSURE_THRESHOLD (250)
+#define PRESSURE_INTEGRATOR_CEILING (1500)
 
 
 
@@ -68,6 +68,12 @@ int main(void)
         int checkSensorNum = 0; 
         int pressureDiff = 0; //hold a cummuliate value of the pressures 
         int adc_read_val = 0; //use for the value conversion
+
+        //---------------------test pressure variables-------------------//
+        static int sens0_val = 0;
+        static int sens1_val = 0;
+        static int sens2_val = 0;
+        static int sens3_val = 0;
         
 
         //get the gpio binding
@@ -219,17 +225,26 @@ int main(void)
 
                 if(adcReady){
                         //update the array of the sensor value 
-                        sensorPressureMap[checkSensorNum] = adc_buf[0];
+                        //sensorPressureMap[checkSensorNum] = adc_buf[0];
                         adc_read_val = adc_buf[0];
 
                         LOG_INF("Sensor Checked: %d", checkSensorNum);
                         LOG_INF("BUFF 0: %d", adc_buf[0]);
-                        LOG_INF("BUFF 1: %d", adc_buf[1]);
-
 
                         if (adc_read_val > 65000){
                                 adc_read_val = 0; 
                         }
+
+                        //print out the sensor values that are present
+                        sensorPressureMap[checkSensorNum] = adc_read_val; 
+
+                        //print out all of the sensor pressure vlaues that are being considered
+                        sens0_val = sensorPressureMap[0];
+                        sens1_val = sensorPressureMap[1];
+                        sens2_val = sensorPressureMap[2];
+                        sens3_val = sensorPressureMap[3];
+
+                        LOG_INF("PRESSURE VALS: 0: %d, 1: %d, 2: %d, 3: %d", sens0_val, sens1_val, sens2_val, sens3_val);
 
                         //calculate the pressure difference 
                         pressureDiff = calculate_pressure_diffrential(checkSensorNum, adc_read_val, NUM_SENSORS);
