@@ -30,8 +30,8 @@
 #define ADC_BUFFER_SIZE (2) //based of resolution, samples taken, and number of channesl (12 bits = 2 bytes)
                                 // 2 bytes * 1 sample taken * 1 channel = 2 
 
-#define PRESSURE_THRESHOLD (250)
-#define PRESSURE_INTEGRATOR_CEILING (1500)
+#define PRESSURE_THRESHOLD (150)
+#define PRESSURE_INTEGRATOR_CEILING (1000)
 
 
 
@@ -238,7 +238,7 @@ int main(void)
 
                         LOG_INF("Pressure Diff: %d", pressureDiff);
                         if (abs(pressureDiff) > PRESSURE_INTEGRATOR_CEILING){
-                                pressureDiff/(abs(pressureDiff)) * PRESSURE_INTEGRATOR_CEILING;
+                                pressureDiff = (pressureDiff/(abs(pressureDiff))) * PRESSURE_INTEGRATOR_CEILING;
                         }
 
                         //based on the pressureDiff decide which side to turn on

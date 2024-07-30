@@ -155,9 +155,9 @@ uint16_t* init_PWM_array(){
 
 void update_board_led_pressure(uint16_t* led_board_map, bool pressure_left, bool pressure_right){
 	for(int i = 0; i < PWM_PULSE_ARRAY_SIZE; i++) {
-		if(pressure_right && i < PWM_PULSE_ARRAY_SIZE/2){
+		if(pressure_right && (i < PWM_PULSE_ARRAY_SIZE/2)){
 			led_board_map[i] = PWM_1; 
-		} else if(pressure_left && i > PWM_PULSE_ARRAY_SIZE/2) {
+		} else if(pressure_left && (i > PWM_PULSE_ARRAY_SIZE/2)) {
 			led_board_map[i] = PWM_1;
 		} else {
 			led_board_map[i] = PWM_0;
