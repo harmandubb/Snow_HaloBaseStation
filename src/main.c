@@ -117,59 +117,59 @@ int main(void)
 
         //----------------------PAIRING BUTTON INIT--------------------------//
 
-        //remeber to change to gpio1_dev for the buttons
-        err = init_pairing_button(gpio1_dev,PIN_PAIRING_BUTTON,pairing_button_cb);
+        // //remeber to change to gpio1_dev for the buttons
+        // err = init_pairing_button(gpio1_dev,PIN_PAIRING_BUTTON,pairing_button_cb);
 
         //-----------------------BLUETOOTH SCAN----------------------//
-        err = bt_enable(bt_ready_cb);
-	if (err) {
-		LOG_ERR("Bluetooth init failed (err %d)", err);
-		return 0;
-	}
+        // err = bt_enable(bt_ready_cb);
+	// if (err) {
+	// 	LOG_ERR("Bluetooth init failed (err %d)", err);
+	// 	return 0;
+	// }
 
-        struct bt_conn_cb cb = {
-                .connected = connected,
-                .disconnected = disconnected,
-                .security_changed = on_security_changed,
-        };
+        // struct bt_conn_cb cb = {
+        //         .connected = connected,
+        //         .disconnected = disconnected,
+        //         .security_changed = on_security_changed,
+        // };
 
-        bt_conn_cb_register(&cb);
+        // bt_conn_cb_register(&cb);
 
-        while(!btReady);
+        // while(!btReady);
 
-        err = settings_load();
-        if (err) {
-                LOG_ERR("Settings load failed (err %d)", err);
-        }
+        // err = settings_load();
+        // if (err) {
+        //         LOG_ERR("Settings load failed (err %d)", err);
+        // }
 
-	const struct bt_scan_init_param bt_scan_init_opts = {
-			.scan_param = NULL, //default config 
-			.connect_if_match = true,
-			.conn_param = NULL, //default config
-	};
+	// const struct bt_scan_init_param bt_scan_init_opts = {
+	// 		.scan_param = NULL, //default config 
+	// 		.connect_if_match = true,
+	// 		.conn_param = NULL, //default config
+	// };
 	
-	bt_scan_init(&bt_scan_init_opts); 
-        BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
-        bt_scan_cb_register(&scan_cb);
+	// bt_scan_init(&bt_scan_init_opts); 
+        // BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
+        // bt_scan_cb_register(&scan_cb);
 
-        //------------------------BOND Devices Scan Check------------//
-        int bond_connect_counter = 0 ; 
-        int bond_count = scan_bond_devices();
-        LOG_INF("Scanning successfully started");
-        LOG_INF("bond count: %d", bond_count);
+        // //------------------------BOND Devices Scan Check------------//
+        // int bond_connect_counter = 0 ; 
+        // int bond_count = scan_bond_devices();
+        // LOG_INF("Scanning successfully started");
+        // LOG_INF("bond count: %d", bond_count);
 
-        while((bond_count > 0) && (bond_connect_counter < BOND_CONNECT_COUNT_THRESHOLD) && (!connectedFlag)){
-                k_sleep(K_MSEC(500));
-                bond_connect_counter++;
-        }
+        // while((bond_count > 0) && (bond_connect_counter < BOND_CONNECT_COUNT_THRESHOLD) && (!connectedFlag)){
+        //         k_sleep(K_MSEC(500));
+        //         bond_connect_counter++;
+        // }
 
-        if (!connectedFlag) {
-                //stop the bond scanning 
-                err = bt_scan_stop();
-                if (err < 0) {
-                        LOG_ERR("Unable to stop bond scanning");
-                }
-        }
+        // if (!connectedFlag) {
+        //         //stop the bond scanning 
+        //         err = bt_scan_stop();
+        //         if (err < 0) {
+        //                 LOG_ERR("Unable to stop bond scanning");
+        //         }
+        // }
 
         
 
@@ -179,65 +179,65 @@ int main(void)
 
         for(;;){
 
-                if (sensorDataRequested == false) {
-                        //send the reques to the adc to read
-                        err = request_sensor_data(gpio0_dev, &adc_channel, adc_sel_pins, NUM_ADC_SEL_PINS, checkSensorNum, NUM_SENSORS, &sequence);
-                        if (err < 0){
-                                LOG_ERR("Failed to request the sensor data (err %d)\n", err);
-                        }
+        //         if (sensorDataRequested == false) {
+        //                 //send the reques to the adc to read
+        //                 err = request_sensor_data(gpio0_dev, &adc_channel, adc_sel_pins, NUM_ADC_SEL_PINS, checkSensorNum, NUM_SENSORS, &sequence);
+        //                 if (err < 0){
+        //                         LOG_ERR("Failed to request the sensor data (err %d)\n", err);
+        //                 }
 
-                        sensorDataRequested = true; 
-                }
+        //                 sensorDataRequested = true; 
+        //         }
 
-                if(adcReady){
-                        //update the array of the sensor value 
-                        adc_read_val = adc_buf[0];
+        //         if(adcReady){
+        //                 //update the array of the sensor value 
+        //                 adc_read_val = adc_buf[0];
 
 
-                        if (adc_read_val > 65000){
-                                adc_read_val = 0; 
-                        }
+        //                 if (adc_read_val > 65000){
+        //                         adc_read_val = 0; 
+        //                 }
 
-                        LOG_INF("Sensor Checked: %d", checkSensorNum);
-                        LOG_INF("BUFF 0: %d", adc_read_val);
+        //                 LOG_INF("Sensor Checked: %d", checkSensorNum);
+        //                 LOG_INF("BUFF 0: %d", adc_read_val);
 
-                        //print out the sensor values that are present
-                        sensorPressureMap[checkSensorNum] = adc_read_val; 
+        //                 //print out the sensor values that are present
+        //                 sensorPressureMap[checkSensorNum] = adc_read_val; 
 
-                        LOG_INF("PRESSURE VALS: 0: %d, 1: %d, 2: %d, 3: %d", sensorPressureMap[0], sensorPressureMap[1], sensorPressureMap[2], sensorPressureMap[3]);
+        //                 LOG_INF("PRESSURE VALS: 0: %d, 1: %d, 2: %d, 3: %d", sensorPressureMap[0], sensorPressureMap[1], sensorPressureMap[2], sensorPressureMap[3]);
 
-                        //calculate the pressure difference 
-                        pressureDiff = calculate_pressure_diffrential(checkSensorNum, adc_read_val, NUM_SENSORS);
+        //                 //calculate the pressure difference 
+        //                 pressureDiff = calculate_pressure_diffrential(checkSensorNum, adc_read_val, NUM_SENSORS);
 
-                        LOG_INF("Pressure Diff: %d", pressureDiff);
-                        if (abs(pressureDiff) > PRESSURE_INTEGRATOR_CEILING){
-                                pressureDiff = (pressureDiff/(abs(pressureDiff))) * PRESSURE_INTEGRATOR_CEILING;
-                        }
+        //                 LOG_INF("Pressure Diff: %d", pressureDiff);
+        //                 if (abs(pressureDiff) > PRESSURE_INTEGRATOR_CEILING){
+        //                         pressureDiff = (pressureDiff/(abs(pressureDiff))) * PRESSURE_INTEGRATOR_CEILING;
+        //                 }
 
-                        //based on the pressureDiff decide which side to turn on
-                        turnOnLeftSide = false; 
-                        turnOnRightSide = false; 
-                        if (abs(pressureDiff) > PRESSURE_THRESHOLD) {
-                                //yes something need to turn on
-                                if(pressureDiff > 0) {
-                                        turnOnRightSide = true;
-                                } else {
-                                        turnOnLeftSide = true; 
+        //                 //based on the pressureDiff decide which side to turn on
+        //                 turnOnLeftSide = false; 
+        //                 turnOnRightSide = false; 
+        //                 if (abs(pressureDiff) > PRESSURE_THRESHOLD) {
+        //                         //yes something need to turn on
+        //                         if(pressureDiff > 0) {
+        //                                 turnOnRightSide = true;
+        //                         } else {
+        //                                 turnOnLeftSide = true; 
                                         
-                                }
-                        }
+        //                         }
+        //                 }
 
-                        //update the led as needed 
-                        update_board_led_pressure(led_board_map, turnOnLeftSide, turnOnRightSide);
+        //                 //update the led as needed 
+        //                 update_board_led_pressure(led_board_map, turnOnLeftSide, turnOnRightSide);
                         
-                        if(ledHandleReady){
-                                updateWristLED(turnOnRightSide);        
-                        }
+        //                 if(ledHandleReady){
+        //                         updateWristLED(turnOnRightSide);        
+        //                 }
 
-                        checkSensorNum = (checkSensorNum + 1) % NUM_SENSORS;
-                        adcReady = false; 
-                        sensorDataRequested = false; 
-                }
+        //                 checkSensorNum = (checkSensorNum + 1) % NUM_SENSORS;
+        //                 adcReady = false; 
+        //                 sensorDataRequested = false; 
+        //         }
 
                 //electronics status indicator
                 status_led_operation(*led_operation_ptr);

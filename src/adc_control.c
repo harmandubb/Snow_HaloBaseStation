@@ -91,7 +91,6 @@ int request_sensor_data(const struct device* gpio_dev, const struct adc_dt_spec 
 */
 
 enum adc_action my_adc_sequence_callback(const struct device *dev, const struct adc_sequence *sequence, uint16_t sampling_index){
-    LOG_INF("The ADC Sample Index is: %d", sampling_index);
     //set the adc done flag 
     adcReady = true; 
 
