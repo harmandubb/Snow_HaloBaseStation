@@ -529,7 +529,7 @@ void bond_initial_cb(const struct bt_bond_info *info, void *user_data){
 
 };
 
-/** @brief set up the scan parameters for the L_boot
+/** @brief set up the scan parameters for the L_boot in a thread work fashion
  * 
  * 	@param bt_bond_info *info: pointer to the bond informaiton we get for each bonded device
  *  @param *user_data a predecided data structure for beused in the callback and outside of the bt_foreach_bond call
@@ -552,24 +552,11 @@ void scan_L_boot(struct k_work *work){
 	
 	bt_scan_filter_remove_all();
 
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LBS);
+	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_NUS_SERVICE);
 	if (err) {
-			LOG_ERR("UUID scanning filters cannot be set (err %d)", err);
+			LOG_ERR("UUID scanning filters cannot be set for the NUS service (err %d)", err);
 			return;
 	}
-
-	//------------------SHORT NAME FILTER
-
-	// struct bt_scan_short_name short_name_filter_data = {
-	//         .name = TARGET_DEVICE_NAME,
-	//         .min_len = sizeof(TARGET_DEVICE_NAME),
-	// };
-
-	// err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME,&short_name_filter_data);
-	// if (err) {
-	// 	LOG_ERR("Short Name scanning filters cannot be set (err %d)", err);
-	// 	return err;
-	// }
 
 	//------------------NAME FILTER
 	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, "SNOW");
@@ -580,8 +567,6 @@ void scan_L_boot(struct k_work *work){
 
 
 	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_NAME_FILTER, true);
-	// err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, true);
-	// err = bt_scan_filter_enable(BT_SCAN_NAME_FILTER, true);
 
 	if (err) {
 			LOG_ERR("Filters cannot be turned on (err %d)", err);
@@ -598,7 +583,7 @@ void scan_L_boot(struct k_work *work){
 	}
 }
 
-K_WORK_DEFINE(scan_standard_work, scan_standard);
+K_WORK_DEFINE(scan_L_boot_work, scan_L_boot);
 
 /** @brief disconnect from all bluetooth devices
  * 

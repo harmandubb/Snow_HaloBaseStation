@@ -31,6 +31,7 @@ extern bool connectedFlag;
 extern struct k_work unpair_work; 
 extern struct k_work scan_standard_work;
 extern struct k_work bt_disconnect_all_work; 
+extern struct k_work scan_L_boot_work;
 
 //function defines: 
 void setup_accept_list_cb(const struct bt_bond_info *info, void *user_data);
