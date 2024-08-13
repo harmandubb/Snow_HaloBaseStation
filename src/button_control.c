@@ -7,7 +7,6 @@ LOG_MODULE_REGISTER(Button_Control, LOG_LEVEL_INF);
 int timer_hold_intervals = 0; 
 K_MUTEX_DEFINE(button_hold_mutex);
 K_TIMER_DEFINE(button_hold_timer,button_timer_expire_cb,NULL);
-int pin_pairing_button = 0; 
 
 /** @brief initilizes the GPIO for the button input responsible for the paring of the system
  * 
@@ -22,7 +21,6 @@ int pin_pairing_button = 0;
 
 int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_callback_handler_t button_interrrupt_handler){
 	int err;
-	pin_pairing_button = button_pin; 
 	static struct gpio_callback button_interupt_cb;
 	gpio_flags_t flags = GPIO_INPUT | GPIO_ACTIVE_HIGH; // I think the configuration here was wrong before hand
 	gpio_flags_t interrupts = GPIO_INT_EDGE_BOTH; //can change to interrupt on active low 
@@ -99,7 +97,7 @@ void button_timer_expire_cb(struct k_timer *timer){
  *  implement concurrency control to ensure that the updates occur correctly
 */
 
-void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins)
+void wrist_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins)
 {
     LOG_INF("In the pairing button callback");
     
@@ -112,10 +110,10 @@ void pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio
 
     k_mutex_lock(&button_hold_mutex, K_FOREVER);  // Use K_FOREVER instead of K_NO_WAIT
 
-    if (pin_vals & BIT(pin_pairing_button)) {
+    if (pin_vals & BIT(PIN_WRIST_PAIRING_BUTTON)) {
         LOG_INF("Button Pressed: starting hold timer");
         k_timer_start(&button_hold_timer, K_MSEC(100), K_SECONDS(1));      
-    } else if (!(pin_vals & BIT(pin_pairing_button)) && timer_hold_intervals > 0) {
+    } else if (!(pin_vals & BIT(PIN_WRIST_PAIRING_BUTTON)) && timer_hold_intervals > 0) {
         LOG_INF("Button Release: stopping timer");
         k_timer_stop(&button_hold_timer);
         

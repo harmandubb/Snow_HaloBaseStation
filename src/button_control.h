@@ -30,7 +30,7 @@ extern "C" {
 
 #include "bluetooth_control.h"
 
-#define PIN_PAIRING_BUTTON (15)
+#define PIN_WRIST_PAIRING_BUTTON (14)
 
 //variables
 extern struct k_mutex button_hold_mutex;
@@ -38,6 +38,8 @@ extern struct k_mutex button_hold_mutex;
 //functions
 int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_callback_handler_t button_interrrupt_handler);
 void button_timer_expire_cb(struct k_timer *timer);
+void wrist_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);
+
 
 
 #ifdef __cplusplus

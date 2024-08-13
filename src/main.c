@@ -23,8 +23,7 @@
 
 // GPIO1
 #define PIN_L_R_SELECT_BUTTON (15)
-#define PIN_L_R_PAIRING_BUTTON (14)
-#define PIN_WRIST_PAIRING_BUTTON (13)
+//PIN_WRIST_PAIRING_BUTTON in button_control.h file
 
 
 // FUNCTION DEFINITIONS
@@ -116,9 +115,10 @@ int main(void)
         adcReady = false; 
 
         //----------------------PAIRING BUTTON INIT--------------------------//
-
-        // //remeber to change to gpio1_dev for the buttons
-        // err = init_pairing_button(gpio1_dev,PIN_PAIRING_BUTTON,pairing_button_cb);
+        err = init_pairing_button(gpio1_dev,PIN_WRIST_PAIRING_BUTTON,wrist_pairing_button_cb);
+        if (err) {
+                LOG_ERR("ERROR Intializing L_R pairing button: %d", err);
+        }
 
         //-----------------------BLUETOOTH SCAN----------------------//
         // err = bt_enable(bt_ready_cb);
