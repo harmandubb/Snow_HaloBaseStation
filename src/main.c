@@ -10,32 +10,21 @@
 
 #include <math.h>
 
-#define NUM_SENSORS (4)
+#define NUM_SENSORS (2)
+#define ADC_BUFFER_SIZE (NUM_SENSORS*2)
 
-#define NUM_ADC_SEL_PINS (4) //should be the bits needed to rep the num_sensors value
-
-// GPIO0
-#define PIN_BOARD_LED (2)
-// adc read pin is set to be pin 3 in the overlay file 
-#define PIN_ADC_SEL_3 (28)
-#define PIN_ADC_SEL_2 (29) 
-#define PIN_ADC_SEL_1 (4) 
-#define PIN_ADC_SEL_0 (5) 
+// GPIO0 - adc read pins
+#define PIN_ADC_READ_0 (2)
+#define PIN_ADC_READ_1 (3)
+#define PIN_ADC_READ_2 (28)
+#define PIN_ADC_READ_3 (29)
+#define PIN_ADC_READ_4 (4)
+#define PIN_ADC_READ_5 (5)
 
 // GPIO1
-#define PIN_PAIRING_BUTTON (15)
-#define PIN_SPARE_BUTTON (14)
-
-
-#define ADC_BUFFER_SIZE (2) //based of resolution, samples taken, and number of channesl (12 bits = 2 bytes)
-                                // 2 bytes * 1 sample taken * 1 channel = 2 
-
-#define PRESSURE_THRESHOLD (150)
-#define PRESSURE_INTEGRATOR_CEILING (1000)
-
-
-
-#define BOND_CONNECT_COUNT_THRESHOLD (6)
+#define PIN_L_R_SELECT_BUTTON (15)
+#define PIN_L_R_PAIRING_BUTTON (14)
+#define PIN_WRIST_PAIRING_BUTTON (13)
 
 
 // FUNCTION DEFINITIONS
@@ -55,19 +44,9 @@ int main(void)
         int err = 0; 
 
         //flags 
-        bool sensorDataRequested = false;
-        adcReady = false; 
-        bool turnOnRightSide = false; 
-        bool turnOnLeftSide = false; 
-        ledHandleReady = false; 
-        led_handle = 0; 
-        wrist_conn = NULL;
-        *led_operation_ptr = BLANK;
-
+        
         //variables
-        int checkSensorNum = 0; 
-        int pressureDiff = 0; //hold a cummuliate value of the pressures 
-        int adc_read_val = 0; //use for the value conversion
+        
         
         //get the gpio binding
         const struct device *gpio0_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
@@ -83,26 +62,16 @@ int main(void)
 	}
 
         //------------------------LED INIT------------------------//
+        // on board status led
         err = dk_leds_init();
 	if (err) {
 		printk("LEDs init failed (err %d)\n", err);
 		return 0;
 	}
 
-        // dynamically allocated memory        
-        uint16_t* boardLedMap = init_board_led(PIN_BOARD_LED);
-        if (boardLedMap == NULL){
-                LOG_ERR("Initilization of board led failed\n");
-        }
-
 
 
         // ---------------------------ADC INIT---------------------------//
-
-        //define the array to hold the selec pins 
-        int adc_sel_pins[] = {PIN_ADC_SEL_0, PIN_ADC_SEL_1, PIN_ADC_SEL_2, PIN_ADC_SEL_3};
-
-        
 
         // //initalize the adc device tree variable 
         static const struct adc_dt_spec adc_channel = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));
@@ -112,35 +81,39 @@ int main(void)
                 .callback = my_adc_sequence_callback,
                 .user_data = NULL, 
                 .extra_samplings = 0,
+                
         };
         uint16_t adc_buf[ADC_BUFFER_SIZE] = {0};
         
 	struct adc_sequence sequence = {
 		.buffer = &adc_buf,
-		/* buffer size in bytes, not number of samples */
 		.buffer_size = sizeof(adc_buf),
 		//Optional
-		//.calibrate = true,
+		//.calibrate = true, //turn on calibration after the bare minimum code is active
                 .options = &opts,
+                .channels = (1 << NUM_SENSORS) - 1,
 	};
 
-        int* sensorPressureMap = init_multiplexer_reader(&adc_channel, &sequence, NUM_SENSORS);
-        if (sensorPressureMap == NULL) {
-                LOG_ERR("Initalization of sensorPressureMap failed\n");
+        err = adc_channel_setup_dt(&adc_channel);
+        if (err < 0) {
+                LOG_ERR("Could not setup channel #%d (%d)", 0, err);
+                return NULL;
+        }
+
+        err = adc_sequence_init_dt(&adc_channel, &sequence);
+        if (err < 0) {
+                LOG_ERR("Could not initalize sequnce");
+                return NULL;
+        }
+        err = adc_read(adc_channel.dev, &sequence);
+        if (err < 0) {
+                LOG_ERR("Could not read (%d)", err);
+                return NULL; 
         }
 
         while(!adcReady);
         LOG_INF("ADC INITALIZATION DONE\n");
         adcReady = false; 
-
-        err = init_multiplexer_sel(gpio0_dev, adc_sel_pins, NUM_ADC_SEL_PINS);
-        if (err < 0){
-                LOG_ERR("Failed to intializlize the multiplexer init pins (err %d)\n", err);
-        }
-
-        //----------------------------PWM INIT--------------------------------//
-        //initalize the pwm pin and the array for the board led 
-        uint16_t* led_board_map = init_board_led(PIN_BOARD_LED);
 
         //----------------------PAIRING BUTTON INIT--------------------------//
 
