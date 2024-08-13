@@ -25,6 +25,8 @@
 #define PIN_L_R_SELECT_BUTTON (15)
 //PIN_WRIST_PAIRING_BUTTON in button_control.h file
 
+#define BOND_CONNECT_COUNT_THRESHOLD (4) //number of half second period to try bonding before giving up
+
 
 // FUNCTION DEFINITIONS
 
@@ -43,6 +45,7 @@ int main(void)
         int err = 0; 
 
         //flags 
+        bool baseStationMode_R = false; 
         
         //variables
         
@@ -121,59 +124,63 @@ int main(void)
         }
 
         //-----------------------BLUETOOTH SCAN----------------------//
-        // err = bt_enable(bt_ready_cb);
-	// if (err) {
-	// 	LOG_ERR("Bluetooth init failed (err %d)", err);
-	// 	return 0;
-	// }
+        err = bt_enable(bt_ready_cb);
+	if (err) {
+		LOG_ERR("Bluetooth init failed (err %d)", err);
+		return 0;
+	}
 
-        // struct bt_conn_cb cb = {
-        //         .connected = connected,
-        //         .disconnected = disconnected,
-        //         .security_changed = on_security_changed,
-        // };
+        struct bt_conn_cb cb = {
+                .connected = connected,
+                .disconnected = disconnected,
+                .security_changed = on_security_changed,
+        };
 
-        // bt_conn_cb_register(&cb);
+        bt_conn_cb_register(&cb);
 
-        // while(!btReady);
+        while(!btReady);
 
-        // err = settings_load();
-        // if (err) {
-        //         LOG_ERR("Settings load failed (err %d)", err);
-        // }
+        err = settings_load();
+        if (err) {
+                LOG_ERR("Settings load failed (err %d)", err);
+        }
 
-	// const struct bt_scan_init_param bt_scan_init_opts = {
-	// 		.scan_param = NULL, //default config 
-	// 		.connect_if_match = true,
-	// 		.conn_param = NULL, //default config
-	// };
-	
-	// bt_scan_init(&bt_scan_init_opts); 
-        // BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
-        // bt_scan_cb_register(&scan_cb);
+        if(baseStationMode_R){
+                //enable to be a central 
+                const struct bt_scan_init_param bt_scan_init_opts = {
+                        .scan_param = NULL, //default config 
+                        .connect_if_match = true,
+                        .conn_param = NULL, //default config
+                };
 
-        // //------------------------BOND Devices Scan Check------------//
-        // int bond_connect_counter = 0 ; 
-        // int bond_count = scan_bond_devices();
-        // LOG_INF("Scanning successfully started");
-        // LOG_INF("bond count: %d", bond_count);
+                bt_scan_init(&bt_scan_init_opts); 
+                BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
+                bt_scan_cb_register(&scan_cb);
 
-        // while((bond_count > 0) && (bond_connect_counter < BOND_CONNECT_COUNT_THRESHOLD) && (!connectedFlag)){
-        //         k_sleep(K_MSEC(500));
-        //         bond_connect_counter++;
-        // }
+                //------------------------BOND Devices Scan Check------------//
+                int bond_connect_counter = 0 ; 
+                int bond_count = scan_bond_devices();
+                LOG_INF("Scanning successfully started");
+                LOG_INF("bond count: %d", bond_count);
 
-        // if (!connectedFlag) {
-        //         //stop the bond scanning 
-        //         err = bt_scan_stop();
-        //         if (err < 0) {
-        //                 LOG_ERR("Unable to stop bond scanning");
-        //         }
-        // }
+                while((bond_count > 0) && (bond_connect_counter < BOND_CONNECT_COUNT_THRESHOLD) && (!connectedFlag)){
+                        k_sleep(K_MSEC(500));
+                        bond_connect_counter++;
+                }
 
-        
+                if (!connectedFlag) {
+                        //stop the bond scanning 
+                        err = bt_scan_stop();
+                        if (err < 0) {
+                                LOG_ERR("Unable to stop bond scanning");
+                        }
+                }
 
-        //--------------SCAN TESTING END---------------------//
+
+
+        } else {
+                //baseStationMode_L means set the device to be a peripheral
+        }
 
         *led_operation_ptr = BOARD_ALIVE;
 
