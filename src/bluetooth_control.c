@@ -529,11 +529,18 @@ void bond_initial_cb(const struct bt_bond_info *info, void *user_data){
 
 };
 
-void scan_standard(struct k_work *work){
+/** @brief set up the scan parameters for the L_boot
+ * 
+ * 	@param bt_bond_info *info: pointer to the bond informaiton we get for each bonded device
+ *  @param *user_data a predecided data structure for beused in the callback and outside of the bt_foreach_bond call
+ * 	
+ */
+
+void scan_L_boot(struct k_work *work){
 //--------------------UUID FILTER
 	int err; 
 
-	LOG_INF("Standard Scan Started");
+	LOG_INF("L Boot Scan Started");
 
 	//ensure that the scanning is off and filters are reset:
 	err = bt_scan_stop();

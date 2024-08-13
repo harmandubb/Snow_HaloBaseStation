@@ -74,16 +74,36 @@ void button_timer_expire_cb(struct k_timer *timer){
 	k_mutex_unlock(&button_hold_mutex);
 };
 
-/** @brief  callback function for the pairing button
+/** @brief  callback function for the pairing button for the L/R boot side
  * 
- *  Allow the bluetooth scanning to occur to accept a new wrist module
+ *  Allow the bluetooth scanning to occur to accept a new L/R Connection. 
+ *  Delete the previously exisitng L/R connection of the system. 
  *  
  *  @param port: device binding device structure 
  *  @param gpio_callback: structure that is used to register callback function in the config stage
  *  @param pins: bitwise repersentation of what pin callback has occured. 
  *  
- *  implement concurrency control to ensure that the updates occur correctly
 */
+
+void boot_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins){
+	LOG_INF("In the pairing button callback");
+    
+    uint32_t pin_vals = 0;
+    int err = gpio_port_get(port, &pin_vals);
+    if (err != 0) {
+        LOG_ERR("Error: Unable to get GPIO port levels (err: %d)", err);
+        return;  // Consider returning early on error
+    }
+
+	if (pin_vals & BIT(PIN_BOOT_PAIRING_BUTTON)){
+		LOG_INF("Adding additional device");
+        k_work_submit(&scan_standard_work);
+	} 
+
+
+}
+
+
 
 /** @brief  callback function for the pairing button
  * 

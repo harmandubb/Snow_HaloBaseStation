@@ -22,7 +22,7 @@
 #define PIN_ADC_READ_5 (5)
 
 // GPIO1
-#define PIN_L_R_SELECT_BUTTON (15)
+//PIN_BOOT_PAIRING_BUTTON in the button_control.h file
 //PIN_WRIST_PAIRING_BUTTON in button_control.h file
 
 #define BOND_CONNECT_COUNT_THRESHOLD (4) //number of half second period to try bonding before giving up
@@ -145,41 +145,34 @@ int main(void)
                 LOG_ERR("Settings load failed (err %d)", err);
         }
 
-        if(baseStationMode_R){
-                //enable to be a central 
-                const struct bt_scan_init_param bt_scan_init_opts = {
-                        .scan_param = NULL, //default config 
-                        .connect_if_match = true,
-                        .conn_param = NULL, //default config
-                };
+        //enable to be a central 
+        const struct bt_scan_init_param bt_scan_init_opts = {
+                .scan_param = NULL, //default config 
+                .connect_if_match = true,
+                .conn_param = NULL, //default config
+        };
 
-                bt_scan_init(&bt_scan_init_opts); 
-                BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
-                bt_scan_cb_register(&scan_cb);
+        bt_scan_init(&bt_scan_init_opts); 
+        BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
+        bt_scan_cb_register(&scan_cb);
 
-                //------------------------BOND Devices Scan Check------------//
-                int bond_connect_counter = 0 ; 
-                int bond_count = scan_bond_devices();
-                LOG_INF("Scanning successfully started");
-                LOG_INF("bond count: %d", bond_count);
+        //------------------------BOND Devices Scan Check------------//
+        int bond_connect_counter = 0 ; 
+        int bond_count = scan_bond_devices();
+        LOG_INF("Scanning successfully started");
+        LOG_INF("bond count: %d", bond_count);
 
-                while((bond_count > 0) && (bond_connect_counter < BOND_CONNECT_COUNT_THRESHOLD) && (!connectedFlag)){
-                        k_sleep(K_MSEC(500));
-                        bond_connect_counter++;
+        while((bond_count > 0) && (bond_connect_counter < BOND_CONNECT_COUNT_THRESHOLD) && (!connectedFlag)){
+                k_sleep(K_MSEC(500));
+                bond_connect_counter++;
+        }
+
+        if (!connectedFlag) {
+                //stop the bond scanning 
+                err = bt_scan_stop();
+                if (err < 0) {
+                        LOG_ERR("Unable to stop bond scanning");
                 }
-
-                if (!connectedFlag) {
-                        //stop the bond scanning 
-                        err = bt_scan_stop();
-                        if (err < 0) {
-                                LOG_ERR("Unable to stop bond scanning");
-                        }
-                }
-
-
-
-        } else {
-                //baseStationMode_L means set the device to be a peripheral
         }
 
         *led_operation_ptr = BOARD_ALIVE;

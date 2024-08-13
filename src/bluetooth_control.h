@@ -10,6 +10,8 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/settings/settings.h>
 #include <bluetooth/services/lbs.h>
+#include <bluetooth/services/nus.h>
+#include <bluetooth/services/nus_client.h>
 #include <zephyr/bluetooth/gatt.h>
 
 #include <bluetooth/scan.h>

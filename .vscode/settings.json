@@ -31,6 +31,8 @@
         "adc.h": "c",
         "gap.h": "c",
         "uuid.h": "c",
-        "functional": "c"
+        "functional": "c",
+        "nus.h": "c",
+        "nus_client.h": "c"
     }
 }
