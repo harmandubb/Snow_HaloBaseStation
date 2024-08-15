@@ -119,8 +119,8 @@ int main(void)
         LOG_INF("ADC INITALIZATION DONE\n");
         adcReady = false; 
 
-        //---------------------- GPIO INIT--------------------------//
-        //---------------------BUTTON INIT-----------------//
+        //----------------------GPIO INIT--------------------------//
+        //---------------------BUTTON INIT-------------------------//
         err = init_pairing_button(gpio1_dev,PIN_WRIST_PAIRING_BUTTON,wrist_pairing_button_cb);
         if (err < 0) {
                 LOG_ERR("ERROR Intializing L_R pairing button: %d", err);
@@ -132,6 +132,7 @@ int main(void)
         }
 
         err = gpio_pin_get(gpio1_dev,PIN_BOOT_DEFINE_SWITCH);
+        LOG_INF("Switch Result: %d", err);
         if (err < 0){
                 LOG_ERR("ERROR getting state L_R define switch: %d", err);
         } else if(err == 1){

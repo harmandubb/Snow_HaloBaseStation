@@ -70,7 +70,7 @@ int init_select_switch(const struct device* gpio_dev, int switch_pin){
 	int err;
 	gpio_flags_t flags = GPIO_INPUT | GPIO_ACTIVE_HIGH;
 
-	err = gpio_pin_configure(gpio_dev, switch_pin, 0);
+	err = gpio_pin_configure(gpio_dev, switch_pin, flags);
 	if (err < 0) {
 		LOG_ERR("Error %d: failed to configure switch gpio pin %d\n", err, switch_pin);
 		return err; 
