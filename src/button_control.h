@@ -36,6 +36,7 @@ extern "C" {
 
 //variables
 extern struct k_mutex button_hold_mutex;
+extern bool isRightBoot;
 
 //functions
 int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_callback_handler_t button_interrrupt_handler);

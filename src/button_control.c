@@ -7,6 +7,7 @@ LOG_MODULE_REGISTER(Button_Control, LOG_LEVEL_INF);
 int timer_hold_intervals = 0; 
 K_MUTEX_DEFINE(button_hold_mutex);
 K_TIMER_DEFINE(button_hold_timer,button_timer_expire_cb,NULL);
+bool isRightBoot = false; 
 
 /** @brief initilizes the GPIO for the button input responsible for the paring of the system
  * 
@@ -128,10 +129,10 @@ void boot_pairing_button_cb(const struct device *port, struct gpio_callback *cb,
 
 
 
-/** @brief  callback function for the pairing button
+/** @brief  callback function for the wristing paring button
  * 
- *  Allow the bluetooth scanning to occur to accept a new wrist module
- *  TODO: Make the button keep a time state for deleting all of the connections 
+ *  Allow the bluetooth system to look for the wrist module (must be a right boot board)
+ *  Act like a central to connect to the wrist module
  *  
  *  @param port: device binding device structure 
  *  @param gpio_callback: structure that is used to register callback function in the config stage
@@ -183,3 +184,31 @@ void wrist_pairing_button_cb(const struct device *port, struct gpio_callback *cb
 }
 
 
+/** @brief  callback function for the pairing of the boot button
+ *
+ * 	check what boot module you are and then start the bluetooth system as needed
+ *  - L: act like a peripheral --> advertise the L name and UART service
+ *  - R: act like a central --> scan using fillters for UUID with the UART service 
+ *  
+ *  @param port: device binding device structure 
+ *  @param gpio_callback: structure that is used to register callback function in the config stage
+ *  @param pins: bitwise repersentation of what pin callback has occured. 
+ *  
+ *  implement concurrency control to ensure that the updates occur correctly
+*/
+
+void boot_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins){
+	// check if the correct interrupt has gone off
+	// I think the documentation states that only the pins set with the call back will call it. 
+	// If the call back is unique then only one pin can activate it. 
+
+	//check what the boot mode is 
+	if (isRightBoot){
+
+	} else {
+		//left boot operation is being focused on 
+		k_work_submit(advertise_L_boot_work);
+
+	}
+	
+};

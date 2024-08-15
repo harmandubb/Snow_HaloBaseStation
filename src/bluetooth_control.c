@@ -607,3 +607,14 @@ void force_disconnect_cb(struct bt_conn *conn, void *data){
 		LOG_ERR("Unable to disconnect from the bluetooth device");
 	}
 };
+
+/** @brief work for advertising the L_Boot configurations
+ * 
+ * 	@param: work parameter for defining work
+ * 
+ */
+void advertise_L_boot(struct k_work *work){
+	
+};
+
+K_WORK_DEFINE(advertise_L_boot_work, advertise_L_boot);

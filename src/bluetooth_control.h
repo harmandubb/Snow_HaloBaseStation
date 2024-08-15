@@ -16,7 +16,9 @@
 
 #include <bluetooth/scan.h>
 
-#define TARGET_DEVICE_NAME "SNOW"
+#define TARGET_DEVICE_BOARD_HALO_L "BOARD_HALO_L"
+#define TARGET_DEVICE_BOARD_HALO_R "BOARD_HALO_R"
+#define TARGET_DEVICE_WRIST_HALO "WRIST_HALO"
 
 //struct definitions
 struct bond_count_data {

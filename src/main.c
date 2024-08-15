@@ -47,7 +47,7 @@ int main(void)
 
         //flags 
         bool baseStationMode_R = false; 
-        bool isRightBoot = false; 
+        extern bool isRightBoot; 
         
         //variables
         
@@ -123,8 +123,14 @@ int main(void)
         //---------------------BUTTON INIT-------------------------//
         err = init_pairing_button(gpio1_dev,PIN_WRIST_PAIRING_BUTTON,wrist_pairing_button_cb);
         if (err < 0) {
-                LOG_ERR("ERROR Intializing L_R pairing button: %d", err);
+                LOG_ERR("ERROR Intializing wrist pairing button: %d", err);
         }
+
+        err = init_pairing_button(gpio1_dev, PIN_BOOT_PAIRING_BUTTON, );
+        if (err < 0){
+                LOG_ERR("ERROR Inializing L_R pairing button: %d", err);
+        }
+
         //---------------------SWITCH INIT----------------------//
         err = init_select_switch(gpio1_dev, PIN_BOOT_DEFINE_SWITCH);
         if (err < 0) {
@@ -198,68 +204,6 @@ int main(void)
         *led_operation_ptr = BOARD_ALIVE;
 
         for(;;){
-
-        //         if (sensorDataRequested == false) {
-        //                 //send the reques to the adc to read
-        //                 err = request_sensor_data(gpio0_dev, &adc_channel, adc_sel_pins, NUM_ADC_SEL_PINS, checkSensorNum, NUM_SENSORS, &sequence);
-        //                 if (err < 0){
-        //                         LOG_ERR("Failed to request the sensor data (err %d)\n", err);
-        //                 }
-
-        //                 sensorDataRequested = true; 
-        //         }
-
-        //         if(adcReady){
-        //                 //update the array of the sensor value 
-        //                 adc_read_val = adc_buf[0];
-
-
-        //                 if (adc_read_val > 65000){
-        //                         adc_read_val = 0; 
-        //                 }
-
-        //                 LOG_INF("Sensor Checked: %d", checkSensorNum);
-        //                 LOG_INF("BUFF 0: %d", adc_read_val);
-
-        //                 //print out the sensor values that are present
-        //                 sensorPressureMap[checkSensorNum] = adc_read_val; 
-
-        //                 LOG_INF("PRESSURE VALS: 0: %d, 1: %d, 2: %d, 3: %d", sensorPressureMap[0], sensorPressureMap[1], sensorPressureMap[2], sensorPressureMap[3]);
-
-        //                 //calculate the pressure difference 
-        //                 pressureDiff = calculate_pressure_diffrential(checkSensorNum, adc_read_val, NUM_SENSORS);
-
-        //                 LOG_INF("Pressure Diff: %d", pressureDiff);
-        //                 if (abs(pressureDiff) > PRESSURE_INTEGRATOR_CEILING){
-        //                         pressureDiff = (pressureDiff/(abs(pressureDiff))) * PRESSURE_INTEGRATOR_CEILING;
-        //                 }
-
-        //                 //based on the pressureDiff decide which side to turn on
-        //                 turnOnLeftSide = false; 
-        //                 turnOnRightSide = false; 
-        //                 if (abs(pressureDiff) > PRESSURE_THRESHOLD) {
-        //                         //yes something need to turn on
-        //                         if(pressureDiff > 0) {
-        //                                 turnOnRightSide = true;
-        //                         } else {
-        //                                 turnOnLeftSide = true; 
-                                        
-        //                         }
-        //                 }
-
-        //                 //update the led as needed 
-        //                 update_board_led_pressure(led_board_map, turnOnLeftSide, turnOnRightSide);
-                        
-        //                 if(ledHandleReady){
-        //                         updateWristLED(turnOnRightSide);        
-        //                 }
-
-        //                 checkSensorNum = (checkSensorNum + 1) % NUM_SENSORS;
-        //                 adcReady = false; 
-        //                 sensorDataRequested = false; 
-        //         }
-
-                //electronics status indicator
                 status_led_operation(*led_operation_ptr);
 
         }
