@@ -583,7 +583,7 @@ void scan_L_boot(struct k_work *work){
 	}
 }
 
-K_WORK_DEFINE(scan_L_boot_work, scan_L_boot);
+K_WORK_DEFINE(scan_standard_work, scan_L_boot);
 
 /** @brief disconnect from all bluetooth devices
  * 

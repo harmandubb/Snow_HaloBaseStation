@@ -22,6 +22,7 @@
 #define PIN_ADC_READ_5 (5)
 
 // GPIO1
+//PIN_BOOT_DEFINE_SWITCH in the button_control.h file
 //PIN_BOOT_PAIRING_BUTTON in the button_control.h file
 //PIN_WRIST_PAIRING_BUTTON in button_control.h file
 
@@ -46,6 +47,7 @@ int main(void)
 
         //flags 
         bool baseStationMode_R = false; 
+        bool isRightBoot = false; 
         
         //variables
         
@@ -117,10 +119,27 @@ int main(void)
         LOG_INF("ADC INITALIZATION DONE\n");
         adcReady = false; 
 
-        //----------------------PAIRING BUTTON INIT--------------------------//
+        //---------------------- GPIO INIT--------------------------//
+        //---------------------BUTTON INIT-----------------//
         err = init_pairing_button(gpio1_dev,PIN_WRIST_PAIRING_BUTTON,wrist_pairing_button_cb);
-        if (err) {
+        if (err < 0) {
                 LOG_ERR("ERROR Intializing L_R pairing button: %d", err);
+        }
+        //---------------------SWITCH INIT----------------------//
+        err = init_select_switch(gpio1_dev, PIN_BOOT_DEFINE_SWITCH);
+        if (err < 0) {
+                LOG_ERR("ERR Initializing L_R define switch: %d", err);
+        }
+
+        err = gpio_pin_get(gpio1_dev,PIN_BOOT_DEFINE_SWITCH);
+        if (err < 0){
+                LOG_ERR("ERROR getting state L_R define switch: %d", err);
+        } else if(err == 1){
+                isRightBoot = true; 
+                LOG_INF("Right Boot Present");
+        } else {
+                isRightBoot = false; 
+                LOG_INF("Left Boot Present");
         }
 
         //-----------------------BLUETOOTH SCAN----------------------//

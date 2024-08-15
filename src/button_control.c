@@ -56,6 +56,29 @@ int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_call
 	return 0;
 }
 
+/** @brief initilizes the GPIO for an slider switch input
+ * 
+ * 	Initlizes the pin input for a slider switch 
+ *  @param gpio_dev device structure that contains the device tree information for the gpio peripheral 
+ *  @param switch_pin Pin value on the board for the button input
+ *   
+ *  @return status code. 0 if successfull <0 if failed 
+ *
+*/
+
+int init_select_switch(const struct device* gpio_dev, int switch_pin){
+	int err;
+	gpio_flags_t flags = GPIO_INPUT | GPIO_ACTIVE_HIGH;
+
+	err = gpio_pin_configure(gpio_dev, switch_pin, 0);
+	if (err < 0) {
+		LOG_ERR("Error %d: failed to configure switch gpio pin %d\n", err, switch_pin);
+		return err; 
+	} 
+
+	return 0;
+}
+
 /** @brief function to execute on the timer expires
  * 
  *  increment the button hold intervals which will be looked at when the button is released
