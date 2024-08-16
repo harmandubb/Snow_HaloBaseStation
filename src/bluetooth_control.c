@@ -541,84 +541,6 @@ void bond_initial_cb(const struct bt_bond_info *info, void *user_data){
 
 };
 
-/** @brief set up the scan parameters for the L_boot in a thread work fashion
- * 
- * 	@param bt_bond_info *info: pointer to the bond informaiton we get for each bonded device
- *  @param *user_data a predecided data structure for beused in the callback and outside of the bt_foreach_bond call
- * 	
- */
-
-void scan_L_boot(struct k_work *work){
-//--------------------UUID FILTER
-	int err; 
-
-	LOG_INF("L Boot Scan Started");
-
-	//ensure that the scanning is off and filters are reset:
-	err = bt_scan_stop();
-	if (err < 0){
-		LOG_INF("Unable to stop scanning (err: %d)", err);
-	}
-
-	bt_scan_filter_disable();
-	
-	bt_scan_filter_remove_all();
-
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_NUS_SERVICE);
-	if (err) {
-			LOG_ERR("UUID scanning filters cannot be set for the NUS service (err %d)", err);
-			return;
-	}
-
-	//------------------NAME FILTER
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, "SNOW");
-	if (err) {
-			LOG_ERR("Name scanning filters cannot be set (err %d)", err);
-			return;
-	}
-
-
-	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_NAME_FILTER, true);
-
-	if (err) {
-			LOG_ERR("Filters cannot be turned on (err %d)", err);
-			return;
-	}
-
-	LOG_INF("Scan module initialized");
-
-	//check if bonding is present?
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-	if (err) {
-			LOG_ERR("Scanning failed to start (err %d)", err);
-			return;
-	}
-}
-
-K_WORK_DEFINE(scan_standard_work, scan_L_boot);
-
-/** @brief disconnect from all bluetooth devices
- * 
- * 	@param: work parameter for defining work
- */
-void bt_disconnect_all(struct k_work *work){
-	bt_conn_foreach(BT_CONN_TYPE_LE,force_disconnect_cb, NULL);
-};
-
-K_WORK_DEFINE(bt_disconnect_all_work, bt_disconnect_all);
-
-/** @brief callback to disconnect from all bluetooth devices that are attached. 
- *  
- *  @param bt_conn conn: connection struct that shows the details that are needed to connect to a device. 
- * 	@param data data ptr to type of data passed (nothing in this case)
- */
-void force_disconnect_cb(struct bt_conn *conn, void *data){
-	LOG_INF("Disconnecting from bt device");
-	int err = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
-	if (err < 0){
-		LOG_ERR("Unable to disconnect from the bluetooth device");
-	}
-};
 
 /** @brief work for advertising the L_Boot configurations
  * 
@@ -641,3 +563,13 @@ void advertise_L_boot(struct k_work *work){
 };
 
 K_WORK_DEFINE(advertise_L_boot_work, advertise_L_boot);
+
+/** @brief disconnect from all bluetooth devices
+ * 
+ * 	@param: work parameter for defining work
+ */
+void bt_disconnect_all(struct k_work *work){
+	bt_conn_foreach(BT_CONN_TYPE_LE,force_disconnect_cb, NULL);
+};
+
+K_WORK_DEFINE(bt_disconnect_all_work, bt_disconnect_all);
