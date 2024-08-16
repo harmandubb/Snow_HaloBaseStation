@@ -33,6 +33,7 @@
         "uuid.h": "c",
         "functional": "c",
         "nus.h": "c",
-        "nus_client.h": "c"
+        "nus_client.h": "c",
+        "gatt.h": "c"
     }
 }

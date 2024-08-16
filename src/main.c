@@ -52,6 +52,7 @@ int main(void)
         //variables
         
         
+        
         //get the gpio binding
         const struct device *gpio0_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 	if (gpio0_dev == NULL) {
@@ -101,18 +102,18 @@ int main(void)
         err = adc_channel_setup_dt(&adc_channel);
         if (err < 0) {
                 LOG_ERR("Could not setup channel #%d (%d)", 0, err);
-                return NULL;
+                return -1;
         }
 
         err = adc_sequence_init_dt(&adc_channel, &sequence);
         if (err < 0) {
                 LOG_ERR("Could not initalize sequnce");
-                return NULL;
+                return -1;
         }
         err = adc_read(adc_channel.dev, &sequence);
         if (err < 0) {
                 LOG_ERR("Could not read (%d)", err);
-                return NULL; 
+                return -1; 
         }
 
         while(!adcReady);
@@ -121,12 +122,12 @@ int main(void)
 
         //----------------------GPIO INIT--------------------------//
         //---------------------BUTTON INIT-------------------------//
-        err = init_pairing_button(gpio1_dev,PIN_WRIST_PAIRING_BUTTON,wrist_pairing_button_cb);
+        err = init_pairing_button(gpio1_dev,PIN_WRIST_PAIRING_BUTTON, wrist_pairing_button_cb);
         if (err < 0) {
                 LOG_ERR("ERROR Intializing wrist pairing button: %d", err);
         }
 
-        err = init_pairing_button(gpio1_dev, PIN_BOOT_PAIRING_BUTTON, );
+        err = init_pairing_button(gpio1_dev, PIN_BOOT_PAIRING_BUTTON, boot_pairing_button_cb);
         if (err < 0){
                 LOG_ERR("ERROR Inializing L_R pairing button: %d", err);
         }
@@ -143,9 +144,11 @@ int main(void)
                 LOG_ERR("ERROR getting state L_R define switch: %d", err);
         } else if(err == 1){
                 isRightBoot = true; 
+                strcpy(device_name, TARGET_DEVICE_BOARD_HALO_R); 
                 LOG_INF("Right Boot Present");
         } else {
                 isRightBoot = false; 
+                strcpy(device_name, TARGET_DEVICE_BOARD_HALO_L); 
                 LOG_INF("Left Boot Present");
         }
 

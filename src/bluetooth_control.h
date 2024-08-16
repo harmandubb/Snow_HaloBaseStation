@@ -20,6 +20,16 @@
 #define TARGET_DEVICE_BOARD_HALO_R "BOARD_HALO_R"
 #define TARGET_DEVICE_WRIST_HALO "WRIST_HALO"
 
+//Defining advertising parametert with no accept list 
+#define BT_LE_ADV_CONN_NO_ACCEPT_LIST  BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_ONE_TIME, \
+				       BT_GAP_ADV_FAST_INT_MIN_2, \
+				       BT_GAP_ADV_FAST_INT_MAX_2, NULL)
+
+//defining advertising parameters with accept list
+#define BT_LE_ADV_CONN_ACCEPT_LIST BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_FILTER_CONN|BT_LE_ADV_OPT_ONE_TIME, \
+				       BT_GAP_ADV_FAST_INT_MIN_2, \
+				       BT_GAP_ADV_FAST_INT_MAX_2, NULL)
+
 //struct definitions
 struct bond_count_data {
 	int count;
@@ -33,7 +43,8 @@ extern bool connectedFlag;
 extern struct k_work unpair_work; 
 extern struct k_work scan_standard_work;
 extern struct k_work bt_disconnect_all_work; 
-extern struct k_work scan_L_boot_work;
+extern struct k_work advertise_L_boot_work;
+extern char device_name[13]; 
 
 //function defines: 
 void setup_accept_list_cb(const struct bt_bond_info *info, void *user_data);

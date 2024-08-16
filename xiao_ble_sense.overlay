@@ -4,12 +4,6 @@
     };
 };
 
-&pwm0 {
-    pinctrl-0 = <&pwm0_board_led>;
-    pinctrl-1 = <&pwm0_board_sleep>;
-    pinctrl-names = "default", "sleep";
-};
-
 &adc {
     #address-cells = <1>;
     #size-cells = <0>;

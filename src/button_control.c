@@ -3,10 +3,7 @@
 
 LOG_MODULE_REGISTER(Button_Control, LOG_LEVEL_INF);
 
-//Global variables 
-int timer_hold_intervals = 0; 
-K_MUTEX_DEFINE(button_hold_mutex);
-K_TIMER_DEFINE(button_hold_timer,button_timer_expire_cb,NULL);
+//Global variables
 bool isRightBoot = false; 
 
 /** @brief initilizes the GPIO for the button input responsible for the paring of the system
@@ -80,53 +77,6 @@ int init_select_switch(const struct device* gpio_dev, int switch_pin){
 	return 0;
 }
 
-/** @brief function to execute on the timer expires
- * 
- *  increment the button hold intervals which will be looked at when the button is released
- *  a concurrency safe coding method will be used such that an external party doesn't read or modify 
- *  the variable before the timer has updated it. 
- *  
- *  @param button_hold_interval ptr to the number of button hold intervals that have occured
- *  
- *  implement concurrency control to ensure that the updates occur correctly
-*/
-
-void button_timer_expire_cb(struct k_timer *timer){
-	k_mutex_lock(&button_hold_mutex,K_FOREVER);
-	timer_hold_intervals++;
-	LOG_INF("Timer_Hold_Intervals: %d", timer_hold_intervals);
-	k_mutex_unlock(&button_hold_mutex);
-};
-
-/** @brief  callback function for the pairing button for the L/R boot side
- * 
- *  Allow the bluetooth scanning to occur to accept a new L/R Connection. 
- *  Delete the previously exisitng L/R connection of the system. 
- *  
- *  @param port: device binding device structure 
- *  @param gpio_callback: structure that is used to register callback function in the config stage
- *  @param pins: bitwise repersentation of what pin callback has occured. 
- *  
-*/
-
-void boot_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins){
-	LOG_INF("In the pairing button callback");
-    
-    uint32_t pin_vals = 0;
-    int err = gpio_port_get(port, &pin_vals);
-    if (err != 0) {
-        LOG_ERR("Error: Unable to get GPIO port levels (err: %d)", err);
-        return;  // Consider returning early on error
-    }
-
-	if (pin_vals & BIT(PIN_BOOT_PAIRING_BUTTON)){
-		LOG_INF("Adding additional device");
-        k_work_submit(&scan_standard_work);
-	} 
-
-
-}
-
 
 
 /** @brief  callback function for the wristing paring button
@@ -143,45 +93,8 @@ void boot_pairing_button_cb(const struct device *port, struct gpio_callback *cb,
 
 void wrist_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins)
 {
-    LOG_INF("In the pairing button callback");
-    
-    uint32_t pin_vals = 0;
-    int err = gpio_port_get(port, &pin_vals);
-    if (err != 0) {
-        LOG_ERR("Error: Unable to get GPIO port levels (err: %d)", err);
-        return;  // Consider returning early on error
-    }
 
-    k_mutex_lock(&button_hold_mutex, K_FOREVER);  // Use K_FOREVER instead of K_NO_WAIT
-
-    if (pin_vals & BIT(PIN_WRIST_PAIRING_BUTTON)) {
-        LOG_INF("Button Pressed: starting hold timer");
-        k_timer_start(&button_hold_timer, K_MSEC(100), K_SECONDS(1));      
-    } else if (!(pin_vals & BIT(PIN_WRIST_PAIRING_BUTTON)) && timer_hold_intervals > 0) {
-        LOG_INF("Button Release: stopping timer");
-        k_timer_stop(&button_hold_timer);
-        
-        switch (timer_hold_intervals) {
-            case 0:
-                // debounce
-                break;
-            case 1:
-                LOG_INF("Adding additional device");
-                k_work_submit(&scan_standard_work);
-                break;
-            default:
-                LOG_INF("Unpairing devices and then adding additional device");
-				k_work_submit(&bt_disconnect_all_work);
-				k_work_submit(&unpair_work);
-				k_work_submit(&scan_standard_work);
-                break;
-        }
-        
-        timer_hold_intervals = 0;
-    }
-
-    k_mutex_unlock(&button_hold_mutex);
-}
+};
 
 
 /** @brief  callback function for the pairing of the boot button
@@ -207,7 +120,7 @@ void boot_pairing_button_cb(const struct device *port, struct gpio_callback *cb,
 
 	} else {
 		//left boot operation is being focused on 
-		k_work_submit(advertise_L_boot_work);
+		k_work_submit(&advertise_L_boot_work);
 
 	}
 	

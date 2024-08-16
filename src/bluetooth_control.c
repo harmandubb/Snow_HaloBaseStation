@@ -3,6 +3,18 @@
 
 LOG_MODULE_REGISTER(button_control, LOG_LEVEL_INF);
 
+static const struct bt_data 
+ad[] = {
+        BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL|BT_LE_AD_NO_BREDR)), 
+        BT_DATA(BT_DATA_NAME_COMPLETE, device_name, sizeof(device_name)),
+		BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NUS_VAL),
+		
+};
+
+static const struct bt_data sd[] = {
+        BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NUS_VAL),
+};
+
 struct bt_conn *default_conn; //would need to make this into an array if more than one connection is needed to be made 
 
 //flags 
@@ -614,7 +626,18 @@ void force_disconnect_cb(struct bt_conn *conn, void *data){
  * 
  */
 void advertise_L_boot(struct k_work *work){
-	
+	int err_code = bt_le_adv_stop();
+	if (err_code) {
+		LOG_ERR("Cannot stop advertising err= %d \n", err_code);
+		return;
+	}
+
+	err_code = bt_le_adv_start(BT_LE_ADV_CONN_NO_ACCEPT_LIST, ad, ARRAY_SIZE(ad),	sd, ARRAY_SIZE(sd));
+	if (err_code) {
+		LOG_ERR("Cannot start open advertising (err: %d)\n", err_code);
+	} else	{
+		LOG_INF("Advertising in pairing mode started");
+	}
 };
 
 K_WORK_DEFINE(advertise_L_boot_work, advertise_L_boot);

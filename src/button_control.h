@@ -43,6 +43,8 @@ int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_call
 void button_timer_expire_cb(struct k_timer *timer);
 void wrist_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);
 int init_select_switch(const struct device* gpio_dev, int switch_pin);
+void boot_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);
+
 
 
 #ifdef __cplusplus
