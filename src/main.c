@@ -46,7 +46,6 @@ int main(void)
         int err = 0; 
 
         //flags 
-        bool baseStationMode_R = false; 
         extern bool isRightBoot; 
         
         //variables
@@ -144,11 +143,9 @@ int main(void)
                 LOG_ERR("ERROR getting state L_R define switch: %d", err);
         } else if(err == 1){
                 isRightBoot = true; 
-                strcpy(device_name, TARGET_DEVICE_BOARD_HALO_R); 
                 LOG_INF("Right Boot Present");
         } else {
                 isRightBoot = false; 
-                strcpy(device_name, TARGET_DEVICE_BOARD_HALO_L); 
                 LOG_INF("Left Boot Present");
         }
 

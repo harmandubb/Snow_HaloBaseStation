@@ -6,8 +6,8 @@ LOG_MODULE_REGISTER(button_control, LOG_LEVEL_INF);
 static const struct bt_data 
 ad[] = {
         BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL|BT_LE_AD_NO_BREDR)), 
-        BT_DATA(BT_DATA_NAME_COMPLETE, device_name, sizeof(device_name)),
-		BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NUS_VAL),
+        BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_BOARD_HALO_L, sizeof(DEVICE_BOARD_HALO_L)),
+		// BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NUS_VAL),
 		
 };
 
@@ -531,7 +531,7 @@ void bond_initial_cb(const struct bt_bond_info *info, void *user_data){
 
 	char addr[BT_ADDR_LE_STR_LEN];
 
-    bt_addr_le_to_str(&info->addr.a, addr, sizeof(addr));
+    bt_addr_le_to_str(&(info->addr), addr, sizeof(addr));
 	LOG_INF("Bonded Address found: %s", addr);
 
 	int err = bond_filter_scan(&(info->addr));
@@ -554,7 +554,7 @@ void advertise_L_boot(struct k_work *work){
 		return;
 	}
 
-	err_code = bt_le_adv_start(BT_LE_ADV_CONN_NO_ACCEPT_LIST, ad, ARRAY_SIZE(ad),	sd, ARRAY_SIZE(sd));
+	err_code = bt_le_adv_start(BT_LE_ADV_CONN_NO_ACCEPT_LIST, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err_code) {
 		LOG_ERR("Cannot start open advertising (err: %d)\n", err_code);
 	} else	{
