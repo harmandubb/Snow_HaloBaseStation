@@ -60,7 +60,7 @@ int request_sensor_data(const struct adc_dt_spec *spec, struct adc_sequence *seq
 
 enum adc_action my_adc_sequence_callback(const struct device *dev, const struct adc_sequence *sequence, uint16_t sampling_index){
     //set the adc done flag 
-    adcReady = true; 
+    adcFinished = true; 
 
     return ADC_ACTION_FINISH;
     

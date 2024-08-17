@@ -47,7 +47,7 @@ int main(void)
         //flags 
         extern bool isRightBoot; 
         bool requestFinished = true; 
-        bool adcFinished;
+        extern bool adcFinished;
         bool UARTFinished = true; 
         
         //variables
@@ -281,7 +281,7 @@ int main(void)
 
                 if(adcFinished){
                         //Send the information through the uart
-                        
+
                 }
 
                 if(UARTFinished){
