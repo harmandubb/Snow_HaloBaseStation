@@ -215,22 +215,7 @@ int main(void)
         }
         //-----------------BLUETOOTH -----------------------//
 
-        if(isRightBoot){
-
-        } else {
-                struct bt_nus_cb uart_cb = {
-                        .sent = sent_uart_cb,
-                        .send_enabled = send_enable_uart_cb,
-
-                };
-
-                //LEFT BOOTH SET UP 
-                err = bt_nus_init(&uart_cb);
-                if(err < 0){
-                        LOG_ERR("ERROR UART service init error: %d", err);
-                }
-
-        }
+        
         //-----------------------BLUETOOTH SCAN----------------------//
         err = bt_enable(bt_ready_cb);
 	if (err) {
@@ -281,6 +266,23 @@ int main(void)
                 if (err < 0) {
                         LOG_ERR("Unable to stop bond scanning");
                 }
+        }
+
+        if(isRightBoot){
+
+        } else {
+                struct bt_nus_cb uart_cb = {
+                        .sent = sent_uart_cb,
+                        .send_enabled = send_enable_uart_cb,
+
+                };
+
+                //LEFT BOOTH SET UP 
+                err = bt_nus_init(&uart_cb);
+                if(err < 0){
+                        LOG_ERR("ERROR UART service init error: %d", err);
+                }
+
         }
 
         *led_operation_ptr = BOARD_ALIVE;
