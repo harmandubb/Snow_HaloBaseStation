@@ -46,6 +46,9 @@ int main(void)
 
         //flags 
         extern bool isRightBoot; 
+        bool requestFinished = true; 
+        bool adcFinished;
+        bool UARTFinished = true; 
         
         //variables
         
@@ -176,9 +179,8 @@ int main(void)
                 LOG_INF("INDEX: %d -- VALUE: %d", i, adc_buf[i]);
         }
 
-        while(!adcReady);
-        LOG_INF("ADC INITALIZATION DONE\n");
-        adcReady = false; 
+        while(!adcFinished);
+        LOG_INF("ADC INITALIZATION DONE\n"); 
 
         //----------------------GPIO INIT--------------------------//
         //---------------------BUTTON INIT-------------------------//
@@ -265,6 +267,27 @@ int main(void)
         *led_operation_ptr = BOARD_ALIVE;
 
         for(;;){
+
+                if(requestFinished){
+                        requestFinished = false;  
+                        adcFinished = false; 
+                        UARTFinished = false; 
+                        err = adc_read(adc_dev, &sequence);
+                        if (err < 0) {
+                                LOG_ERR("Could not read (%d)", err);
+                                return -1; 
+                        }
+                }
+
+                if(adcFinished){
+                        //Send the information through the uart
+                        
+                }
+
+                if(UARTFinished){
+                        requestFinished = true; 
+                }
+                
                 status_led_operation(*led_operation_ptr);
 
         }

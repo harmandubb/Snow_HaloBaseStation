@@ -32,7 +32,7 @@ extern "C" {
 #define NUM_SENSORS (2)
 #define ADC_BUFFER_SIZE (NUM_SENSORS*2)
 
-extern bool adcReady;
+extern bool adcFinished;
 extern uint16_t led_handle;
 extern struct bt_conn *conn; //TODO: make this an array of connections based on the connections that are allowed to allow for multiple gatt operations to take place. For now just allow one wrist device to take place. 
 

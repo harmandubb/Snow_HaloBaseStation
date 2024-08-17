@@ -17,7 +17,7 @@
 LOG_MODULE_REGISTER(ADC_Control, LOG_LEVEL_INF);
 
 //flag definitions 
-bool adcReady = false; 
+bool adcFinished = true; 
 
 
 /** @brief request data from sensor 
@@ -62,13 +62,8 @@ enum adc_action my_adc_sequence_callback(const struct device *dev, const struct 
     //set the adc done flag 
     adcReady = true; 
 
-    LOG_INF("Sampling Index: %d", sampling_index);
-
-    if (sampling_index < NUM_SENSORS){
-        return ADC_ACTION_CONTINUE;
-    } else {
-        return ADC_ACTION_FINISH;
-    }
+    return ADC_ACTION_FINISH;
+    
 };
 
 
