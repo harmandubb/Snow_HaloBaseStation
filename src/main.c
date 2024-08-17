@@ -77,10 +77,74 @@ int main(void)
         // ---------------------------ADC INIT---------------------------//
 
         // //initalize the adc device tree variable 
-        static const struct adc_dt_spec adc_channel0 = ADC_DT_SPEC_GET(DT_PATH(zephyr_user0));
-        static const struct adc_dt_spec adc_channel1 = ADC_DT_SPEC_GET(DT_PATH(zephyr_user1));
+        static const struct adc_dt_spec adc_channel_0 = ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user),0);
+        static const struct adc_dt_spec adc_channel_1 = ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user),1);
+        static const struct adc_dt_spec adc_channel_2 = ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user),2);
+        static const struct adc_dt_spec adc_channel_3 = ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user),3);
+        static const struct adc_dt_spec adc_channel_4 = ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user),4);
+        static const struct adc_dt_spec adc_channel_5 = ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user),5);
 
         const struct device *adc_dev = DEVICE_DT_GET(DT_NODELABEL(adc));
+
+        if(!adc_is_ready_dt(&adc_channel_0)){
+                LOG_ERR("ADC controller device %s not ready", adc_channel_0.dev->name);
+        }
+
+        if(!adc_is_ready_dt(&adc_channel_1)){
+                LOG_ERR("ADC controller device %s not ready", adc_channel_1.dev->name);
+        }
+
+        if(!adc_is_ready_dt(&adc_channel_2)){
+                LOG_ERR("ADC controller device %s not ready", adc_channel_2.dev->name);
+        }
+
+        if(!adc_is_ready_dt(&adc_channel_3)){
+                LOG_ERR("ADC controller device %s not ready", adc_channel_3.dev->name);
+        }
+
+        if(!adc_is_ready_dt(&adc_channel_4)){
+                LOG_ERR("ADC controller device %s not ready", adc_channel_4.dev->name);
+        }
+
+        if(!adc_is_ready_dt(&adc_channel_5)){
+                LOG_ERR("ADC controller device %s not ready", adc_channel_5.dev->name);
+        }
+
+        err = adc_channel_setup_dt(&adc_channel_0);
+        if (err < 0) {
+                LOG_ERR("Could not setup channel #%d (%d)", 0, err);
+                return 0;
+        }
+
+        err = adc_channel_setup_dt(&adc_channel_1);
+        if (err < 0) {
+                LOG_ERR("Could not setup channel #%d (%d)", 0, err);
+                return 0;
+        }
+
+        err = adc_channel_setup_dt(&adc_channel_2);
+        if (err < 0) {
+                LOG_ERR("Could not setup channel #%d (%d)", 0, err);
+                return 0;
+        }
+
+        err = adc_channel_setup_dt(&adc_channel_3);
+        if (err < 0) {
+                LOG_ERR("Could not setup channel #%d (%d)", 0, err);
+                return 0;
+        }
+
+        err = adc_channel_setup_dt(&adc_channel_4);
+        if (err < 0) {
+                LOG_ERR("Could not setup channel #%d (%d)", 0, err);
+                return 0;
+        }
+
+        err = adc_channel_setup_dt(&adc_channel_5);
+        if (err < 0) {
+                LOG_ERR("Could not setup channel #%d (%d)", 0, err);
+                return 0;
+        }
 
         struct adc_sequence_options opts = {
                 .interval_us = 0,
@@ -98,32 +162,10 @@ int main(void)
 		//.calibrate = true, //turn on calibration after the bare minimum code is active
                 .options = &opts,
                 .channels = (1 << NUM_SENSORS) - 1,
+                .resolution = 12,
 	};
 
-        err = adc_channel_setup_dt(&adc_channel0);
-        if (err < 0) {
-                LOG_ERR("Could not setup channel #%d (%d)", 0, err);
-                return -1;
-        }
-
-        err = adc_channel_setup_dt(&adc_channel1);
-        if (err < 0) {
-                LOG_ERR("Could not setup channel #%d (%d)", 0, err);
-                return -1;
-        }
-
-        // err = adc_sequence_init_dt(&adc_channel0, &sequence);
-        // if (err < 0) {
-        //         LOG_ERR("Could not initalize sequnce");
-        //         return -1;
-        // }
-
-        // err = adc_sequence_init_dt(&adc_channel1, &sequence);
-        // if (err < 0) {
-        //         LOG_ERR("Could not initalize sequnce");
-        //         return -1;
-        // }
-        err = adc_read(adc_channel.dev, &sequence);
+        err = adc_read(adc_dev, &sequence);
         if (err < 0) {
                 LOG_ERR("Could not read (%d)", err);
                 return -1; 
