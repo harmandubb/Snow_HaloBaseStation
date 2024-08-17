@@ -14,6 +14,8 @@ target_sources(app PRIVATE
   src/adc_control.h
   src/button_control.c
   src/button_control.h
+  src/UART_bt_control.c
+  src/UART_bt_control.h
 )
 
 # NORDIC SDK APP END

@@ -573,3 +573,4 @@ void bt_disconnect_all(struct k_work *work){
 };
 
 K_WORK_DEFINE(bt_disconnect_all_work, bt_disconnect_all);
+

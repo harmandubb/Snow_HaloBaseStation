@@ -211,7 +211,22 @@ int main(void)
                 isRightBoot = false; 
                 LOG_INF("Left Boot Present");
         }
+        //-----------------BLUETOOTH -----------------------//
 
+        if(isRightBoot){
+
+        } else {
+                struct bt_nus_cb = {
+                        .sent = ,
+                        
+                };
+                //LEFT BOOTH SET UP 
+                err = bt_nus_init();
+                if(err < 0){
+                        LOG_ERR("ERROR UART service init error: %d", err);
+                }
+
+        }
         //-----------------------BLUETOOTH SCAN----------------------//
         err = bt_enable(bt_ready_cb);
 	if (err) {
