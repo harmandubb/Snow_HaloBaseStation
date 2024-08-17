@@ -10,10 +10,9 @@
 
 #include "adc_control.h"
 
-#define NUM_MULTIPLEXER_PINS_ALLOWED (4)
+
 #define ADC_CHANNEL_ID  DT_PROP(DT_CHILD(ADC_NODE, channel_0), reg)
-#define ADC_RESOLUTION (12)
-#define ADC_BUFFER_SIZE (2)
+
 
 LOG_MODULE_REGISTER(ADC_Control, LOG_LEVEL_INF);
 
@@ -37,44 +36,13 @@ bool adcReady = false;
 *                      other errors --> based on the pin logic value setting  
 */
 
-int request_sensor_data(const struct device* gpio_dev, const struct adc_dt_spec *spec, int sel_pins[], int num_pins, int num_sensor, int num_total_sensors, struct adc_sequence *sequence){
-    //did you change the adc num pins flag? 
-    int err; 
-    if (!(num_sensor < num_total_sensors)) {
-        LOG_ERR("num_sensor val (%d) is greater than sensors present (%d)\n", num_sensor, num_total_sensors);
-        return -100; 
-    }
-
-    static uint32_t off_pin_mask = 0;
-    for (int i = 0; i < num_pins; i++){
-        off_pin_mask = off_pin_mask | (1 << sel_pins[i]);
-    }
-    
-    //turn off all of the gpio pins initilially
-    gpio_port_clear_bits(gpio_dev,off_pin_mask);
-
-     // Turn on the pins based on the num_sensor that is being used.
-    for (int i = 0; i < num_pins; i++) {
-        if ((num_sensor >> i) & 1) {
-            err = gpio_pin_set(gpio_dev, sel_pins[i], true);
-            if (err < 0) {
-                LOG_ERR("Error (%d) occurred when setting the pin for the multiplexer\n", err);
-                return err;
-            }
-        }
-    }
-
-    //offset the pin on 
-    int offset = 29; //corresponds to 4 on the bits  
-    err = gpio_pin_set(gpio_dev, offset, true);
-    if (err < 0){
-        LOG_ERR("Error (%d) occurred when setting the offset pin", err);
-    }
-
+int request_sensor_data(const struct adc_dt_spec *spec, struct adc_sequence *sequence){
+    int err = 0; 
     //request the adc to start recording the data     
     err = adc_read(spec->dev, sequence);
     if (err < 0){
         LOG_ERR("Error (%d) has occured when trying to read from adc\n", err);
+        return err; 
     }
 
     return 0; 
@@ -94,7 +62,13 @@ enum adc_action my_adc_sequence_callback(const struct device *dev, const struct 
     //set the adc done flag 
     adcReady = true; 
 
-    return ADC_ACTION_FINISH;
+    LOG_INF("Sampling Index: %d", sampling_index);
+
+    if (sampling_index < NUM_SENSORS){
+        return ADC_ACTION_CONTINUE;
+    } else {
+        return ADC_ACTION_FINISH;
+    }
 };
 
 

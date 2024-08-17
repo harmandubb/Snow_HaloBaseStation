@@ -10,8 +10,7 @@
 
 #include <math.h>
 
-#define NUM_SENSORS (2)
-#define ADC_BUFFER_SIZE (NUM_SENSORS*2)
+
 
 // GPIO0 - adc read pins
 #define PIN_ADC_READ_0 (2)
@@ -78,7 +77,10 @@ int main(void)
         // ---------------------------ADC INIT---------------------------//
 
         // //initalize the adc device tree variable 
-        static const struct adc_dt_spec adc_channel = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));
+        static const struct adc_dt_spec adc_channel0 = ADC_DT_SPEC_GET(DT_PATH(zephyr_user0));
+        static const struct adc_dt_spec adc_channel1 = ADC_DT_SPEC_GET(DT_PATH(zephyr_user1));
+
+        const struct device *adc_dev = DEVICE_DT_GET(DT_NODELABEL(adc));
 
         struct adc_sequence_options opts = {
                 .interval_us = 0,
@@ -98,21 +100,38 @@ int main(void)
                 .channels = (1 << NUM_SENSORS) - 1,
 	};
 
-        err = adc_channel_setup_dt(&adc_channel);
+        err = adc_channel_setup_dt(&adc_channel0);
         if (err < 0) {
                 LOG_ERR("Could not setup channel #%d (%d)", 0, err);
                 return -1;
         }
 
-        err = adc_sequence_init_dt(&adc_channel, &sequence);
+        err = adc_channel_setup_dt(&adc_channel1);
         if (err < 0) {
-                LOG_ERR("Could not initalize sequnce");
+                LOG_ERR("Could not setup channel #%d (%d)", 0, err);
                 return -1;
         }
+
+        // err = adc_sequence_init_dt(&adc_channel0, &sequence);
+        // if (err < 0) {
+        //         LOG_ERR("Could not initalize sequnce");
+        //         return -1;
+        // }
+
+        // err = adc_sequence_init_dt(&adc_channel1, &sequence);
+        // if (err < 0) {
+        //         LOG_ERR("Could not initalize sequnce");
+        //         return -1;
+        // }
         err = adc_read(adc_channel.dev, &sequence);
         if (err < 0) {
                 LOG_ERR("Could not read (%d)", err);
                 return -1; 
+        }
+
+        //test the adc read 
+        for (int i = 0; i < ADC_BUFFER_SIZE; i++){
+                LOG_INF("INDEX: %d -- VALUE: %d", i, adc_buf[i]);
         }
 
         while(!adcReady);
