@@ -7,6 +7,7 @@
 #include "adc_control.h"
 #include "bluetooth_control.h"
 #include "button_control.h"
+#include "UART_bt_control.h"
 
 #include <math.h>
 
@@ -49,6 +50,7 @@ int main(void)
         bool requestFinished = true; 
         extern bool adcFinished;
         bool UARTFinished = true; 
+        extern bool UARTConnectionReady; 
         
         //variables
         
@@ -216,12 +218,14 @@ int main(void)
         if(isRightBoot){
 
         } else {
-                struct bt_nus_cb = {
-                        .sent = ,
-                        
+                struct bt_nus_cb uart_cb = {
+                        .sent = sent_uart_cb,
+                        .send_enabled = send_enable_uart_cb,
+
                 };
+
                 //LEFT BOOTH SET UP 
-                err = bt_nus_init();
+                err = bt_nus_init(&uart_cb);
                 if(err < 0){
                         LOG_ERR("ERROR UART service init error: %d", err);
                 }

@@ -35,5 +35,6 @@
         "nus.h": "c",
         "nus_client.h": "c",
         "gatt.h": "c"
-    }
+    },
+    "C_Cpp.configurationWarnings": "disabled"
 }
