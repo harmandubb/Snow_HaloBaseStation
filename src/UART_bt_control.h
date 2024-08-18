@@ -8,7 +8,8 @@
 #include <zephyr/logging/log.h>
 
 // External variables
-extern bool UARTConnectionReady; 
+extern bool UARTSendEnable; 
+extern bool UARTFinished; 
 
 // Function declarations
 void sent_uart_cb(struct bt_conn *conn);

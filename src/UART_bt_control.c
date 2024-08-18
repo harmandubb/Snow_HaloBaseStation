@@ -2,7 +2,8 @@
 
 LOG_MODULE_REGISTER(UART_bt_control, LOG_LEVEL_INF);
 
-bool UARTConnectionReady = false;
+bool UARTSendEnable = false;
+bool UARTFinished = false; 
 
 /** @brief Callback function for when the UART transmission is completed
  *  
@@ -11,6 +12,8 @@ bool UARTConnectionReady = false;
  */
 void sent_uart_cb(struct bt_conn *conn) {
     LOG_INF("UART data successfully sent");
+    UARTFinished = true; 
+
 }
 
 /** @brief Callback function to check if the central has accepted notifications,
@@ -21,7 +24,7 @@ void sent_uart_cb(struct bt_conn *conn) {
 void send_enable_uart_cb(enum bt_nus_send_status status) {
     if (status == BT_NUS_SEND_STATUS_ENABLED) {
         LOG_INF("The UART connection is successful");
-        UARTConnectionReady = true; 
+        UARTSendEnable = true; 
     } else {
         LOG_ERR("The UART connection failed");
     }

@@ -49,8 +49,8 @@ int main(void)
         extern bool isRightBoot; 
         bool requestFinished = true; 
         extern bool adcFinished;
-        bool UARTFinished = true; 
-        extern bool UARTConnectionReady; 
+        extern bool UARTFinished; 
+        extern bool UARTSendEnable; 
         
         //variables
         
@@ -158,7 +158,7 @@ int main(void)
                 .extra_samplings = 0,
                 
         };
-        uint16_t adc_buf[ADC_BUFFER_SIZE] = {0};
+        uint8_t adc_buf[ADC_BUFFER_SIZE] = {0};
         
 	struct adc_sequence sequence = {
 		.buffer = &adc_buf,
@@ -289,6 +289,8 @@ int main(void)
 
         for(;;){
 
+                LOG_INF("requestFinsihed: %d, adcFinished: %d, UARTFinished: %d, isRightBoot: %d, UARTSendEnable: %d",requestFinished, adcFinished, UARTFinished, isRightBoot, UARTSendEnable);
+
                 if(requestFinished){
                         requestFinished = false;  
                         adcFinished = false; 
@@ -301,7 +303,13 @@ int main(void)
                 }
 
                 if(adcFinished){
-                        //Send the information through the uart
+                        if(!isRightBoot && UARTSendEnable){
+                                //send information through uart
+                                err = bt_nus_send(NULL, adc_buf, ADC_BUFFER_SIZE);
+                                if (err < 0){
+                                        LOG_ERR("Error UART Send: %d", err);
+                                } 
+                        }
 
                 }
 
