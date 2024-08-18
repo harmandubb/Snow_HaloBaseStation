@@ -49,13 +49,12 @@ void Lboot_scan(struct k_work *work){
         return; 
     }
 
-    // err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, DEVICE_BOARD_HALO_L);
-    // if (err < 0){
-    //     LOG_ERR("L Boot name scanning filters cannot be set (err %d)", err);
-    //     return; 
-    // }
+    err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, DEVICE_BOARD_HALO_L);
+    if (err < 0){
+        LOG_ERR("L Boot name scanning filters cannot be set (err %d)", err);
+        return; 
+    }
 
-    // err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_NAME_FILTER, true);
     err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, true);
     if (err < 0) {
 			LOG_ERR("Filters cannot be turned on (err %d)", err);
