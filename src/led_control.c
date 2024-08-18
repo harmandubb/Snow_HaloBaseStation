@@ -23,7 +23,7 @@
 
 #include "led_control.h"
 
-LOG_MODULE_REGISTER(LED_Control, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(led_control, LOG_LEVEL_INF);
 
 #define HOLD_INTERVAL_DURATION K_SECONDS(3) //secounds
 #define HOLD_INTERVAL_PERIOD K_SECONDS(5) //secounds 

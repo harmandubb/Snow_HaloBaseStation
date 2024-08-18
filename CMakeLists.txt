@@ -16,6 +16,8 @@ target_sources(app PRIVATE
   src/button_control.h
   src/UART_bt_control.c
   src/UART_bt_control.h
+  src/boot_bt_connect.c
+  src/boot_bt_connect.h
 )
 
 # NORDIC SDK APP END

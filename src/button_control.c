@@ -5,6 +5,7 @@ LOG_MODULE_REGISTER(Button_Control, LOG_LEVEL_INF);
 
 //Global variables
 bool isRightBoot = false; 
+extern struct k_work Lboot_scan_work; 
 
 /** @brief initilizes the GPIO for the button input responsible for the paring of the system
  * 
@@ -117,7 +118,8 @@ void boot_pairing_button_cb(const struct device *port, struct gpio_callback *cb,
 
 	//check what the boot mode is 
 	if (isRightBoot){
-
+		// use the scanning options
+		k_work_submit(&Lboot_scan_work);
 	} else {
 		//left boot operation is being focused on 
 		k_work_submit(&advertise_L_boot_work);

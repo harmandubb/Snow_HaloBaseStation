@@ -1,7 +1,7 @@
 #include "bluetooth_control.h"
 #include "led_control.h"
 
-LOG_MODULE_REGISTER(button_control, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(bluetooth_control, LOG_LEVEL_INF);
 
 static const struct bt_data 
 ad[] = {
@@ -541,28 +541,6 @@ void bond_initial_cb(const struct bt_bond_info *info, void *user_data){
 
 };
 
-
-/** @brief work for advertising the L_Boot configurations
- * 
- * 	@param: work parameter for defining work
- * 
- */
-void advertise_L_boot(struct k_work *work){
-	int err_code = bt_le_adv_stop();
-	if (err_code) {
-		LOG_ERR("Cannot stop advertising err= %d \n", err_code);
-		return;
-	}
-
-	err_code = bt_le_adv_start(BT_LE_ADV_CONN_NO_ACCEPT_LIST, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
-	if (err_code) {
-		LOG_ERR("Cannot start open advertising (err: %d)\n", err_code);
-	} else	{
-		LOG_INF("Advertising in pairing mode started");
-	}
-};
-
-K_WORK_DEFINE(advertise_L_boot_work, advertise_L_boot);
 
 /** @brief disconnect from all bluetooth devices
  * 

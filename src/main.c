@@ -238,35 +238,35 @@ int main(void)
                 LOG_ERR("Settings load failed (err %d)", err);
         }
 
-        //enable to be a central 
-        const struct bt_scan_init_param bt_scan_init_opts = {
-                .scan_param = NULL, //default config 
-                .connect_if_match = true,
-                .conn_param = NULL, //default config
-        };
+        // //enable to be a central 
+        // const struct bt_scan_init_param bt_scan_init_opts = {
+        //         .scan_param = NULL, //default config 
+        //         .connect_if_match = true,
+        //         .conn_param = NULL, //default config
+        // };
 
-        bt_scan_init(&bt_scan_init_opts); 
-        BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
-        bt_scan_cb_register(&scan_cb);
+        // bt_scan_init(&bt_scan_init_opts); 
+        // BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
+        // bt_scan_cb_register(&scan_cb);
 
-        //------------------------BOND Devices Scan Check------------//
-        int bond_connect_counter = 0 ; 
-        int bond_count = scan_bond_devices();
-        LOG_INF("Scanning successfully started");
-        LOG_INF("bond count: %d", bond_count);
+        // // ------------------------BOND Devices Scan Check------------//
+        // int bond_connect_counter = 0 ; 
+        // int bond_count = scan_bond_devices();
+        // LOG_INF("Scanning successfully started");
+        // LOG_INF("bond count: %d", bond_count);
 
-        while((bond_count > 0) && (bond_connect_counter < BOND_CONNECT_COUNT_THRESHOLD) && (!connectedFlag)){
-                k_sleep(K_MSEC(500));
-                bond_connect_counter++;
-        }
+        // while((bond_count > 0) && (bond_connect_counter < BOND_CONNECT_COUNT_THRESHOLD) && (!connectedFlag)){
+        //         k_sleep(K_MSEC(500));
+        //         bond_connect_counter++;
+        // }
 
-        if (!connectedFlag) {
-                //stop the bond scanning 
-                err = bt_scan_stop();
-                if (err < 0) {
-                        LOG_ERR("Unable to stop bond scanning");
-                }
-        }
+        // if (!connectedFlag) {
+        //         //stop the bond scanning 
+        //         err = bt_scan_stop();
+        //         if (err < 0) {
+        //                 LOG_ERR("Unable to stop bond scanning");
+        //         }
+        // }
 
         if(isRightBoot){
 
@@ -291,31 +291,36 @@ int main(void)
 
                 LOG_INF("requestFinsihed: %d, adcFinished: %d, UARTFinished: %d, isRightBoot: %d, UARTSendEnable: %d",requestFinished, adcFinished, UARTFinished, isRightBoot, UARTSendEnable);
 
-                if(requestFinished){
-                        requestFinished = false;  
-                        adcFinished = false; 
-                        UARTFinished = false; 
-                        err = adc_read(adc_dev, &sequence);
-                        if (err < 0) {
-                                LOG_ERR("Could not read (%d)", err);
-                                return -1; 
-                        }
-                }
-
-                if(adcFinished){
-                        if(!isRightBoot && UARTSendEnable){
-                                //send information through uart
-                                err = bt_nus_send(NULL, adc_buf, ADC_BUFFER_SIZE);
-                                if (err < 0){
-                                        LOG_ERR("Error UART Send: %d", err);
-                                } 
+                if(!isRightBoot){
+                        //LEFT BOOT OPERATION
+                        if(requestFinished){
+                                requestFinished = false;  
+                                adcFinished = false; 
+                                UARTFinished = false; 
+                                err = adc_read(adc_dev, &sequence);
+                                if (err < 0) {
+                                        LOG_ERR("Could not read (%d)", err);
+                                        return -1; 
+                                }
                         }
 
-                }
+                        if(adcFinished){
+                                if(UARTSendEnable){
+                                        //send information through uart
+                                        err = bt_nus_send(NULL, adc_buf, ADC_BUFFER_SIZE);
+                                        if (err < 0){
+                                                LOG_ERR("Error UART Send: %d", err);
+                                        } 
+                                }
+                        }
 
-                if(UARTFinished){
-                        requestFinished = true; 
+                        if(UARTFinished){
+                                requestFinished = true; 
+                        }
+                } else {
+                        //RIGHT BOOT OPERATION
                 }
+                
                 
                 status_led_operation(*led_operation_ptr);
 
