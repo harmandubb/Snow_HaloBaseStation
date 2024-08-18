@@ -8,6 +8,7 @@
 #include "bluetooth_control.h"
 #include "button_control.h"
 #include "UART_bt_control.h"
+#include "boot_bt_connect.h"
 
 #include <math.h>
 
@@ -238,16 +239,7 @@ int main(void)
                 LOG_ERR("Settings load failed (err %d)", err);
         }
 
-        // //enable to be a central 
-        // const struct bt_scan_init_param bt_scan_init_opts = {
-        //         .scan_param = NULL, //default config 
-        //         .connect_if_match = true,
-        //         .conn_param = NULL, //default config
-        // };
-
-        // bt_scan_init(&bt_scan_init_opts); 
-        // BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match, scan_connecting_error, scan_connecting);
-        // bt_scan_cb_register(&scan_cb);
+        
 
         // // ------------------------BOND Devices Scan Check------------//
         // int bond_connect_counter = 0 ; 
@@ -269,7 +261,15 @@ int main(void)
         // }
 
         if(isRightBoot){
+                const struct bt_scan_init_param bt_scan_init_opts = {
+                        .scan_param = NULL, //default config 
+                        .connect_if_match = true,
+                        .conn_param = NULL, //default config
+                };
 
+                bt_scan_init(&bt_scan_init_opts); 
+                BT_SCAN_CB_INIT(boot_scan_cb, boot_scan_filter_match, boot_scan_filter_no_match, boot_scan_connecting_error, boot_scan_connecting);
+                bt_scan_cb_register(&boot_scan_cb);
         } else {
                 struct bt_nus_cb uart_cb = {
                         .sent = sent_uart_cb,
@@ -288,8 +288,8 @@ int main(void)
         *led_operation_ptr = BOARD_ALIVE;
 
         for(;;){
+                // LOG_INF("requestFinsihed: %d, adcFinished: %d, UARTFinished: %d, isRightBoot: %d, UARTSendEnable: %d",requestFinished, adcFinished, UARTFinished, isRightBoot, UARTSendEnable);
 
-                LOG_INF("requestFinsihed: %d, adcFinished: %d, UARTFinished: %d, isRightBoot: %d, UARTSendEnable: %d",requestFinished, adcFinished, UARTFinished, isRightBoot, UARTSendEnable);
 
                 if(!isRightBoot){
                         //LEFT BOOT OPERATION

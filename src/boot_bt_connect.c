@@ -37,7 +37,7 @@ void Lboot_scan(struct k_work *work){
 
     err = bt_scan_stop(); 
     if (err < 0){
-        LOG_INF("Unable to stop scanning (err: %d)", err);
+        LOG_ERR("Unable to stop scanning (err: %d)", err);
     }
 
     bt_scan_filter_disable(); 
@@ -49,17 +49,24 @@ void Lboot_scan(struct k_work *work){
         return; 
     }
 
-    err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, DEVICE_BOARD_HALO_L);
-    if (err < 0){
-        LOG_ERR("L Boot name scanning filters cannot be set (err %d)", err);
-        return; 
-    }
+    // err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, DEVICE_BOARD_HALO_L);
+    // if (err < 0){
+    //     LOG_ERR("L Boot name scanning filters cannot be set (err %d)", err);
+    //     return; 
+    // }
+
+    // err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER | BT_SCAN_NAME_FILTER, true);
+    err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, true);
+    if (err < 0) {
+			LOG_ERR("Filters cannot be turned on (err %d)", err);
+			return;
+	}
 
     LOG_INF("Scan module initialized");
 
     err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
     if (err < 0){
-        LOG_ERR("L Boot scanning fialed to start (err %d)", err);
+        LOG_ERR("L Boot scanning failed to start (err %d)", err);
     }
 
 }          
