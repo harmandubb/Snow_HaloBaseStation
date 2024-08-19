@@ -13,7 +13,9 @@
 #include <bluetooth/services/nus_client.h>
 #include <zephyr/bluetooth/gatt.h>
 
+
 #include <bluetooth/scan.h>
+#include <bluetooth/gatt_dm.h>
 
 #include "led_control.h"
 
@@ -40,5 +42,6 @@ void boot_scan_connecting_error(struct bt_scan_device_info *device_info);
 void boot_scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_filter_match *filter_match, bool connectable);
 void boot_scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable);
 void boot_scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn);
+int UART_gatt_discover(struct bt_conn *conn);
 
 #endif /* BOOT_BT_CONNECT_H */

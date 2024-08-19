@@ -15,6 +15,7 @@
 #include <zephyr/bluetooth/gatt.h>
 
 #include <bluetooth/scan.h>
+#include "boot_bt_connect.h"
 
 #define DEVICE_BOARD_HALO_L "BOARD_HALO_L"
 #define DEVICE_BOARD_HALO_R "BOARD_HALO_R"

@@ -23,6 +23,7 @@ static const struct bt_data sd[] = {
 //global variables 
 struct k_work Lboot_scan_work; 
 struct bt_conn *Lboot_conn; 
+static struct bt_nus_client nus_client;
 
 
 /** @brief Set the filters for accepting L_Boot and start the scanning
@@ -200,123 +201,6 @@ void boot_scan_connecting_error(struct bt_scan_device_info *device_info)
 BT_SCAN_CB_INIT(boot_scan_cb, boot_scan_filter_match, boot_scan_filter_no_match, boot_scan_connecting_error, boot_scan_connecting);
 
 
-/** @brief callback funciton to address cycling through characteristics of the incoming connection
- * 
- * 	Want to find the led characteristic of the led service then get the required information 
- * 
- *  @param bt_conn *conn: ptr to the connection parameters needed for a bluetooth conneciton 
- *  @param bt_gatt_attr *attr: the gatt attribute that is found currently 
- *  @param bt_gatt_discover_params *params: Discovery parameters that are given
- *  
- */
-
-// uint8_t discover_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt_gatt_discover_params *params) {	
-// 	// static struct bt_gatt_discover_params discover_params;
-// 	// k_sleep(K_SECONDS(1));
-// 	// if (attr == NULL) {
-//     //     LOG_INF("Discovery complete");
-//     //     return BT_GATT_ITER_STOP;
-//     // }
-
-
-//     // if (params->type == BT_GATT_DISCOVER_PRIMARY) {
-//     //     struct bt_gatt_service_val *service_val = (struct bt_gatt_service_val *)attr->user_data;
-//     //     print_uuid(service_val->uuid);
-
-//     //     if (bt_uuid_cmp(service_val->uuid, BT_UUID_LBS) == 0) {
-			
-//     //         LOG_INF("Found LBS service");
-//     //         // Here you can start discovering characteristics of the LBS service
-// 	// 		discover_params.uuid = NULL;
-// 	// 		discover_params.start_handle = attr->handle + 1; 
-// 	// 		discover_params.end_handle = service_val->end_handle;
-// 	// 		discover_params.type = BT_GATT_DISCOVER_CHARACTERISTIC;
-// 	// 		discover_params.func = discover_cb;
-
-// 	// 		LOG_INF("BEFORE the LBS discover function");
-// 	// 		k_sleep(K_SECONDS(1));
-// 	// 		int err = bt_gatt_discover(conn, &discover_params);
-// 	// 		LOG_INF("After the LBS discover function");
-// 	// 		k_sleep(K_SECONDS(1));
-
-// 	// 		if (err < 0){
-// 	// 			LOG_ERR("Characteristic discovery failed (err: %d)", err);
-// 	// 			return BT_GATT_ITER_STOP;
-// 	// 		}
-//     //         return BT_GATT_ITER_STOP;
-//     //     }
-//     // } else if (params->type == BT_GATT_DISCOVER_CHARACTERISTIC){
-// 	// 	struct bt_gatt_chrc *chrc = (struct bt_gatt_chrc *)attr->user_data;
-// 	// 	LOG_INF("Found characteristic with UUID: ");
-//     //     print_uuid(chrc->uuid);
-
-// 	// 	if (bt_uuid_cmp(chrc->uuid, BT_UUID_LBS_LED) == 0) {
-//     //         LOG_INF("Found LED characteristic");
-//     //         led_handle = chrc->value_handle;
-//     //         LOG_INF("LED characteristic handle: %u", led_handle);
-//     //         ledHandleReady = true;
-//     //         return BT_GATT_ITER_STOP;
-//     //     }
-// 	// }
-
-//     // return BT_GATT_ITER_CONTINUE;
-// }
-
-
-
-// uint8_t gatt_read_func(struct bt_conn *conn, uint8_t err, struct bt_gatt_read_params *params, const void *data, uint16_t length)
-// {
-//     // if (err< 0) {
-//     //     LOG_ERR("Read failed (err %d)\n", err);
-//     //     return BT_GATT_ITER_STOP ;
-//     // }
-
-// 	// if(data == NULL){
-// 	// 	LOG_INF("Read is complete");
-
-// 	// 	return BT_GATT_ITER_STOP;
-// 	// } else {
-// 	// 	LOG_INF("Size of data: %d", length);
-//     //     memcpy(read_data, data, length);
-//     //     LOG_INF("Read data: %s\n", read_data);
-//     //     return BT_GATT_ITER_STOP;
-//     // }
-
-// 	// return BT_GATT_ITER_CONTINUE;
-// };
-
-/** @brief create the appropriate scan filter based on the bonded devices. 
- * 
- * 	
- */
-
-static int bond_filter_scan(const bt_addr_le_t* bond_addr) {
-    int err;
-
-    LOG_INF("BOND FILTER SCAN STARTED");
-
-    err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR, bond_addr);
-    if (err < 0) {
-        LOG_ERR("Error adding the addr filter for bonded devices: (err %d)", err);
-        return err;
-    }
-
-    err = bt_scan_filter_enable(BT_SCAN_ADDR_FILTER, false);
-    if (err < 0) {
-        LOG_ERR("Filters cannot be turned on (err %d)", err);
-        return err;
-    }
-
-    err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-    if (err < 0){
-        LOG_ERR("Scanning failed to start (err %d)", err);
-        return err;
-    }
-
-    return 0;  // Ensure a value is returned in the success case
-}
-
-
 /** @brief work for advertising the L_Boot configurations
  * 
  * 	@param: work parameter for defining work
@@ -339,3 +223,49 @@ void advertise_L_boot(struct k_work *work){
 
 K_WORK_DEFINE(advertise_L_boot_work, advertise_L_boot);
 
+static void uart_discovery_complete(struct bt_gatt_dm *dm, void *context){
+	struct bt_nus_client *nus = context; 
+	LOG_INF("Service discovery completed");
+
+	bt_gatt_dm_data_print(dm);
+	bt_nus_handles_assign(dm, nus);
+	bt_gatt_dm_data_release(dm);
+};
+
+static void uart_discovery_not_found(struct bt_conn *conn, void *context){
+	LOG_INF("Service not found");
+};
+
+static void uart_error_found(struct bt_conn *conn, int err, void *context){
+	LOG_WRN("Error while discovering GATT database: (%d)", err);
+};
+
+struct bt_gatt_dm_cb uart_discovery_cb = {
+	.completed = uart_discovery_complete,
+	.service_not_found = uart_discovery_not_found, 
+	.error_found = uart_error_found,
+};
+
+/** @brief UART_gatt_discover: find the UART service 
+ * 
+ * 	@param bt_conn the structure of the bt_connection made 
+ * 	
+ * @return error if present
+ */
+
+int UART_gatt_discover(struct bt_conn *conn){
+	int err = 0; 
+
+	err = bt_gatt_dm_start(conn, 
+						BT_UUID_NUS_SERVICE,
+						&uart_discovery_cb,
+						&nus_client);
+
+	if (err < 0){
+		LOG_ERR("Could not start the discovery procedure (err %d)", err);
+		return err; 
+	}
+
+	return 0;
+	
+};
