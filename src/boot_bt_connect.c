@@ -25,6 +25,9 @@ struct k_work Lboot_scan_work;
 struct bt_conn *Lboot_conn; 
 static struct bt_nus_client nus_client;
 
+//struct defines
+static K_FIFO_DEFINE(fifo_uart_rx_data);
+
 
 /** @brief Set the filters for accepting L_Boot and start the scanning
  *  
@@ -269,3 +272,41 @@ int UART_gatt_discover(struct bt_conn *conn){
 	return 0;
 	
 };
+
+uint8_t ble_uart_data_received(struct bt_nus_client *nus, const uint8_t *data, uint16_t len){
+	LOG_INF("Received Data from UART");
+	ARG_UNUSED(nus);
+
+	int err = 0; 
+
+	for (uint16_t i = 0; i < len; i++){
+		k_fifo_put(&fifo_uart_rx_data,data[i]); //see if a type should be cast to the fifo to do some porcessing
+	}
+
+	return BT_GATT_ITER_CONTINUE; 
+};
+
+/** @brief initialize the nuse client module for receiving information 
+ * 
+ *  
+ *  @return error is present 
+ */
+
+int nus_client_init(){
+	int err = 0; 
+	static struct bt_nus_client_init_param init = {
+		.cb = {
+			.received = ble_uart_data_received,
+		}
+	};
+
+	err = bt_nus_client_init(&nus_client, &init);
+	if (err < 0){
+		LOG_ERR("NUS Client Initilaizaiton failed (err %d)", err);
+		return err; 
+	}
+
+	LOG_INF("NUS Client module initilized");
+	return err; 
+}
+

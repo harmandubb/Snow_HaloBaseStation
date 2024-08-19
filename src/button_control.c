@@ -24,15 +24,11 @@ int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_call
 	gpio_flags_t flags = GPIO_INPUT | GPIO_ACTIVE_HIGH; // I think the configuration here was wrong before hand
 	gpio_flags_t interrupts = GPIO_INT_EDGE_BOTH; //can change to interrupt on active low 
 
-	LOG_INF("Init GPIO Button: gpio_pin_configure\n");
-
 	err = gpio_pin_configure(gpio_dev, button_pin, flags);
 	if (err < 0) {
 		LOG_ERR("Error %d: failed to configure button gpio pin %d\n", err, button_pin);
 		return err; 
 	} 
-
-	LOG_INF("Init GPIO Button: gpio_pin_interrupt_configure\n");
 
 	err = gpio_pin_interrupt_configure(gpio_dev, button_pin, interrupts);
 	if (err < 0){
@@ -40,11 +36,7 @@ int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_call
 		return err;
 	}
 
-	LOG_INF("Init GPIO Button: gpio_init_callback\n");
-
 	gpio_init_callback(&button_interupt_cb, button_interrrupt_handler ,BIT(button_pin));
-
-	LOG_INF("Init GPIO Button: gpio_add_callback\n");
 
 	err = gpio_add_callback(gpio_dev, &button_interupt_cb);
 	if (err < 0) {

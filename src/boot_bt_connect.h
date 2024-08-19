@@ -22,6 +22,7 @@
 #define DEVICE_BOARD_HALO_L "BOARD_HALO_L"
 #define DEVICE_BOARD_HALO_R "BOARD_HALO_R"
 #define DEVICE_WRIST_HALO "WRIST_HALO"
+#define UART_BUF_SIZE (100)
 
 //Defining advertising parametert with no accept list 
 #define BT_LE_ADV_CONN_NO_ACCEPT_LIST  BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_ONE_TIME, \
@@ -43,5 +44,6 @@ void boot_scan_filter_match(struct bt_scan_device_info *device_info, struct bt_s
 void boot_scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable);
 void boot_scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn);
 int UART_gatt_discover(struct bt_conn *conn);
+int nus_client_init();
 
 #endif /* BOOT_BT_CONNECT_H */

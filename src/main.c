@@ -270,6 +270,11 @@ int main(void)
                 bt_scan_init(&bt_scan_init_opts); 
                 BT_SCAN_CB_INIT(boot_scan_cb, boot_scan_filter_match, boot_scan_filter_no_match, boot_scan_connecting_error, boot_scan_connecting);
                 bt_scan_cb_register(&boot_scan_cb);
+
+                err= nus_client_init();
+                if (err < 0){
+                        LOG_INF("Failed to intialized nus client");
+                }
         } else {
                 struct bt_nus_cb uart_cb = {
                         .sent = sent_uart_cb,
