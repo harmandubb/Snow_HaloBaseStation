@@ -233,6 +233,11 @@ static void uart_discovery_complete(struct bt_gatt_dm *dm, void *context){
 	bt_gatt_dm_data_print(dm);
 	bt_nus_handles_assign(dm, nus);
 	bt_gatt_dm_data_release(dm);
+
+	int err = bt_nus_subscribe_receive(&nus_client);
+	if (err < 0){
+		LOG_ERR("Error Subsribing to the UART notiifcation");
+	}
 };
 
 static void uart_discovery_not_found(struct bt_conn *conn, void *context){
