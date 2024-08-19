@@ -253,7 +253,7 @@ void connected(struct bt_conn *conn, uint8_t err){
 	int result = 0; 
 
 	LOG_INF("Discovering UART Service");
-	result = UART_gatt_discover(Lboot_conn); //need to compare the connection parameters 
+	result = UART_gatt_discover(conn); //need to compare the connection parameters 
 	if (result < 0){
 		LOG_ERR("ERROR when UArt discovery");
 	}

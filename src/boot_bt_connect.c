@@ -225,7 +225,7 @@ K_WORK_DEFINE(advertise_L_boot_work, advertise_L_boot);
 
 static void uart_discovery_complete(struct bt_gatt_dm *dm, void *context){
 	struct bt_nus_client *nus = context; 
-	LOG_INF("Service discovery completed");
+	LOG_INF("UART Service discovery completed");
 
 	bt_gatt_dm_data_print(dm);
 	bt_nus_handles_assign(dm, nus);
