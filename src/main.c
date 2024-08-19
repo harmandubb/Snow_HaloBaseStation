@@ -54,7 +54,7 @@ int main(void)
         extern bool UARTSendEnable; 
         
         //variables
-        
+        void *data; //reading fifo data
         
         
         //get the gpio binding
@@ -323,7 +323,6 @@ int main(void)
                                 requestFinished = true; 
                         }
                 } else {
-                        static void *data; 
                         data = k_fifo_get(&fifo_uart_rx_data, K_MSEC(500));
 
                         if (data == NULL) {
