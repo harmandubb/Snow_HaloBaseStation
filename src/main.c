@@ -323,13 +323,15 @@ int main(void)
                                 requestFinished = true; 
                         }
                 } else {
+                        k_sleep(K_MSEC(500));
+                        LOG_INF("RIGHT BOOT BRANCH");
                         data = k_fifo_get(&fifo_uart_rx_data, K_MSEC(500));
 
-                        if (data == NULL) {
-                                LOG_ERR("Not able to get value from fifo");
-                        } else {
-                                LOG_INF("UART OUTPUT Collected: %d", *(int *)data);
-}
+                        // if (data == NULL) {
+                        //         LOG_ERR("Not able to get value from fifo");
+                        // } else {
+                        //         LOG_INF("UART OUTPUT Collected: %d", *(int *)data);
+                        // }
                 }
                 
                 
