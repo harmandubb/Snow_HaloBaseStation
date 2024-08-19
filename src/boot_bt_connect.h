@@ -36,6 +36,7 @@
 
 //external variables
 extern struct k_work Lboot_scan_work; 
+extern struct bt_nus_client nus_client;
 
 //function defines: 
 void print_uuid(const struct bt_uuid *uuid);
@@ -43,7 +44,6 @@ void boot_scan_connecting_error(struct bt_scan_device_info *device_info);
 void boot_scan_filter_match(struct bt_scan_device_info *device_info, struct bt_scan_filter_match *filter_match, bool connectable);
 void boot_scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable);
 void boot_scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn);
-int UART_gatt_discover(struct bt_conn *conn);
-int nus_client_init();
+
 
 #endif /* BOOT_BT_CONNECT_H */

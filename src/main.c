@@ -293,10 +293,10 @@ int main(void)
         *led_operation_ptr = BOARD_ALIVE;
 
         for(;;){
-                // LOG_INF("requestFinsihed: %d, adcFinished: %d, UARTFinished: %d, isRightBoot: %d, UARTSendEnable: %d",requestFinished, adcFinished, UARTFinished, isRightBoot, UARTSendEnable);
 
 
-                if(!isRightBoot){
+                if(!isRightBoot){ //LEFT/Server
+                LOG_INF("requestFinsihed: %d, adcFinished: %d, UARTFinished: %d, isRightBoot: %d, UARTSendEnable: %d",requestFinished, adcFinished, UARTFinished, isRightBoot, UARTSendEnable);
                         //LEFT BOOT OPERATION
                         if(requestFinished){
                                 requestFinished = false;  
@@ -323,7 +323,14 @@ int main(void)
                                 requestFinished = true; 
                         }
                 } else {
-                        //RIGHT BOOT OPERATION
+                        static void *data; 
+                        data = k_fifo_get(&fifo_uart_rx_data, K_MSEC(500));
+
+                        if (data == NULL) {
+                                LOG_ERR("Not able to get value from fifo");
+                        } else {
+                                LOG_INF("UART OUTPUT Collected: %d", *(int *)data);
+}
                 }
                 
                 

@@ -24,6 +24,7 @@ struct bt_conn *wrist_conn = NULL;
 uint8_t read_data[100]; 
 bool connectedFlag = false; 
 extern struct bt_conn *Lboot_conn; 
+extern bool isRightBoot; 
               
 
 /** @brief for each bond present the device is added to an accept list
@@ -252,25 +253,29 @@ void connected(struct bt_conn *conn, uint8_t err){
 
 	int result = 0; 
 
-	LOG_INF("Discovering UART Service");
-	result = UART_gatt_discover(conn); //need to compare the connection parameters 
-	if (result < 0){
-		LOG_ERR("ERROR when UArt discovery");
-	}
+	LOG_INF("isRightBoot: %d", isRightBoot);
 
-	static struct bt_gatt_discover_params discover_params = {
-		.uuid = NULL,
-		.func = discover_cb, //discover attribute callback  //shuldn't beed the issue, but not being called at all? 
-		.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE, 
-		.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE,
-		.type = BT_GATT_DISCOVER_PRIMARY,
-	};
+	if(isRightBoot){
+		LOG_INF("Discovering UART Service");
+		result = UART_gatt_discover(conn); //need to compare the connection parameters 
+		if (result < 0){
+			LOG_ERR("ERROR when UArt discovery");
+		}
 
-	wrist_conn = conn; 
+		static struct bt_gatt_discover_params discover_params = {
+			.uuid = NULL,
+			.func = discover_cb, //discover attribute callback  //shuldn't beed the issue, but not being called at all? 
+			.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE, 
+			.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE,
+			.type = BT_GATT_DISCOVER_PRIMARY,
+		};
 
-	result = bt_gatt_discover(conn, &discover_params);
-	if (result < 0) {
-		LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
+		wrist_conn = conn; 
+
+		result = bt_gatt_discover(conn, &discover_params);
+		if (result < 0) {
+			LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
+		}
 	}
 };
 
