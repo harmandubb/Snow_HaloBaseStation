@@ -80,5 +80,17 @@ int nus_client_init(){
 	return err; 
 }
 
+/** @brief Convert broken UART transmission values to a full UART resoltuion 
+ * 	 
+ * 	@param msb_val most signigifaicant bit number
+ *  @param lsb_val least significant bit numer
+ * 
+ *  @return return a full resolution value 
+ */
+
+uint16_t UART_full_resolution_converter(uint8_t msb_val, uint8_t lsb_val){
+	return (msb_val << 8) | lsb_val;
+};
+
 
 

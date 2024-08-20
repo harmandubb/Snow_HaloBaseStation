@@ -26,5 +26,6 @@ void sent_uart_cb(struct bt_conn *conn);
 void send_enable_uart_cb(enum bt_nus_send_status status);
 int UART_gatt_discover(struct bt_conn *conn);
 int nus_client_init();
+uint16_t UART_full_resolution_converter(uint8_t msb_val, uint8_t lsb_val);
 
 #endif /* UART_BT_CONTROL_H */

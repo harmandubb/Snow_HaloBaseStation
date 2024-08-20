@@ -55,6 +55,7 @@ int main(void)
         
         //variables
         struct tx_fifo_t *rec_item; //reading fifo data
+        uint16_t *UART_Comp_Array;
         
         
         //get the gpio binding
@@ -209,6 +210,7 @@ int main(void)
                 LOG_ERR("ERROR getting state L_R define switch: %d", err);
         } else if(err == 1){
                 isRightBoot = true; 
+                UART_Comp_Array = k_malloc(sizeof(uint16_t)*NUM_SENSORS);
                 LOG_INF("Right Boot Present");
         } else {
                 isRightBoot = false; 
@@ -323,19 +325,42 @@ int main(void)
                         }
                 } else {
                         //RIGHT/Central 
-                        printk("UART-->");
-                        for(int i = 0; i < ADC_BUFFER_SIZE; i++){
-                                rec_item = k_fifo_get(&fifo_uart_rx_data, K_NO_WAIT);
-                                if (rec_item == NULL) {
-                                        LOG_ERR("Not able to get value from fifo");
-                                } else {
-                                        printk("%d: %d ", i, rec_item->data);
+                        if(requestFinished){
+                                requestFinished = false;  
+                                adcFinished = false; 
+                                UARTFinished = false; 
+                                err = adc_read(adc_dev, &sequence);
+                                if (err < 0) {
+                                        LOG_ERR("Could not read (%d)", err);
+                                        return -1; 
                                 }
-
-                                k_free(rec_item);
                         }
-                        printk("\n");
-                        
+
+                        if(adcFinished){
+                                LOG_INF("UART --> 1: %d 2: %d 3: %d 4: %d", adc_buf[0],adc_buf[1],adc_buf[2],adc_buf[3]);
+                                static uint8_t lsb_val; 
+                                for(int i = 0; i < ADC_BUFFER_SIZE; i++){
+                                        rec_item = k_fifo_get(&fifo_uart_rx_data, K_NO_WAIT);
+                                        if (rec_item == NULL) {
+                                                LOG_ERR("Not able to get value from fifo");
+                                        } else {
+                                                printk("%d: %d ", i, rec_item->data);
+                                        }
+
+                                        
+                                        if ((i % 2)==1){
+                                                UART_Comp_Array[i/2] = UART_full_resolution_converter(adc_buf[i],adc_buf[i-1]) - UART_full_resolution_converter(rec_item->data, lsb_val);
+                                        } else {
+                                                lsb_val = rec_item->data;
+                                        }
+
+                                        k_free(rec_item);
+                                }
+                                
+                                LOG_INF("UART COMP --> 1: %d 2: %d", UART_Comp_Array[0],UART_Comp_Array[1]);
+                                adcFinished = false; 
+                                requestFinished = true; 
+                        }
                 }
                 
                 
