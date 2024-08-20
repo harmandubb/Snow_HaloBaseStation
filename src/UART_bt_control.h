@@ -14,6 +14,12 @@ extern bool UARTSendEnable;
 extern bool UARTFinished; 
 extern struct k_fifo fifo_uart_rx_data; 
 
+//struct define
+struct tx_fifo_t {
+    void *fifo_reserved; 
+    uint8_t data;
+};
+
 
 // Function declarations
 void sent_uart_cb(struct bt_conn *conn);

@@ -54,7 +54,7 @@ int main(void)
         extern bool UARTSendEnable; 
         
         //variables
-        void *data; //reading fifo data
+        struct tx_fifo_t *rec_item; //reading fifo data
         
         
         //get the gpio binding
@@ -296,8 +296,7 @@ int main(void)
 
 
                 if(!isRightBoot){ //LEFT/Server
-                LOG_INF("requestFinsihed: %d, adcFinished: %d, UARTFinished: %d, isRightBoot: %d, UARTSendEnable: %d",requestFinished, adcFinished, UARTFinished, isRightBoot, UARTSendEnable);
-                        //LEFT BOOT OPERATION
+                // LOG_INF("requestFinsihed: %d, adcFinished: %d, UARTFinished: %d, isRightBoot: %d, UARTSendEnable: %d",requestFinished, adcFinished, UARTFinished, isRightBoot, UARTSendEnable);
                         if(requestFinished){
                                 requestFinished = false;  
                                 adcFinished = false; 
@@ -311,7 +310,7 @@ int main(void)
 
                         if(adcFinished){
                                 if(UARTSendEnable){
-                                        //send information through uart
+                                        LOG_INF("UART --> 1: %d 2: %d 3: %d 4: %d", adc_buf[0],adc_buf[1],adc_buf[2],adc_buf[3]);
                                         err = bt_nus_send(NULL, adc_buf, ADC_BUFFER_SIZE);
                                         if (err < 0){
                                                 LOG_ERR("Error UART Send: %d", err);
@@ -323,15 +322,18 @@ int main(void)
                                 requestFinished = true; 
                         }
                 } else {
-                        k_sleep(K_MSEC(500));
-                        LOG_INF("RIGHT BOOT BRANCH");
-                        data = k_fifo_get(&fifo_uart_rx_data, K_MSEC(500));
-
-                        // if (data == NULL) {
-                        //         LOG_ERR("Not able to get value from fifo");
-                        // } else {
-                        //         LOG_INF("UART OUTPUT Collected: %d", *(int *)data);
-                        // }
+                        //RIGHT/Central 
+                        printk("UART-->");
+                        for(int i = 0; i < ADC_BUFFER_SIZE; i++){
+                                rec_item = k_fifo_get(&fifo_uart_rx_data, K_NO_WAIT);
+                                if (rec_item == NULL) {
+                                        LOG_ERR("Not able to get value from fifo");
+                                } else {
+                                        printk("%d: %d ", i, rec_item->data);
+                                }
+                        }
+                        printk("\n");
+                        
                 }
                 
                 

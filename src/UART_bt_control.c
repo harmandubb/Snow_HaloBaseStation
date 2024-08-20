@@ -5,6 +5,9 @@ LOG_MODULE_REGISTER(UART_bt_control, LOG_LEVEL_INF);
 bool UARTSendEnable = false;
 bool UARTFinished = false; 
 
+//struct define 
+
+
 K_FIFO_DEFINE(fifo_uart_rx_data);
 
 /** @brief Callback function for when the UART transmission is completed
@@ -35,13 +38,19 @@ void send_enable_uart_cb(enum bt_nus_send_status status) {
 //Callback for accepting the incoming uart data over ble
 
 uint8_t ble_uart_data_received(struct bt_nus_client *nus, const uint8_t *data, uint16_t len){
-	LOG_INF("Received Data from UART");
+	// LOG_INF("Received Data from UART");
 	ARG_UNUSED(nus);
 
 	int err = 0; 
 
 	for (uint16_t i = 0; i < len; i++){
-		k_fifo_put(&fifo_uart_rx_data,data[i]); //see if a type should be cast to the fifo to do some porcessing
+		struct tx_fifo_t *buf = k_malloc(sizeof(struct tx_fifo_t));
+		if (buf == NULL){
+			LOG_ERR("Unable to allocate memory");
+			return -1; 
+		}
+		buf->data = data[i];
+		k_fifo_put(&fifo_uart_rx_data,buf); //see if a type should be cast to the fifo to do some porcessing
 	}
 
 	return BT_GATT_ITER_CONTINUE; 
