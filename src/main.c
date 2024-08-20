@@ -331,6 +331,8 @@ int main(void)
                                 } else {
                                         printk("%d: %d ", i, rec_item->data);
                                 }
+
+                                k_free(rec_item);
                         }
                         printk("\n");
                         
