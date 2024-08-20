@@ -28,6 +28,7 @@
 //PIN_WRIST_PAIRING_BUTTON in button_control.h file
 
 #define BOND_CONNECT_COUNT_THRESHOLD (4) //number of half second period to try bonding before giving up
+#define PRESSURE_THRESHOLD (100)
 
 
 // FUNCTION DEFINITIONS
@@ -55,7 +56,8 @@ int main(void)
         
         //variables
         struct tx_fifo_t *rec_item; //reading fifo data
-        uint16_t *UART_Comp_Array;
+        int *UART_Comp_Array;
+        int avgPressure = 0;
         
         
         //get the gpio binding
@@ -355,6 +357,22 @@ int main(void)
                                         }
 
                                         k_free(rec_item);
+                                }
+
+                                //average value find
+                                avgPressure = 0;
+                                for(int i = 0; i < NUM_SENSORS; i++){
+                                        avgPressure = avgPressure+ UART_Comp_Array[i];
+                                }
+                                avgPressure = avgPressure/NUM_SENSORS;
+
+                                if((avgPressure > 0) && abs(avgPressure) > PRESSURE_THRESHOLD){
+                                        //turn on the wrist LED
+                                        updateWristLED(true);
+                                        
+                                } else {
+                                        //turn off the wrist LED
+                                        updateWristLED(false);
                                 }
                                 
                                 LOG_INF("UART COMP --> 1: %d 2: %d", UART_Comp_Array[0],UART_Comp_Array[1]);
