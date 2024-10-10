@@ -18,6 +18,8 @@ target_sources(app PRIVATE
   src/UART_bt_control.h
   src/boot_bt_connect.c
   src/boot_bt_connect.h
+  src/UART.c
+  src/UART.h
 )
 
 # NORDIC SDK APP END

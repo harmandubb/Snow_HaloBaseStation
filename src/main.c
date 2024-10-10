@@ -58,6 +58,7 @@ int main(void)
         struct tx_fifo_t *rec_item; //reading fifo data
         int *UART_Comp_Array;
         int avgPressure = 0;
+        extern const struct device *uart; //uart binding
         
         
         //get the gpio binding
@@ -187,6 +188,19 @@ int main(void)
 
         while(!adcFinished);
         LOG_INF("ADC INITALIZATION DONE\n"); 
+
+        //----------------------UART INIT--------------------------//
+        err = configUART(uart);
+        if (err < 0){
+                LOG_ERR("ERROR Configuring UART: %d", err);
+        }
+        err = uart_init(uart);
+        if (err < 0){
+                LOG_ERR("ERROR Initalizing UART: %d", err);
+        }
+
+        
+
 
         //----------------------GPIO INIT--------------------------//
         //---------------------BUTTON INIT-------------------------//
