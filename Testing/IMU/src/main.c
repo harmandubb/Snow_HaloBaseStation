@@ -10,8 +10,11 @@
 #include <zephyr/drivers/i2c.h>
 #include <stdio.h>
 #include <zephyr/sys/util.h>
+#include <zephyr/drivers/gpio.h>
 
-#define I2C0_NODE DT_NODELABEL(mysensor)
+
+#define I2C0_NODE DT_NODELABEL(i2c0)
+#define IMU_NODE DT_NODELABEL(imu)
 // static inline float out_ev(struct sensor_value *val)
 // {
 // 	return (val->val1 + (float)val->val2 / 1000000);
@@ -99,30 +102,23 @@
 
 int main(void)
 {
-	// int cnt = 0;
-	// char out_str[64];
-	// struct sensor_value odr_attr;
-	// const struct device *const lsm6dsl_dev = DEVICE_DT_GET_ONE(st_lsm6dsl);
+	
 
-	// if (!device_is_ready(lsm6dsl_dev)) {
-	// 	printk("sensor: device not ready.\n");
-	// 	return 0;
-	// }
+	int err = 0; 
 
-	uint8_t reg_addr = 0x00;
+	//Checkin gif the I2C bus sees the sensor
+	uint8_t reg_addr = 0x0F;
 	uint8_t who_am_i; 
 	// Step 1: Get I2C device binding (for I2C0)
-    static const struct i2c_dt_spec dev_i2c = I2C_DT_SPEC_GET(I2C0_NODE);  // Using DEVICE_DT_GET for I2C0 bus
+    static const struct i2c_dt_spec dev_i2c = I2C_DT_SPEC_GET(IMU_NODE);  // Using DEVICE_DT_GET for I2C0 bus
     if (!device_is_ready(dev_i2c.bus)) {
 		printk("I2C bus %s is not ready!\n\r",dev_i2c.bus->name);
 		return -1;
 	} else {
 		printk("I2C bus FOUND\n");
 		printk("Address of I2C device: 0x%x\n", dev_i2c.addr);
-		printk("Name of I2C: %s", dev_i2c.bus->name);
+		printk("Name of I2C: %s\n", dev_i2c.bus->name);
 	}
-
-
 
 	// Step 2: Configure I2C bus speed to standard mode (100 kHz)
     if (i2c_configure(dev_i2c.bus, I2C_SPEED_SET(I2C_SPEED_STANDARD)) < 0) {
@@ -133,25 +129,53 @@ int main(void)
 	}
 
 	// Step 3: Read WHO_AM_I register from the sensor
-    if (i2c_write_read(dev_i2c.bus, dev_i2c.addr, &reg_addr, sizeof(reg_addr), &who_am_i, sizeof(who_am_i)) < 0) {
+	err = i2c_write_read(dev_i2c.bus, dev_i2c.addr, &reg_addr, sizeof(reg_addr), &who_am_i, sizeof(who_am_i));
+    if (err < 0) {
         printk("I2C: Failed to read WHO_AM_I register.\n");
         return -1;
     }
 
 	 // Step 4: Print the read value
-    printk("WHO_AM_I register: 0x%x\n", who_am_i);  // Expected output for LSM6DS3TR-C: 0x6a
+    printk("WHO_AM_I register: 0x%x\n", who_am_i);  
+
+	// COnfirm that the sensor is correctly configured after I2C is seeing the sensor
+	int cnt = 0;
+	char out_str[64];
+	struct sensor_value odr_attr;
+	const struct device *imu_dev = DEVICE_DT_GET(DT_NODELABEL(imu));
+
+	if (!device_is_ready(imu_dev)) {
+		printk("IMU device not ready\n");
+		return -1;
+	} else {
+		printk("IMU READY\n");
+	}
+
+
+	// if (lsm6dsx_dev == NULL){
+	// 	printk("device is not being referenced properly\n");
+	// } else {
+	// 	printk("Device is referenced\n");
+	// }
+
+	// if (!device_is_ready(lsm6dsx_dev)) {
+	// 	printk("sensor: device not ready.\n");
+	// 	return 0;
+	// } else {
+	// 	printk("Sensor: READY\n");
+	// }
 
 
 
 // 	/* set accel/gyro sampling frequency to 104 Hz */
-// 	odr_attr.val1 = 104;
-// 	odr_attr.val2 = 0;
+	// odr_attr.val1 = 104;
+	// odr_attr.val2 = 0;
 
-// 	if (sensor_attr_set(lsm6dsl_dev, SENSOR_CHAN_ACCEL_XYZ,
-// 			    SENSOR_ATTR_SAMPLING_FREQUENCY, &odr_attr) < 0) {
-// 		printk("Cannot set sampling frequency for accelerometer.\n");
-// 		return 0;
-// 	}
+	// if (sensor_attr_set(lsm6dsl_dev, SENSOR_CHAN_ACCEL_XYZ,
+	// 		    SENSOR_ATTR_SAMPLING_FREQUENCY, &odr_attr) < 0) {
+	// 	printk("Cannot set sampling frequency for accelerometer.\n");
+	// 	return 0;
+	// }
 
 // 	if (sensor_attr_set(lsm6dsl_dev, SENSOR_CHAN_GYRO_XYZ,
 // 			    SENSOR_ATTR_SAMPLING_FREQUENCY, &odr_attr) < 0) {
