@@ -8,7 +8,7 @@
 
 
 // External variables
-extern const struct device *uart; 
+// extern const struct device *uart; 
 
 //struct define
 

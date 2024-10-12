@@ -4,6 +4,11 @@
     };
 };
 
+&uart0 {
+    current-speed = <9600>;
+};
+
+
 &adc {
     #address-cells = <1>;
     #size-cells = <0>;

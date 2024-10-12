@@ -2,7 +2,7 @@
 
 LOG_MODULE_REGISTER(UART, LOG_LEVEL_INF);
 
-const struct device *uart = DEVICE_DT_GET(DT_NODELABEL(uart0));
+
 
 
 #define UART_BUF_SIZE 128
