@@ -5,7 +5,12 @@
 };
 
 &uart0 {
-    current-speed = <9600>;
+    status = "okay";
+    gps0: gps {
+        compatible = "u-blox,m10";
+        uart-baudrate = <115200>;
+        status = "okay";
+    };
 };
 
 

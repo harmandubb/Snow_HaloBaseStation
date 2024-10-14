@@ -9,7 +9,7 @@
 #include "button_control.h"
 #include "UART_bt_control.h"
 #include "boot_bt_connect.h"
-#include "UART.h"
+#include "GPS.h"
 
 #include <math.h>
 
@@ -41,6 +41,8 @@ LOG_MODULE_REGISTER(base_station, LOG_LEVEL_INF);
 
 //flags
 bool btReady = false; 
+
+
 
 int main(void)
 {
@@ -190,32 +192,7 @@ int main(void)
         while(!adcFinished);
         LOG_INF("ADC INITALIZATION DONE\n"); 
 
-        //----------------------UART INIT--------------------------//
-        const struct device *uart = DEVICE_DT_GET(DT_NODELABEL(uart0));
-        // Check if the UART device is ready
-        if (!device_is_ready(uart)) {
-                LOG_INF("UART device not ready\n");
-                return -ENODEV;  // Return an error or handle it appropriately
-        }
 
-        const struct uart_driver_api *api = (const struct uart_driver_api *)uart->api;
-        
-        if (api->configure == NULL) {
-                LOG_INF("uart_configure() not supported on this device\n");
-        } else {
-                LOG_INF("uart_configure() SUPPORTED");
-        }
-
-        err = configUART(uart);
-        if (err < 0){
-                LOG_ERR("ERROR Configuring UART: %d", err);
-        }
-        err = uart_init(uart);
-        if (err < 0){
-                LOG_ERR("ERROR Initalizing UART: %d", err);
-        }
-
-        
 
 
         //----------------------GPIO INIT--------------------------//
@@ -326,7 +303,22 @@ int main(void)
 
         *led_operation_ptr = BOARD_ALIVE;
 
+        
+        //----------------------GPS INIT---------------------------//
+        // check if the device is available
+        if (!device_is_ready(GPS_DEVICE)) {
+                LOG_ERR("GNSS device is not ready");
+                return -1;
+        } else {
+                LOG_INF("GPS DEVICE IS READY");
+        }
+
+        // GPS scanning start
+        GNSS_DATA_CALLBACK_DEFINE(GPS_DEVICE, gnss_data_cb);
+
         for(;;){
+                k_msleep(1000);
+                LOG_INF("WHILE");
 
 
                 // if(!isRightBoot){ //LEFT/Server

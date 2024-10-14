@@ -94,11 +94,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/Harman/Git_Projects/Snow_HaloBaseStation/Testing/UART/XIAO_BUILD/zephyr/drivers/modem/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
   include("C:/Users/Harman/Git_Projects/Snow_HaloBaseStation/Testing/UART/XIAO_BUILD/zephyr/drivers/pinctrl/cmake_install.cmake")
 endif()
 

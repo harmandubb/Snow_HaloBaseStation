@@ -186,9 +186,6 @@ C:/Users/Harman/Git_Projects/Snow_HaloBaseStation/Testing/UART/XIAO_BUILD/zephyr
 C:/Users/Harman/Git_Projects/Snow_HaloBaseStation/Testing/UART/XIAO_BUILD/zephyr/drivers/hwinfo/CMakeFiles/drivers__hwinfo.dir
 C:/Users/Harman/Git_Projects/Snow_HaloBaseStation/Testing/UART/XIAO_BUILD/zephyr/drivers/hwinfo/CMakeFiles/edit_cache.dir
 C:/Users/Harman/Git_Projects/Snow_HaloBaseStation/Testing/UART/XIAO_BUILD/zephyr/drivers/hwinfo/CMakeFiles/rebuild_cache.dir
-C:/Users/Harman/Git_Projects/Snow_HaloBaseStation/Testing/UART/XIAO_BUILD/zephyr/drivers/modem/CMakeFiles/drivers__modem.dir
-C:/Users/Harman/Git_Projects/Snow_HaloBaseStation/Testing/UART/XIAO_BUILD/zephyr/drivers/modem/CMakeFiles/edit_cache.dir
-C:/Users/Harman/Git_Projects/Snow_HaloBaseStation/Testing/UART/XIAO_BUILD/zephyr/drivers/modem/CMakeFiles/rebuild_cache.dir
 C:/Users/Harman/Git_Projects/Snow_HaloBaseStation/Testing/UART/XIAO_BUILD/zephyr/drivers/pinctrl/CMakeFiles/edit_cache.dir
 C:/Users/Harman/Git_Projects/Snow_HaloBaseStation/Testing/UART/XIAO_BUILD/zephyr/drivers/pinctrl/CMakeFiles/drivers__pinctrl.dir
 C:/Users/Harman/Git_Projects/Snow_HaloBaseStation/Testing/UART/XIAO_BUILD/zephyr/drivers/pinctrl/CMakeFiles/rebuild_cache.dir
