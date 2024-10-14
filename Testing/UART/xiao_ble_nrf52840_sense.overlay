@@ -11,17 +11,6 @@
 // For more help, browse the DeviceTree documentation at https://docs.zephyrproject.org/latest/guides/dts/index.html
 // You can also visit the nRF DeviceTree extension documentation at https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/ncs_configure_app.html#devicetree-support-in-the-extension
 
-// MY ORITINAL CODE
-// &uart0{
-//     status="okay";
-//     gps0 {
-//         compatible="u-blox,m10";
-//         uart-baudrate=<115200>;
-//         status="okay";  
-//         label="gps0";
-//     };
-// };
-
 &uart0 {
     status = "okay";
     gps0: gps {
