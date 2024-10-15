@@ -3,6 +3,7 @@
 #include <zephyr/drivers/adc.h>
 #include <stdlib.h>
 
+
 #include "led_control.h"
 #include "adc_control.h"
 #include "bluetooth_control.h"
@@ -10,10 +11,9 @@
 #include "UART_bt_control.h"
 #include "boot_bt_connect.h"
 #include "GPS.h"
+#include "IMU.h"
 
 #include <math.h>
-
-
 
 // GPIO0 - adc read pins
 #define PIN_ADC_READ_0 (2)
@@ -305,20 +305,27 @@ int main(void)
 
         
         //----------------------GPS INIT---------------------------//
-        // check if the device is available
-        if (!device_is_ready(GPS_DEVICE)) {
-                LOG_ERR("GNSS device is not ready");
-                return -1;
-        } else {
-                LOG_INF("GPS DEVICE IS READY");
-        }
+        // // check if the device is available
+        // if (!device_is_ready(GPS_DEVICE)) {
+        //         LOG_ERR("GNSS device is not ready");
+        //         return -1;
+        // } else {
+        //         LOG_INF("GPS DEVICE IS READY");
+        // }
 
-        // GPS scanning start
-        GNSS_DATA_CALLBACK_DEFINE(GPS_DEVICE, gnss_data_cb);
+        // // GPS scanning start
+        // GNSS_DATA_CALLBACK_DEFINE(GPS_DEVICE, gnss_data_cb);
+
+        //-------------------IMU INIT ------------------------//
+        err = IMUSetup();
+        if(err < 0){
+                return -1;
+        }
 
         for(;;){
                 k_msleep(1000);
                 LOG_INF("WHILE");
+                readIMUData();
 
 
                 // if(!isRightBoot){ //LEFT/Server

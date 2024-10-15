@@ -1,6 +1,6 @@
 #include "GPS.h"
 
-LOG_MODULE_REGISTER(gps_app, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(gps, LOG_LEVEL_DBG);
 
 void gnss_data_cb(const struct device *dev, const struct gnss_data *data)
 {

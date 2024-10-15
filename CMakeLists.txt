@@ -20,6 +20,8 @@ target_sources(app PRIVATE
   src/boot_bt_connect.h
   src/GPS.c
   src/GPS.h
+  src/IMU.c
+  src/IMU.h
 )
 
 # NORDIC SDK APP END
