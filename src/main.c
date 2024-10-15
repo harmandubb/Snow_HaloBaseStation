@@ -305,16 +305,16 @@ int main(void)
 
         
         //----------------------GPS INIT---------------------------//
-        // // check if the device is available
-        // if (!device_is_ready(GPS_DEVICE)) {
-        //         LOG_ERR("GNSS device is not ready");
-        //         return -1;
-        // } else {
-        //         LOG_INF("GPS DEVICE IS READY");
-        // }
+        // check if the device is available
+        if (!device_is_ready(GPS_DEVICE)) {
+                LOG_ERR("GNSS device is not ready");
+                return -1;
+        } else {
+                LOG_INF("GPS DEVICE IS READY");
+        }
 
-        // // GPS scanning start
-        // GNSS_DATA_CALLBACK_DEFINE(GPS_DEVICE, gnss_data_cb);
+        // GPS scanning start
+        GNSS_DATA_CALLBACK_DEFINE(GPS_DEVICE, gnss_data_cb);
 
         //-------------------IMU INIT ------------------------//
         err = IMUSetup();
@@ -324,91 +324,90 @@ int main(void)
 
         for(;;){
                 k_msleep(1000);
-                LOG_INF("WHILE");
                 readIMUData();
 
 
-                // if(!isRightBoot){ //LEFT/Server
-                // // LOG_INF("requestFinsihed: %d, adcFinished: %d, UARTFinished: %d, isRightBoot: %d, UARTSendEnable: %d",requestFinished, adcFinished, UARTFinished, isRightBoot, UARTSendEnable);
-                //         if(requestFinished){
-                //                 requestFinished = false;  
-                //                 adcFinished = false; 
-                //                 UARTFinished = false; 
-                //                 err = adc_read(adc_dev, &sequence);
-                //                 if (err < 0) {
-                //                         LOG_ERR("Could not read (%d)", err);
-                //                         return -1; 
-                //                 }
-                //         }
+                if(!isRightBoot){ //LEFT/Server
+                // LOG_INF("requestFinsihed: %d, adcFinished: %d, UARTFinished: %d, isRightBoot: %d, UARTSendEnable: %d",requestFinished, adcFinished, UARTFinished, isRightBoot, UARTSendEnable);
+                        if(requestFinished){
+                                requestFinished = false;  
+                                adcFinished = false; 
+                                UARTFinished = false; 
+                                err = adc_read(adc_dev, &sequence);
+                                if (err < 0) {
+                                        LOG_ERR("Could not read (%d)", err);
+                                        return -1; 
+                                }
+                        }
 
-                //         if(adcFinished){
-                //                 if(UARTSendEnable){
-                //                         LOG_INF("UART --> 1: %d 2: %d 3: %d 4: %d", adc_buf[0],adc_buf[1],adc_buf[2],adc_buf[3]);
-                //                         err = bt_nus_send(NULL, adc_buf, ADC_BUFFER_SIZE);
-                //                         if (err < 0){
-                //                                 LOG_ERR("Error UART Send: %d", err);
-                //                         } 
-                //                 }
-                //         }
+                        if(adcFinished){
+                                if(UARTSendEnable){
+                                        LOG_INF("UART --> 1: %d 2: %d 3: %d 4: %d", adc_buf[0],adc_buf[1],adc_buf[2],adc_buf[3]);
+                                        err = bt_nus_send(NULL, adc_buf, ADC_BUFFER_SIZE);
+                                        if (err < 0){
+                                                LOG_ERR("Error UART Send: %d", err);
+                                        } 
+                                }
+                        }
 
-                //         if(UARTFinished){
-                //                 requestFinished = true; 
-                //         }
-                // } else {
-                //         //RIGHT/Central 
-                //         if(requestFinished){
-                //                 requestFinished = false;  
-                //                 adcFinished = false; 
-                //                 UARTFinished = false; 
-                //                 err = adc_read(adc_dev, &sequence);
-                //                 if (err < 0) {
-                //                         LOG_ERR("Could not read (%d)", err);
-                //                         return -1; 
-                //                 }
-                //         }
+                        if(UARTFinished){
+                                requestFinished = true; 
+                        }
+                } else {
+                        //RIGHT/Central 
+                        if(requestFinished){
+                                requestFinished = false;  
+                                adcFinished = false; 
+                                UARTFinished = false; 
+                                err = adc_read(adc_dev, &sequence);
+                                if (err < 0) {
+                                        LOG_ERR("Could not read (%d)", err);
+                                        return -1; 
+                                }
+                        }
 
-                //         if(adcFinished){
-                //                 LOG_INF("UART --> 1: %d 2: %d 3: %d 4: %d", adc_buf[0],adc_buf[1],adc_buf[2],adc_buf[3]);
-                //                 static uint8_t lsb_val; 
-                //                 for(int i = 0; i < ADC_BUFFER_SIZE; i++){
-                //                         rec_item = k_fifo_get(&fifo_uart_rx_data, K_NO_WAIT);
-                //                         if (rec_item == NULL) {
-                //                                 LOG_ERR("Not able to get value from fifo");
-                //                         } else {
-                //                                 printk("%d: %d ", i, rec_item->data);
-                //                         }
+                        if(adcFinished){
+                                LOG_INF("UART --> 1: %d 2: %d 3: %d 4: %d", adc_buf[0],adc_buf[1],adc_buf[2],adc_buf[3]);
+                                static uint8_t lsb_val; 
+                                for(int i = 0; i < ADC_BUFFER_SIZE; i++){
+                                        rec_item = k_fifo_get(&fifo_uart_rx_data, K_NO_WAIT);
+                                        if (rec_item == NULL) {
+                                                LOG_ERR("Not able to get value from fifo");
+                                        } else {
+                                                printk("%d: %d ", i, rec_item->data);
+                                        }
 
                                         
-                //                         if ((i % 2)==1){
-                //                                 UART_Comp_Array[i/2] = UART_full_resolution_converter(adc_buf[i],adc_buf[i-1]) - UART_full_resolution_converter(rec_item->data, lsb_val);
-                //                         } else {
-                //                                 lsb_val = rec_item->data;
-                //                         }
+                                        if ((i % 2)==1){
+                                                UART_Comp_Array[i/2] = UART_full_resolution_converter(adc_buf[i],adc_buf[i-1]) - UART_full_resolution_converter(rec_item->data, lsb_val);
+                                        } else {
+                                                lsb_val = rec_item->data;
+                                        }
 
-                //                         k_free(rec_item);
-                //                 }
+                                        k_free(rec_item);
+                                }
 
-                //                 //average value find
-                //                 avgPressure = 0;
-                //                 for(int i = 0; i < NUM_SENSORS; i++){
-                //                         avgPressure = avgPressure+ UART_Comp_Array[i];
-                //                 }
-                //                 avgPressure = avgPressure/NUM_SENSORS;
+                                //average value find
+                                avgPressure = 0;
+                                for(int i = 0; i < NUM_SENSORS; i++){
+                                        avgPressure = avgPressure+ UART_Comp_Array[i];
+                                }
+                                avgPressure = avgPressure/NUM_SENSORS;
 
-                //                 if((avgPressure > 0) && abs(avgPressure) > PRESSURE_THRESHOLD){
-                //                         //turn on the wrist LED
-                //                         updateWristLED(true);
+                                if((avgPressure > 0) && abs(avgPressure) > PRESSURE_THRESHOLD){
+                                        //turn on the wrist LED
+                                        updateWristLED(true);
                                         
-                //                 } else {
-                //                         //turn off the wrist LED
-                //                         updateWristLED(false);
-                //                 }
+                                } else {
+                                        //turn off the wrist LED
+                                        updateWristLED(false);
+                                }
                                 
-                //                 LOG_INF("UART COMP --> 1: %d 2: %d", UART_Comp_Array[0],UART_Comp_Array[1]);
-                //                 adcFinished = false; 
-                //                 requestFinished = true; 
-                //         }
-                // }
+                                LOG_INF("UART COMP --> 1: %d 2: %d", UART_Comp_Array[0],UART_Comp_Array[1]);
+                                adcFinished = false; 
+                                requestFinished = true; 
+                        }
+                }
                 
                 
                 status_led_operation(*led_operation_ptr);

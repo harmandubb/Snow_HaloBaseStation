@@ -8,7 +8,7 @@ int IMUSetup(){
                 LOG_ERR("IMU device is not ready");
                 return -1;
         } else {
-                LOG_INF("IMU DEVICE IS READY");
+                LOG_INF("IMU DEVICE MegIS READY");
         }
 
     return 0; 
