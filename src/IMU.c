@@ -3,7 +3,6 @@
 LOG_MODULE_REGISTER(imu, LOG_LEVEL_INF);
 
 int IMUSetup(){
-    int err = 0; 
     if (!device_is_ready(IMU_DEVICE)) {
                 LOG_ERR("IMU device is not ready");
                 return -1;
@@ -25,7 +24,7 @@ int readIMUData(){
     err = sensor_sample_fetch_chan(IMU_DEVICE, SENSOR_CHAN_ACCEL_XYZ);
     if (err < 0) {
         LOG_ERR("Error fetching accelerometer data: %d", err);
-        return;  // Exit or handle the error appropriately
+        return err;  // Exit or handle the error appropriately
     }
 
     // Get accelerometer channels
@@ -48,7 +47,7 @@ int readIMUData(){
     err = sensor_sample_fetch_chan(IMU_DEVICE, SENSOR_CHAN_GYRO_XYZ);
     if (err < 0) {
         LOG_ERR("Error fetching gyroscope data: %d", err);
-        return;  // Exit or handle the error appropriately
+        return err;  // Exit or handle the error appropriately
     }
 
     // Get gyroscope channels

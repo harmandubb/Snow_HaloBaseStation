@@ -197,7 +197,7 @@ int main(void)
 
         //----------------------GPIO INIT--------------------------//
         //---------------------BUTTON INIT-------------------------//
-        err = init_pairing_button(gpio1_dev,PIN_WRIST_PAIRING_BUTTON, wrist_pairing_button_cb);
+        err = init_pairing_button(gpio1_dev,PIN_PHONE_PAIRING_BUTTON, phone_pairing_button_cb);
         if (err < 0) {
                 LOG_ERR("ERROR Intializing wrist pairing button: %d", err);
         }
@@ -323,36 +323,9 @@ int main(void)
         }
 
         for(;;){
-                k_msleep(1000);
-                readIMUData();
-
-
                 if(!isRightBoot){ //LEFT/Server
-                // LOG_INF("requestFinsihed: %d, adcFinished: %d, UARTFinished: %d, isRightBoot: %d, UARTSendEnable: %d",requestFinished, adcFinished, UARTFinished, isRightBoot, UARTSendEnable);
-                        if(requestFinished){
-                                requestFinished = false;  
-                                adcFinished = false; 
-                                UARTFinished = false; 
-                                err = adc_read(adc_dev, &sequence);
-                                if (err < 0) {
-                                        LOG_ERR("Could not read (%d)", err);
-                                        return -1; 
-                                }
-                        }
-
-                        if(adcFinished){
-                                if(UARTSendEnable){
-                                        LOG_INF("UART --> 1: %d 2: %d 3: %d 4: %d", adc_buf[0],adc_buf[1],adc_buf[2],adc_buf[3]);
-                                        err = bt_nus_send(NULL, adc_buf, ADC_BUFFER_SIZE);
-                                        if (err < 0){
-                                                LOG_ERR("Error UART Send: %d", err);
-                                        } 
-                                }
-                        }
-
-                        if(UARTFinished){
-                                requestFinished = true; 
-                        }
+                        left_boot_operation(&requestFinished, &adcFinished, &UARTFinished, &UARTSendEnable, ADC_BUFFER_SIZE, adc_dev, &sequence, adc_buf);
+                        
                 } else {
                         //RIGHT/Central 
                         if(requestFinished){
@@ -395,12 +368,10 @@ int main(void)
                                 avgPressure = avgPressure/NUM_SENSORS;
 
                                 if((avgPressure > 0) && abs(avgPressure) > PRESSURE_THRESHOLD){
-                                        //turn on the wrist LED
-                                        updateWristLED(true);
+                                        
                                         
                                 } else {
-                                        //turn off the wrist LED
-                                        updateWristLED(false);
+
                                 }
                                 
                                 LOG_INF("UART COMP --> 1: %d 2: %d", UART_Comp_Array[0],UART_Comp_Array[1]);

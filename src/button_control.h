@@ -29,9 +29,10 @@ extern "C" {
 #include <stdlib.h>
 
 #include "bluetooth_control.h"
+#include "iphone_bt_connect.h"
 
 
-#define PIN_WRIST_PAIRING_BUTTON (13)
+#define PIN_PHONE_PAIRING_BUTTON (13)
 #define PIN_BOOT_PAIRING_BUTTON (14)
 #define PIN_BOOT_DEFINE_SWITCH (15)
 
@@ -41,7 +42,7 @@ extern bool isRightBoot;
 //functions
 int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_callback_handler_t button_interrrupt_handler);
 int init_select_switch(const struct device* gpio_dev, int switch_pin);
-void wrist_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);
+void phone_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);
 void boot_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);
 
 

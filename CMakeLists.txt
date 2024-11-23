@@ -22,6 +22,12 @@ target_sources(app PRIVATE
   src/GPS.h
   src/IMU.c
   src/IMU.h
+  src/iphone_bt_connect.c
+  src/iphone_bt_connect.h
+  src/left_boot_operation.c
+  src/left_boot_operation.h
+  src/right_boot_operation.c
+  src/right_boot_operation.h
 )
 
 # NORDIC SDK APP END

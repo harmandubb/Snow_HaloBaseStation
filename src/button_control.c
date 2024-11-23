@@ -84,9 +84,16 @@ int init_select_switch(const struct device* gpio_dev, int switch_pin){
  *  implement concurrency control to ensure that the updates occur correctly
 */
 
-void wrist_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins)
+void phone_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins)
 {
+	//check what the boot mode is 
+	if (isRightBoot){
+		// use the scanning options
+		k_work_submit(&advertise_phone_work);
+	} else {
+		//NOTHING NEEDS TO HAPPEN
 
+	}
 };
 
 
