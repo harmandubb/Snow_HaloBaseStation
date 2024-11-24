@@ -65,6 +65,7 @@ int main(void)
         // extern const struct device *uart; //uart binding
         extern uint8_t uart_rx_data[]; // array for receiving data from the left boot
         extern struct k_mutex uart_data_mutex; 
+        uint8_t uart_phone_buf[2*NUM_SENSORS + ]
 
         //get the gpio binding
         const struct device *gpio0_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
