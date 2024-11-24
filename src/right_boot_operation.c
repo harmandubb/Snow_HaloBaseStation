@@ -110,4 +110,8 @@ void convert_IMI_data_to_bytes(struct sensor_value *sensor, uint8_t output[8]) {
     output[6] = (sensor->val2 >> 8) & 0xFF;
     output[7] = sensor->val2 & 0xFF;          // Least significant byte (LSB)
 }
+
+void setUartGPSData(struct gps_data gps_data, uint8_t uart_phone_buf[], int start_index){
+    
+}
                           
