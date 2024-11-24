@@ -13,7 +13,7 @@ int IMUSetup(){
     return 0; 
 };
 
-int readIMUData(){
+int readIMUData(struct sensor_value accel[], struct sensor_value gyro[]){
     int err = 0; 
 
     static struct sensor_value accel_x, accel_y, accel_z;
@@ -66,15 +66,14 @@ int readIMUData(){
         LOG_ERR("Error getting gyroscope Z channel: %d", err);
     }
 
-    // Print accelerometer data
-    LOG_INF("Accelerometer (m/s^2):\n\tX: %d.%06d\n\tY: %d.%06d\n\tZ: %d.%06d",
-            accel_x.val1, accel_x.val2, 
-            accel_y.val1, accel_y.val2, 
-            accel_z.val1, accel_z.val2);
+    accel[0] = accel_x;
+    accel[1] = accel_y;
+    accel[2] = accel_z;
 
-    // Print gyroscope data
-    LOG_INF("Gyroscope (rad/s):\n\tX: %d.%06d\n\tY: %d.%06d\n\tZ: %d.%06d",
-            gyro_x.val1, gyro_x.val2, 
-            gyro_y.val1, gyro_y.val2, 
-            gyro_z.val1, gyro_z.val2);
+    gyro[0] = gyro_x;
+    gyro[1] = gyro_y;
+    gyro[2] = gyro_z;
+
+    return 0;
+   
 }

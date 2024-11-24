@@ -8,6 +8,7 @@
 
 #include "adc_control.h"
 #include "UART_bt_control.h"
+#include "IMU.h"
 
 /**
  * @file right_boot_operation.h
@@ -34,7 +35,7 @@
 void right_boot_operation(bool *requestFinished, bool *UARTTransmit, bool *UARTSendEnable, 
                           bool *adcFinished, const struct device *adc_dev, 
                           struct adc_sequence *sequence, uint8_t adc_buf[], 
-                          uint8_t uart_rx_data[], struct k_mutex *uart_data_mutex, 
-                          uint16_t UART_Comp_Array[]);
+                          uint8_t uart_rx_data[], struct k_mutex *uart_data_mutex,
+                          uint8_t uart_phone_buf[]);
 
 #endif /* RIGHT_BOOT_OPERATION_H */

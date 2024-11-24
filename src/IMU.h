@@ -25,7 +25,7 @@
 
 // Function declarations
 int IMUSetup();
-int readIMUData();
+int readIMUData(struct sensor_value accel[], struct sensor_value gyro[]);
 
 
 #endif /* IMU_H */
