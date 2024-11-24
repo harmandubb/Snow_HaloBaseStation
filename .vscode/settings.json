@@ -38,7 +38,8 @@
         "boot_bt_connect.h": "c",
         "addr.h": "c",
         "gps.h": "c",
-        "gnss.h": "c"
+        "gnss.h": "c",
+        "left_boot_operation.h": "c"
     },
     "C_Cpp.configurationWarnings": "disabled",
     "nrf-connect.applications": [],

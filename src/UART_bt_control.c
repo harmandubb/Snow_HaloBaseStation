@@ -4,11 +4,9 @@ LOG_MODULE_REGISTER(UART_bt_control, LOG_LEVEL_INF);
 
 bool UARTSendEnable = false;
 bool UARTFinished = false; 
-
-//struct define 
-
-
-K_FIFO_DEFINE(fifo_uart_rx_data);
+ 
+uint8_t uart_rx_data[UART_BUF_SIZE] = {0};
+K_MUTEX_DEFINE(uart_data_mutex);
 
 /** @brief Callback function for when the UART transmission is completed
  *  
@@ -44,13 +42,9 @@ uint8_t ble_uart_data_received(struct bt_nus_client *nus, const uint8_t *data, u
 	int err = 0; 
 
 	for (uint16_t i = 0; i < len; i++){
-		struct tx_fifo_t *buf = k_malloc(sizeof(struct tx_fifo_t));
-		if (buf == NULL){
-			LOG_ERR("Unable to allocate memory");
-			return -1; 
-		}
-		buf->data = data[i];
-		k_fifo_put(&fifo_uart_rx_data,buf); //see if a type should be cast to the fifo to do some porcessing
+		k_mutex_lock(&uart_data_mutex,K_FOREVER);
+		uart_rx_data[i] = data[i];
+		k_mutex_unlock(&uart_data_mutex);
 	}
 
 	return BT_GATT_ITER_CONTINUE; 
@@ -92,5 +86,15 @@ uint16_t UART_full_resolution_converter(uint8_t msb_val, uint8_t lsb_val){
 	return (msb_val << 8) | lsb_val;
 };
 
+/** @brief Split a full UART resolution value into MSB and LSB
+ * 
+ *  @param full_val Full 16-bit resolution value to be split
+ *  @param msb_val Pointer to store the most significant byte
+ *  @param lsb_val Pointer to store the least significant byte
+ */
+void UART_split_resolution(uint16_t full_val, uint8_t *msb_val, uint8_t *lsb_val) {
+    *msb_val = (full_val >> 8) & 0xFF; // Extract the MSB (upper 8 bits)
+    *lsb_val = full_val & 0xFF;       // Extract the LSB (lower 8 bits)
+}
 
 
