@@ -9,6 +9,7 @@
 #include "adc_control.h"
 #include "UART_bt_control.h"
 #include "IMU.h"
+#include "GPS.h"
 
 /**
  * @file right_boot_operation.h
@@ -36,6 +37,10 @@ void right_boot_operation(bool *requestFinished, bool *UARTTransmit, bool *UARTS
                           bool *adcFinished, const struct device *adc_dev, 
                           struct adc_sequence *sequence, uint8_t adc_buf[], 
                           uint8_t uart_rx_data[], struct k_mutex *uart_data_mutex,
-                          uint8_t uart_phone_buf[]);
+                          uint8_t uart_phone_buf[], struct gps_data *gps_data);
+
+void convert_IMI_data_to_bytes(struct sensor_value *sensor, uint8_t output[8]);
+void setUartIMUData(const struct sensor_value accel[3], const struct sensor_value gyro[3], 
+                    uint8_t uart_phone_buf[], int start_index);
 
 #endif /* RIGHT_BOOT_OPERATION_H */
