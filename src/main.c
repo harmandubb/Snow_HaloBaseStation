@@ -326,10 +326,10 @@ int main(void)
 
         for(;;){
                 if(!isRightBoot){ //LEFT/Server
-                        left_boot_operation(&requestFinished, &adcFinished, &UARTFinished, &UARTSendEnable, ADC_BUFFER_SIZE, adc_dev, &sequence, adc_buf);
+                        // left_boot_operation(&requestFinished, &adcFinished, &UARTFinished, &UARTSendEnable, ADC_BUFFER_SIZE, adc_dev, &sequence, adc_buf);
                         
                 } else {
-                        right_boot_operation(&requestFinished, &UARTTransmit, &UARTSendEnable, &adcFinished, adc_dev, &sequence, adc_buf, uart_rx_data, uart_data_mutex, UART_Comp_Array);
+                        // right_boot_operation(&requestFinished, &UARTTransmit, &UARTSendEnable, &adcFinished, adc_dev, &sequence, adc_buf, uart_rx_data, uart_data_mutex, UART_Comp_Array);
                 }
                 
                 
