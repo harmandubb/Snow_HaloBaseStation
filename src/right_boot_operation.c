@@ -40,10 +40,7 @@ void right_boot_operation(bool *requestFinished, bool *UARTTransmit, bool *UARTS
         setUartIMUData(accel, gyro, uart_phone_buf, ADC_BUFFER_SIZE*2);
 
         //set the gps data 
-
-
-
-
+        setUartGPSData(gps_data, &uart_phone_buf, (ADC_BUFFER_SIZE*2+IMU_BYTES));
 
         *adcFinished = false;
         *UARTTransmit = true;
@@ -111,7 +108,31 @@ void convert_IMI_data_to_bytes(struct sensor_value *sensor, uint8_t output[8]) {
     output[7] = sensor->val2 & 0xFF;          // Least significant byte (LSB)
 }
 
-void setUartGPSData(struct gps_data gps_data, uint8_t uart_phone_buf[], int start_index){
+void setUartGPSData(struct gps_data *data, uint8_t *uart_phone_buf, int start_index){
+    uint8_t *ptr = uart_phone_buf+start_index; // Pointer to the current position in the buffer
+    
+    // Serialize latitude (double -> 8 bytes)
+    memcpy(ptr, &data->latitude, sizeof(data->latitude));
+    ptr += sizeof(data->latitude);
+    
+    // Serialize longitude (double -> 8 bytes)
+    memcpy(ptr, &data->longitude, sizeof(data->longitude));
+    ptr += sizeof(data->longitude);
+    
+    // Serialize speed (float -> 4 bytes)
+    memcpy(ptr, &data->speed, sizeof(data->speed));
+    ptr += sizeof(data->speed);
+    
+    // Serialize hours (1 byte)
+    *ptr++ = data->time.hours;
+    
+    // Serialize minutes (1 byte)
+    *ptr++ = data->time.minutes;
+    
+    // Serialize milliseconds (2 bytes)
+    memcpy(ptr, &data->time.milliseconds, sizeof(data->time.milliseconds));
+    ptr += sizeof(data->time.milliseconds);
     
 }
+
                           
