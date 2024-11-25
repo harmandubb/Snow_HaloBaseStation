@@ -48,6 +48,7 @@ bool btReady = false;
 
 int main(void)
 {
+        k_sleep(K_SECONDS(2));
         //Setup
         int err = 0; 
 
@@ -201,16 +202,6 @@ int main(void)
 
 
         //----------------------GPIO INIT--------------------------//
-        //---------------------BUTTON INIT-------------------------//
-        err = init_pairing_button(gpio1_dev,PIN_PHONE_PAIRING_BUTTON, phone_pairing_button_cb);
-        if (err < 0) {
-                LOG_ERR("ERROR Intializing wrist pairing button: %d", err);
-        }
-
-        err = init_pairing_button(gpio1_dev, PIN_BOOT_PAIRING_BUTTON, boot_pairing_button_cb);
-        if (err < 0){
-                LOG_ERR("ERROR Inializing L_R pairing button: %d", err);
-        }
 
         //---------------------SWITCH INIT----------------------//
         err = init_select_switch(gpio1_dev, PIN_BOOT_DEFINE_SWITCH);
@@ -229,6 +220,17 @@ int main(void)
         } else {
                 isRightBoot = false; 
                 LOG_INF("Left Boot Present");
+        }
+
+        //---------------------BUTTON INIT-------------------------//
+        err = init_pairing_button(gpio1_dev, PIN_BOOT_PAIRING_BUTTON, boot_pairing_button_cb);
+        if (err < 0){
+                LOG_ERR("ERROR Inializing L_R pairing button: %d", err);
+        }
+
+        err = init_pairing_button(gpio1_dev,PIN_PHONE_PAIRING_BUTTON, phone_pairing_button_cb);
+        if (err < 0) {
+                LOG_ERR("ERROR Intializing wrist pairing button: %d", err);
         }
         //-----------------BLUETOOTH -----------------------//
 
@@ -329,9 +331,11 @@ int main(void)
 
         for(;;){
                 if(!isRightBoot){ //LEFT/Server
+                // LOG_INF("In the LEFT BRANCH");
                         left_boot_operation(&requestFinished, &adcFinished, &UARTFinished, &UARTSendEnable, ADC_BUFFER_SIZE, adc_dev, &sequence, &adc_buf);
                         
                 } else {
+                // LOG_INF("In the RIGHT Branch");
                         right_boot_operation(&requestFinished, &UARTTransmit, &UARTSendEnable, &adcFinished, adc_dev, &sequence, &adc_buf, &uart_rx_data, &uart_data_mutex, &uart_phone_buf, &gps_data);
                 }
                 

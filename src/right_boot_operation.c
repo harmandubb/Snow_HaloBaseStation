@@ -49,7 +49,7 @@ void right_boot_operation(bool *requestFinished, bool *UARTTransmit, bool *UARTS
     if (*UARTTransmit) {
         if (*UARTSendEnable) {
 
-            err = bt_nus_send(NULL, uart_phone_buf, ADC_BUFFER_SIZE);
+            err = bt_nus_send(NULL, uart_phone_buf, PHONE_UART_BUFFER_SIZE);
             if (err < 0) {
                 LOG_ERR("Failed to transmit over Bluetooth (%d)", err);
             }

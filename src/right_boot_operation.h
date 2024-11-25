@@ -11,6 +11,8 @@
 #include "IMU.h"
 #include "GPS.h"
 
+#define PHONE_UART_BUFFER_SIZE (2*ADC_BUFFER_SIZE+IMU_BYTES+GPS_BYTES)
+
 /**
  * @file right_boot_operation.h
  * @brief Header file for right_boot_operation function.

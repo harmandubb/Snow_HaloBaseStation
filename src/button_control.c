@@ -86,14 +86,13 @@ int init_select_switch(const struct device* gpio_dev, int switch_pin){
 
 void phone_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins)
 {
+	LOG_INF("IN the Phone pairng callback");
 	//check what the boot mode is 
 	if (isRightBoot){
+		LOG_INF("Advertising right boot for phone connection");
 		// use the scanning options
 		k_work_submit(&advertise_phone_work);
-	} else {
-		//NOTHING NEEDS TO HAPPEN
-
-	}
+	} 
 };
 
 
@@ -115,12 +114,15 @@ void boot_pairing_button_cb(const struct device *port, struct gpio_callback *cb,
 	// I think the documentation states that only the pins set with the call back will call it. 
 	// If the call back is unique then only one pin can activate it. 
 
+	LOG_INF("IN the BOOT pairing callback");
 	//check what the boot mode is 
 	if (isRightBoot){
+		LOG_INF("SCANNING FOR L boot");
 		// use the scanning options
 		k_work_submit(&Lboot_scan_work);
 	} else {
 		//left boot operation is being focused on 
+		LOG_INF("ADVERTISING L BOOT");
 		k_work_submit(&advertise_L_boot_work);
 
 	}

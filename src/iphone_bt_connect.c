@@ -27,7 +27,7 @@ void advertise_to_phone(struct k_work *work){
 		return;
 	}
 
-	err_code = (BT_LE_ADV_CONN_NO_ACCEPT_LIST, iphone_ad, ARRAY_SIZE(iphone_ad), iphone_sd, ARRAY_SIZE(iphone_sd));
+	err_code = bt_le_adv_start(BT_LE_ADV_CONN_NO_ACCEPT_LIST, iphone_ad, ARRAY_SIZE(iphone_ad), iphone_sd, ARRAY_SIZE(iphone_sd));
 	if (err_code) {
 		LOG_ERR("Cannot start open advertising for phone connection(err: %d)\n", err_code);
 	} else	{
