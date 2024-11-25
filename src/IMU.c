@@ -2,6 +2,8 @@
 
 LOG_MODULE_REGISTER(imu, LOG_LEVEL_INF);
 
+#if IMU_DEVICE_READY // Only include IMU-related code if the device is present
+
 int IMUSetup(){
     if (!device_is_ready(IMU_DEVICE)) {
                 LOG_ERR("IMU device is not ready");
@@ -77,3 +79,5 @@ int readIMUData(struct sensor_value accel[], struct sensor_value gyro[]){
     return 0;
    
 }
+
+#endif // IMU_DEVICE_READY

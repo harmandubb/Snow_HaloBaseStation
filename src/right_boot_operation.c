@@ -41,8 +41,10 @@ void right_boot_operation(bool *requestFinished, bool *UARTTransmit, bool *UARTS
         struct sensor_value gyro[3] = {0};
 
         // read IMU
-        err = readIMUData(accel,gyro);
-        setUartIMUData(accel, gyro, uart_phone_buf, ADC_BUFFER_SIZE*2);
+        if(IMU_DEVICE_READY){
+            err = readIMUData(accel,gyro);
+            setUartIMUData(accel, gyro, uart_phone_buf, ADC_BUFFER_SIZE*2);
+        }
 
         // //set the gps data 
         setUartGPSData(gps_data, uart_phone_buf, (ADC_BUFFER_SIZE*2+IMU_BYTES));

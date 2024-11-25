@@ -24,8 +24,9 @@
 //struct define
 
 // Function declarations
+#if IMU_DEVICE_READY
 int IMUSetup();
 int readIMUData(struct sensor_value accel[], struct sensor_value gyro[]);
-
+#endif
 
 #endif /* IMU_H */

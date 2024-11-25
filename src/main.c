@@ -340,9 +340,11 @@ int main(void)
         GNSS_DATA_CALLBACK_DEFINE(GPS_DEVICE, gnss_data_cb);
 
         //-------------------IMU INIT ------------------------//
-        err = IMUSetup();
-        if(err < 0){
-                return -1;
+        if(IMU_DEVICE_READY){
+                err = IMUSetup();
+                if(err < 0){
+                        return -1;
+                }
         }
 
         for(;;){
