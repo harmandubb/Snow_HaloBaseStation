@@ -40,7 +40,7 @@ extern "C" {
 extern bool isRightBoot;
 
 //functions
-int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_callback_handler_t button_interrrupt_handler);
+int init_pairing_button(const struct device* gpio_dev, int button_pin, struct gpio_callback* button_interupt_cb, gpio_callback_handler_t button_interrrupt_handler);
 int init_select_switch(const struct device* gpio_dev, int switch_pin);
 void phone_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);
 void boot_pairing_button_cb(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);

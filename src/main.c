@@ -223,12 +223,15 @@ int main(void)
         }
 
         //---------------------BUTTON INIT-------------------------//
-        err = init_pairing_button(gpio1_dev, PIN_BOOT_PAIRING_BUTTON, boot_pairing_button_cb);
+        static struct gpio_callback button_interupt_cb_pairing;
+        static struct gpio_callback button_interupt_cb_phone;
+        
+        err = init_pairing_button(gpio1_dev, PIN_BOOT_PAIRING_BUTTON, &button_interupt_cb_pairing, boot_pairing_button_cb);
         if (err < 0){
                 LOG_ERR("ERROR Inializing L_R pairing button: %d", err);
         }
 
-        err = init_pairing_button(gpio1_dev,PIN_PHONE_PAIRING_BUTTON, phone_pairing_button_cb);
+        err = init_pairing_button(gpio1_dev,PIN_PHONE_PAIRING_BUTTON, &button_interupt_cb_phone, phone_pairing_button_cb);
         if (err < 0) {
                 LOG_ERR("ERROR Intializing wrist pairing button: %d", err);
         }

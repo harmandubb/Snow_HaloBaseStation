@@ -18,33 +18,32 @@ extern struct k_work Lboot_scan_work;
  *
 */
 
-int init_pairing_button(const struct device* gpio_dev, int button_pin, gpio_callback_handler_t button_interrrupt_handler){
-	int err;
-	static struct gpio_callback button_interupt_cb;
-	gpio_flags_t flags = GPIO_INPUT | GPIO_ACTIVE_HIGH; // I think the configuration here was wrong before hand
-	gpio_flags_t interrupts = GPIO_INT_EDGE_BOTH; //can change to interrupt on active low 
+int init_pairing_button(const struct device* gpio_dev, int button_pin, struct gpio_callback* button_interupt_cb, gpio_callback_handler_t button_interrrupt_handler) {
+    int err;
+    gpio_flags_t flags = GPIO_INPUT | GPIO_ACTIVE_HIGH; // I think the configuration here was wrong before hand
+    gpio_flags_t interrupts = GPIO_INT_EDGE_BOTH; //can change to interrupt on active low 
 
-	err = gpio_pin_configure(gpio_dev, button_pin, flags);
-	if (err < 0) {
-		LOG_ERR("Error %d: failed to configure button gpio pin %d\n", err, button_pin);
-		return err; 
-	} 
+    err = gpio_pin_configure(gpio_dev, button_pin, flags);
+    if (err < 0) {
+        LOG_ERR("Error %d: failed to configure button gpio pin %d\n", err, button_pin);
+        return err; 
+    } 
 
-	err = gpio_pin_interrupt_configure(gpio_dev, button_pin, interrupts);
-	if (err < 0){
-		LOG_ERR("Error %d: failed to configure button callback on pin %d\n", err, button_pin);
-		return err;
-	}
+    err = gpio_pin_interrupt_configure(gpio_dev, button_pin, interrupts);
+    if (err < 0) {
+        LOG_ERR("Error %d: failed to configure button callback on pin %d\n", err, button_pin);
+        return err;
+    }
 
-	gpio_init_callback(&button_interupt_cb, button_interrrupt_handler ,BIT(button_pin));
+    gpio_init_callback(button_interupt_cb, button_interrrupt_handler, BIT(button_pin));
 
-	err = gpio_add_callback(gpio_dev, &button_interupt_cb);
-	if (err < 0) {
-		LOG_ERR("Error adding callback for button change: (err %d)\n", err);
-		return err; 
-	}
+    err = gpio_add_callback(gpio_dev, button_interupt_cb);
+    if (err < 0) {
+        LOG_ERR("Error adding callback for button change: (err %d)\n", err);
+        return err; 
+    }
 
-	return 0;
+    return 0;
 }
 
 /** @brief initilizes the GPIO for an slider switch input
