@@ -29,7 +29,7 @@ extern "C" {
 #include <zephyr/drivers/adc.h>
 
 #define ADC_RESOLUTION (12)
-#define NUM_SENSORS (4)
+#define NUM_SENSORS (2)
 #define ADC_BUFFER_SIZE (NUM_SENSORS*2)
 
 extern bool adcFinished;

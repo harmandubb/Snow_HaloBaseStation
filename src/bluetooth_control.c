@@ -276,6 +276,7 @@ void connected(struct bt_conn *conn, uint8_t err){
 		if (result < 0) {
 			LOG_ERR("Error occured when discovering the bluetooth services (err: %d)", result);
 		}
+
 	}
 };
 
