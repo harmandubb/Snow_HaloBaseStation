@@ -42,5 +42,6 @@ void right_boot_operation(bool *requestFinished, bool *UARTTransmit, bool *UARTS
 void convert_IMI_data_to_bytes(struct sensor_value *sensor, uint8_t output[8]);
 void setUartIMUData(const struct sensor_value accel[3], const struct sensor_value gyro[3], 
                     uint8_t uart_phone_buf[], int start_index);
+void setUartGPSData(struct gps_data *data, uint8_t *uart_phone_buf, int start_index);
 
 #endif /* RIGHT_BOOT_OPERATION_H */

@@ -40,7 +40,7 @@ void right_boot_operation(bool *requestFinished, bool *UARTTransmit, bool *UARTS
         setUartIMUData(accel, gyro, uart_phone_buf, ADC_BUFFER_SIZE*2);
 
         //set the gps data 
-        setUartGPSData(gps_data, &uart_phone_buf, (ADC_BUFFER_SIZE*2+IMU_BYTES));
+        setUartGPSData(gps_data, uart_phone_buf, (ADC_BUFFER_SIZE*2+IMU_BYTES));
 
         *adcFinished = false;
         *UARTTransmit = true;

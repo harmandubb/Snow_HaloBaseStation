@@ -12,7 +12,7 @@
 //external variables
 
 //function defines: 
-int left_boot_operation(bool *requestFinished, bool *adcFinished, bool *UARTFinished, bool *UARTSendEnable, int adc_buf_size, struct device *adc_dev, struct adc_sequence sequence, uint8_t adc_buf[]);
+int left_boot_operation(bool *requestFinished, bool *adcFinished, bool *UARTFinished, bool *UARTSendEnable, int adc_buf_size, struct device *adc_dev, struct adc_sequence *sequence, uint8_t adc_buf[]);
 
 
 
