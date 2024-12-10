@@ -1,4 +1,4 @@
-# Snowboarder Metrics Recording System
+# SNOW HALO: Snowboarder Performance Metrics Recording System
 
 **Code for running on a Seeed Studio XIAO nRF52840 (Sense) Board to record snowboarder metrics.**
 
