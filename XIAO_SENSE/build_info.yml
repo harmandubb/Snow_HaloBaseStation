@@ -1,0 +1,19 @@
+cmake:
+  application:
+    source-dir: C:/ncs/v2.9.0/zephyr/share/sysbuild
+  board:
+    name: xiao_ble
+    qualifiers: nrf52840/sense
+    revision: 
+  kconfig:
+    files:
+     - C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/empty.conf
+     - C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/empty.conf
+    user-files:
+     - C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/empty.conf
+  sysbuild: true
+version: 0.1.0
+west:
+  command: C:\ncs\toolchains\b620d30767\opt\bin\Scripts\west build --build-dir c:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE c:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation --pristine --board xiao_ble/nrf52840/sense -- -DNCS_TOOLCHAIN_VERSION=NONE -DDTC_OVERLAY_FILE=xiao_ble_sense.overlay
+  topdir: c:\ncs\v2.9.0
+  version: 1.2.0

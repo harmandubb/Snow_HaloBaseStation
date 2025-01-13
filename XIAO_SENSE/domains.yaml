@@ -1,0 +1,7 @@
+default: Snow_HaloBaseStation
+build_dir: C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE
+domains:
+  - name: Snow_HaloBaseStation
+    build_dir: C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/Snow_HaloBaseStation
+flash_order:
+  - Snow_HaloBaseStation

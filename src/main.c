@@ -378,6 +378,22 @@ void bt_ready_cb(int err){
                 LOG_INF("Bluetooth initialized");
         }
 
+        // start the advertising of the left boot such that the right boot can connect
+        if (isRightBoot){
+		LOG_INF("SCANNING FOR L boot");
+		// use the scanning options
+		k_work_submit(&Lboot_scan_work);
+
+                LOG_INF("Advertising right boot for phone connection");
+		// use the scanning options
+		k_work_submit(&advertise_phone_work);
+	} else {
+		//left boot operation is being focused on 
+		LOG_INF("ADVERTISING L BOOT");
+		k_work_submit(&advertise_L_boot_work);
+
+	}
+
         btReady = true; 
 
 };

@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/CMakeFiles/Snow_HaloBaseStation"
+		},
+		{
+			"file" : "C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/CMakeFiles/Snow_HaloBaseStation.rule"
+		},
+		{
+			"file" : "C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/CMakeFiles/Snow_HaloBaseStation-complete.rule"
+		},
+		{
+			"file" : "C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-build.rule"
+		},
+		{
+			"file" : "C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-configure.rule"
+		},
+		{
+			"file" : "C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-download.rule"
+		},
+		{
+			"file" : "C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-install.rule"
+		},
+		{
+			"file" : "C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-patch.rule"
+		},
+		{
+			"file" : "C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"Snow_HaloBaseStation"
+		],
+		"name" : "Snow_HaloBaseStation"
+	}
+}

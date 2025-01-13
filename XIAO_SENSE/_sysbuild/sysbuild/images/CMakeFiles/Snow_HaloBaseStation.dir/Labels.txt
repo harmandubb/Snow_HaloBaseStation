@@ -1,0 +1,13 @@
+# Target labels
+ Snow_HaloBaseStation
+# Source files and their labels
+C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/CMakeFiles/Snow_HaloBaseStation
+C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/CMakeFiles/Snow_HaloBaseStation.rule
+C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/CMakeFiles/Snow_HaloBaseStation-complete.rule
+C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-build.rule
+C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-configure.rule
+C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-download.rule
+C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-install.rule
+C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-mkdir.rule
+C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-patch.rule
+C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/_sysbuild/sysbuild/images/Snow_HaloBaseStation-prefix/src/Snow_HaloBaseStation-stamp/Snow_HaloBaseStation-update.rule

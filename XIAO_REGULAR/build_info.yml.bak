@@ -1,0 +1,6 @@
+west:
+  command: C:\ncs\toolchains\b620d30767\opt\bin\Scripts\west build --build-dir c:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_REGULAR
+    c:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation --pristine --board
+    xiao_ble/nrf52840 --sysbuild -- -DNCS_TOOLCHAIN_VERSION=NONE -DDTC_OVERLAY_FILE=xiao_ble.overlay
+  topdir: c:\ncs\v2.9.0
+  version: 1.2.0
