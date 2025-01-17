@@ -239,6 +239,7 @@ int main(void)
 
         
         //-----------------------BLUETOOTH SCAN----------------------//
+        LOG_INF("Eabling the bluetooth module to start");
         err = bt_enable(bt_ready_cb);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)", err);
@@ -346,6 +347,28 @@ int main(void)
                         return -1;
                 }
         }
+
+        // Initial Bluetooth COnnection start
+
+        LOG_INF("STARTING THE BLUETOOTH START UP CONNECTIONS");
+
+        // start the advertising of the left boot such that the right boot can connect
+        if (isRightBoot){
+		LOG_INF("SCANNING FOR L boot");
+		// use the scanning options
+		k_work_submit(&Lboot_scan_work);
+
+                k_sleep(K_SECONDS(2));
+
+                LOG_INF("Advertising right boot for phone connection");
+		// use the scanning options
+		k_work_submit(&advertise_phone_work);
+	} else {
+		//left boot operation is being focused on 
+		LOG_INF("ADVERTISING L BOOT");
+		k_work_submit(&advertise_L_boot_work);
+
+	}
 
         for(;;){
                 if(!isRightBoot){ //LEFT/Server
