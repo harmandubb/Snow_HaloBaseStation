@@ -68,13 +68,13 @@ int readIMUData(struct sensor_value accel[], struct sensor_value gyro[]){
         LOG_ERR("Error getting gyroscope Z channel: %d", err);
     }
 
-    accel[0] = accel_x;
-    accel[1] = accel_y;
-    accel[2] = accel_z;
+    accel[0] = sensor_value_to_double(accel_x);
+    accel[1] = sensor_value_to_double(accel_y);
+    accel[2] = sensor_value_to_double(accel_z);
 
-    gyro[0] = gyro_x;
-    gyro[1] = gyro_y;
-    gyro[2] = gyro_z;
+    gyro[0] = sensor_value_to_double(gyro_x);
+    gyro[1] = sensor_value_to_double(gyro_y);
+    gyro[2] = sensor_value_to_double(gyro_z);
 
     return 0;
    

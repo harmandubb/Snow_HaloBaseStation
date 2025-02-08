@@ -326,3 +326,7 @@
 113938	119016	7542735333209186	C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_REGULAR/zephyr/zephyr.bin	84e832d8607bf0ec
 113938	119016	7542735333209186	C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_REGULAR/zephyr/zephyr.uf2	84e832d8607bf0ec
 113938	119016	7542735333209186	C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_REGULAR/zephyr/zephyr.stat	84e832d8607bf0ec
+168	746	7607083129318156	zephyr/include/generated/ncs_commit.h	9af66541cee883c9
+168	746	7607083129318156	C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_REGULAR/zephyr/include/generated/ncs_commit.h	9af66541cee883c9
+185	752	7607083146983048	zephyr/include/generated/zephyr_commit.h	464bed55ff57bd6e
+185	752	7607083146983048	C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_REGULAR/zephyr/include/generated/zephyr_commit.h	464bed55ff57bd6e
