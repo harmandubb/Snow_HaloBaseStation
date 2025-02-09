@@ -9,28 +9,17 @@
 typedef void (* ISR)(const void *);
 uintptr_t __irq_vector_table _irq_vector_table[48] = {
 	((uintptr_t)&_isr_wrapper),
-<<<<<<< HEAD:sense_build/zephyr/isr_tables.c
-	442019,
-=======
-	441903,
->>>>>>> e27c531 (UPdated the code to make the trasnimssion of bluetooth data easier to understand):XIAO_REGULAR/zephyr/isr_tables.c
+	441899,
 	((uintptr_t)&_isr_wrapper),
 	((uintptr_t)&_isr_wrapper),
 	((uintptr_t)&_isr_wrapper),
 	((uintptr_t)&_isr_wrapper),
 	((uintptr_t)&_isr_wrapper),
 	((uintptr_t)&_isr_wrapper),
-<<<<<<< HEAD:sense_build/zephyr/isr_tables.c
 	441945,
 	((uintptr_t)&_isr_wrapper),
 	((uintptr_t)&_isr_wrapper),
 	441997,
-=======
-	441829,
-	((uintptr_t)&_isr_wrapper),
-	((uintptr_t)&_isr_wrapper),
-	441881,
->>>>>>> e27c531 (UPdated the code to make the trasnimssion of bluetooth data easier to understand):XIAO_REGULAR/zephyr/isr_tables.c
 	((uintptr_t)&_isr_wrapper),
 	((uintptr_t)&_isr_wrapper),
 	((uintptr_t)&_isr_wrapper),
@@ -69,7 +58,6 @@ uintptr_t __irq_vector_table _irq_vector_table[48] = {
 	((uintptr_t)&_isr_wrapper),
 };
 struct _isr_table_entry __sw_isr_table _sw_isr_table[48] = {
-<<<<<<< HEAD:sense_build/zephyr/isr_tables.c
 	{(const void *)0x6c0b9, (ISR)0x6bf27}, /* 0 */
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 1 */
 	{(const void *)0x6d698, (ISR)0x6bb03}, /* 2 */
@@ -78,16 +66,6 @@ struct _isr_table_entry __sw_isr_table _sw_isr_table[48] = {
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 5 */
 	{(const void *)0x5e0bd, (ISR)0x6bf27}, /* 6 */
 	{(const void *)0x6d6c0, (ISR)0x59285}, /* 7 */
-=======
-	{(const void *)0x6c045, (ISR)0x6beb3}, /* 0 */
-	{(const void *)0x0, (ISR)z_irq_spurious}, /* 1 */
-	{(const void *)0x6d624, (ISR)0x6ba8f}, /* 2 */
-	{(const void *)0x0, (ISR)z_irq_spurious}, /* 3 */
-	{(const void *)0x5f4b9, (ISR)0x6beb3}, /* 4 */
-	{(const void *)0x0, (ISR)z_irq_spurious}, /* 5 */
-	{(const void *)0x5e049, (ISR)0x6beb3}, /* 6 */
-	{(const void *)0x6d64c, (ISR)0x59211}, /* 7 */
->>>>>>> e27c531 (UPdated the code to make the trasnimssion of bluetooth data easier to understand):XIAO_REGULAR/zephyr/isr_tables.c
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 8 */
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 9 */
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 10 */
@@ -115,7 +93,6 @@ struct _isr_table_entry __sw_isr_table _sw_isr_table[48] = {
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 32 */
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 33 */
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 34 */
-<<<<<<< HEAD:sense_build/zephyr/isr_tables.c
 	{(const void *)0x5f0c5, (ISR)0x6bf27}, /* 35 */
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 36 */
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 37 */
@@ -123,15 +100,6 @@ struct _isr_table_entry __sw_isr_table _sw_isr_table[48] = {
 	{(const void *)0x586cd, (ISR)0x6bf27}, /* 39 */
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 40 */
 	{(const void *)0x5ecc5, (ISR)0x6bf27}, /* 41 */
-=======
-	{(const void *)0x5f051, (ISR)0x6beb3}, /* 35 */
-	{(const void *)0x0, (ISR)z_irq_spurious}, /* 36 */
-	{(const void *)0x0, (ISR)z_irq_spurious}, /* 37 */
-	{(const void *)0x0, (ISR)z_irq_spurious}, /* 38 */
-	{(const void *)0x58659, (ISR)0x6beb3}, /* 39 */
-	{(const void *)0x0, (ISR)z_irq_spurious}, /* 40 */
-	{(const void *)0x5ec51, (ISR)0x6beb3}, /* 41 */
->>>>>>> e27c531 (UPdated the code to make the trasnimssion of bluetooth data easier to understand):XIAO_REGULAR/zephyr/isr_tables.c
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 42 */
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 43 */
 	{(const void *)0x0, (ISR)z_irq_spurious}, /* 44 */
