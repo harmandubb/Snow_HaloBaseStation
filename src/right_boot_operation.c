@@ -56,9 +56,6 @@ void right_boot_operation(bool *requestFinished, bool *UARTTransmit, bool *UARTS
     if (*UARTTransmit) {
         if (*UARTSendEnable) {
 
-            uint8_t test_buf[4] = {0, 1, 2, 3};
-
-
             err = bt_nus_send(NULL, uart_phone_buf, ADC_BUFFER_SIZE*2+GPS_BYTES+IMU_BYTES);
             // err = bt_nus_send(NULL, test_buf, 4);
             if (err < 0) {

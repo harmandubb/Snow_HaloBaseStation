@@ -39,8 +39,6 @@ uint8_t ble_uart_data_received(struct bt_nus_client *nus, const uint8_t *data, u
 	// LOG_INF("Received Data from UART");
 	ARG_UNUSED(nus);
 
-	int err = 0; 
-
 	for (uint16_t i = 0; i < len; i++){
 		k_mutex_lock(&uart_data_mutex,K_FOREVER);
 		uart_rx_data[i] = data[i];

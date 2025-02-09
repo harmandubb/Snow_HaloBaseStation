@@ -507,8 +507,11 @@ static int bond_filter_scan(bt_addr_le_t* bond_addr){
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err < 0){
 		LOG_ERR("Scanning failed to start (err %d)", err);
-		return 0;
+		return err;
 	}
+
+	return 0;
+
 
 };
 

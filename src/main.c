@@ -62,7 +62,6 @@ int main(void)
         
         //variables
         int *UART_Comp_Array;
-        int avgPressure = 0;
         // extern const struct device *uart; //uart binding
         extern uint8_t uart_rx_data[]; // array for receiving data from the left boot
         extern struct k_mutex uart_data_mutex; 
@@ -354,6 +353,7 @@ int main(void)
 
         // start the advertising of the left boot such that the right boot can connect
         if (isRightBoot){
+                LOG_INF("RIGHT BOOT PRESENT");
 		LOG_INF("SCANNING FOR L boot");
 		// use the scanning options
 		k_work_submit(&Lboot_scan_work);
@@ -364,6 +364,7 @@ int main(void)
 		// use the scanning options
 		k_work_submit(&advertise_phone_work);
 	} else {
+                LOG_INF("LEFT BOOT PRESENT");
 		//left boot operation is being focused on 
 		LOG_INF("ADVERTISING L BOOT");
 		k_work_submit(&advertise_L_boot_work);
