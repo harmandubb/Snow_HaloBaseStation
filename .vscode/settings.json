@@ -39,7 +39,11 @@
         "addr.h": "c",
         "gps.h": "c",
         "gnss.h": "c",
-        "left_boot_operation.h": "c"
+        "left_boot_operation.h": "c",
+        "ratio": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     },
     "C_Cpp.configurationWarnings": "disabled",
     "nrf-connect.applications": [],

@@ -11,7 +11,7 @@
 #define IMU_NODE DT_NODELABEL(lsm6ds3tr_c)
 #define IMU_DEVICE DEVICE_DT_GET(IMU_NODE)
 #define SAMPLE_FREQUENCY (2)
-#define IMU_BYTES (6*4*2)
+#define IMU_BYTES (6*4*2+2) //plus two for the spacing of data 
 
 #if DT_NODE_EXISTS(IMU_NODE)
 #define IMU_DEVICE_READY 1
@@ -26,7 +26,7 @@
 // Function declarations
 #if IMU_DEVICE_READY
 int IMUSetup();
-int readIMUData(struct sensor_value accel[], struct sensor_value gyro[]);
+int readIMUData(double accel[], double gyro[]);
 #endif
 
 #endif /* IMU_H */

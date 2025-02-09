@@ -9,7 +9,7 @@
 
 #define GPS_NODE DT_NODELABEL(gps0)
 #define GPS_DEVICE DEVICE_DT_GET(GPS_NODE)
-#define GPS_BYTES (8+8+4+1+1+2)
+#define GPS_BYTES (8+8+4+1+1+2+2) //exta Plus 2 is added to provide the spacing
 
 #if DT_NODE_EXISTS(GPS_NODE)
 #define GPS_DEVICE_READY 1
