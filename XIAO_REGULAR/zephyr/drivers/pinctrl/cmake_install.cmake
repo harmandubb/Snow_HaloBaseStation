@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_REGULAR/zephyr/drivers/pinctrl/renesas/cmake_install.cmake")
+  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_REGULAR/zephyr/drivers/pinctrl/renesas/cmake_install.cmake")
 endif()
 

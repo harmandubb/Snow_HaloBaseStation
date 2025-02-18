@@ -39,16 +39,16 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_REGULAR/modules/nrf/drivers/mpsl/clock_control/cmake_install.cmake")
+  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_REGULAR/modules/nrf/drivers/mpsl/clock_control/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_REGULAR/modules/nrf/drivers/mpsl/flash_sync/cmake_install.cmake")
+  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_REGULAR/modules/nrf/drivers/mpsl/flash_sync/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_REGULAR/modules/nrf/drivers/mpsl/temp_nrf5/cmake_install.cmake")
+  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_REGULAR/modules/nrf/drivers/mpsl/temp_nrf5/cmake_install.cmake")
 endif()
 

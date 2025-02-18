@@ -373,11 +373,11 @@ int main(void)
 
         for(;;){
                 if(!isRightBoot){ //LEFT/Server
-                // LOG_INF("In the LEFT BRANCH");
+                LOG_INF("In the LEFT BRANCH");
                         left_boot_operation(&requestFinished, &adcFinished, &UARTFinished, &UARTSendEnable, ADC_BUFFER_SIZE, adc_dev, &sequence, &adc_buf);
                         
                 } else {
-                // LOG_INF("In the RIGHT Branch");
+                LOG_INF("In the RIGHT Branch");
                         right_boot_operation(&requestFinished, &UARTTransmit, &UARTSendEnable, &adcFinished, adc_dev, &sequence, &adc_buf, &uart_rx_data, &uart_data_mutex, &uart_phone_buf, &gps_data);
                 }
                 
