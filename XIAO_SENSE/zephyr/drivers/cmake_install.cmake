@@ -39,111 +39,111 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/disk/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/disk/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/interrupt_controller/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/interrupt_controller/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/misc/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/misc/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/pcie/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/pcie/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/usb/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/usb/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/usb_c/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/usb_c/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/adc/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/adc/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/clock_control/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/clock_control/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/console/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/console/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/entropy/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/entropy/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/flash/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/flash/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/gnss/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/gnss/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/gpio/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/gpio/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/hwinfo/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/hwinfo/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/i2c/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/i2c/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/pinctrl/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/pinctrl/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/pwm/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/pwm/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/regulator/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/regulator/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/sensor/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/sensor/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/serial/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/serial/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/spi/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/spi/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/timer/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/zephyr/drivers/timer/cmake_install.cmake")
 endif()
 

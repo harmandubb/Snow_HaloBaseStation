@@ -1,5 +1,5 @@
 @echo off
-cd /D C:\Users\harma\Documents\Git_Projects\Snow_HaloBaseStation\XIAO_REGULAR || (set FAIL_LINE=2& goto :ABORT)
+cd /D C:\Users\bhupi\Git_Projects\SnowHalo\Snow_HaloBaseStation\XIAO_REGULAR || (set FAIL_LINE=2& goto :ABORT)
 C:\ncs\toolchains\ce3b5ff664\opt\bin\cmake.exe -E echo adafruit_2_8_tft_touch_v2 || (set FAIL_LINE=3& goto :ABORT)
 C:\ncs\toolchains\ce3b5ff664\opt\bin\cmake.exe -E echo adafruit_2_8_tft_touch_v2_nano || (set FAIL_LINE=4& goto :ABORT)
 C:\ncs\toolchains\ce3b5ff664\opt\bin\cmake.exe -E echo adafruit_can_picowbell || (set FAIL_LINE=5& goto :ABORT)

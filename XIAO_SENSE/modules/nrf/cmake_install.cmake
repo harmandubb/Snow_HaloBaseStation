@@ -39,36 +39,36 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/ext/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/ext/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/lib/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/lib/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/samples/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/samples/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/subsys/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/subsys/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/modules/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/modules/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/drivers/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/drivers/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/harma/Documents/Git_Projects/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/tests/cmake_install.cmake")
+  include("C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/XIAO_SENSE/modules/nrf/tests/cmake_install.cmake")
 endif()
 

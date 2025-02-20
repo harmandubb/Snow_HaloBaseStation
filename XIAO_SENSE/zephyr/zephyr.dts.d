@@ -28,4 +28,4 @@ empty_file.o: C:/ncs/v2.7.0/zephyr/misc/empty_file.c \
  C:/ncs/v2.7.0/zephyr/boards/seeed/xiao_ble/xiao_ble-pinctrl.dtsi \
  C:/ncs/v2.7.0/zephyr/boards/seeed/xiao_ble/seeed_xiao_connector.dtsi \
  C:/ncs/v2.7.0/zephyr/include/zephyr/dt-bindings/gpio/nordic-nrf-gpio.h \
- xiao_ble_sense.overlay
+ C:/Users/bhupi/Git_Projects/SnowHalo/Snow_HaloBaseStation/xiao_ble_sense.overlay

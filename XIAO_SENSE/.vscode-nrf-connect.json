@@ -14,8 +14,6 @@
   "buildDirectory": "XIAO_SENSE",
   "kconfigFragments": [],
   "snippets": [],
-  "dtcOverlays": [
-    "xiao_ble_sense.overlay"
-  ],
+  "dtcOverlays": [],
   "extraDtcOverlays": []
 }
