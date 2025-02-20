@@ -8,11 +8,6 @@ void right_boot_operation(bool *requestFinished, bool *UARTTransmit, bool *UARTS
                           uint8_t uart_rx_data[], struct k_mutex *uart_data_mutex,
                           uint8_t uart_phone_buf[], struct gps_data *gps_data) {
     int err = 0;
-    
-    // LOG_INF("Request Finish: %d", *requestFinished);
-    // LOG_INF("ADC Finished: %d", *adcFinished);
-    // LOG_INF("UART Transmit: %d", *UARTTransmit);
-    // LOG_INF("UART Send Enable: %d", *UARTSendEnable);
 
     if (*requestFinished) {
         *requestFinished = false;
@@ -56,8 +51,17 @@ void right_boot_operation(bool *requestFinished, bool *UARTTransmit, bool *UARTS
     if (*UARTTransmit) {
         if (*UARTSendEnable) {
 
-            err = bt_nus_send(NULL, uart_phone_buf, ADC_BUFFER_SIZE*2+GPS_BYTES+IMU_BYTES);
-            // err = bt_nus_send(NULL, test_buf, 4);
+            int total_uart_buf_size = ADC_BUFFER_SIZE*2+GPS_BYTES+IMU_BYTES;
+
+            // Test print all of teh bytes as seen on the uart 
+
+            for (int i = 0; i < total_uart_buf_size; i++) {
+                LOG_INF("Index %d: 0x%02X", i, uart_phone_buf[i]);
+            }
+
+            k_sleep(K_SECONDS(1));
+
+            err = bt_nus_send(NULL, uart_phone_buf, total_uart_buf_size);
             if (err < 0) {
                 LOG_ERR("Failed to transmit over Bluetooth (%d)", err);
             }

@@ -260,27 +260,6 @@ int main(void)
                 LOG_ERR("Settings load failed (err %d)", err);
         }
 
-        
-
-        // // ------------------------BOND Devices Scan Check------------//
-        // int bond_connect_counter = 0 ; 
-        // int bond_count = scan_bond_devices();
-        // LOG_INF("Scanning successfully started");
-        // LOG_INF("bond count: %d", bond_count);
-
-        // while((bond_count > 0) && (bond_connect_counter < BOND_CONNECT_COUNT_THRESHOLD) && (!connectedFlag)){
-        //         k_sleep(K_MSEC(500));
-        //         bond_connect_counter++;
-        // }
-
-        // if (!connectedFlag) {
-        //         //stop the bond scanning 
-        //         err = bt_scan_stop();
-        //         if (err < 0) {
-        //                 LOG_ERR("Unable to stop bond scanning");
-        //         }
-        // }
-
         if(isRightBoot){
                 const struct bt_scan_init_param bt_scan_init_opts = {
                         .scan_param = NULL, //default config 
